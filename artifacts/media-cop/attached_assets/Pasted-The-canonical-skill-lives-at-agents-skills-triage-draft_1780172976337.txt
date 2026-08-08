@@ -1,0 +1,60 @@
+The canonical skill lives at .agents/skills/triage-drafts/SKILL.md (the .local/ copy is what keeps getting wiped). Let me read the real one.
+
+
+2 actions
+Here's the current, canonical version of the triage skill (read straight from .agents/skills/triage-drafts/SKILL.md, which is the real source — the .local/ copy is just a working cache that gets wiped), followed by what you'd need to port it elsewhere.
+
+1. Most up-to-date draft-triage description
+What it is: A read-only planning routine that re-labels every draft (a task you haven't approved yet) with a single priority prefix so you can see, at a glance, what to approve and in what order. It re-labels and reports only — it never implements, cancels, or merges. You archive stale drafts yourself.
+
+When it runs: On "triage" / "triage drafts" / "re-triage" / "what should I do next," and naturally after a heavy merge/churn wave so the survivors get re-judged in the new context.
+
+The single question asked of every draft (not "what type of work is this?" but):
+
+Is something broken, is this finishing/protecting an outcome that was already intended, or is this adding something new?
+
+The tiers that question collapses to:
+
+[P0] — broken now. Production down, data wrong, security hole. Drop everything.
+[P1] — will break, or a malfunction already exists but there's a workaround / the app is still usable (e.g. a breached prompt-budget margin, latent wrong/truncated output).
+[P2] — completes or protects an already-intended, in-scope outcome. Almost always worth approving, and it does not add expansive new UI/capability.
+[P3] — adds new scope: net-new UI, new capability, new alert/automation, or polish.
+[STALE] — verification proves the symptom is already gone; recommend archiving.
+The two rules that keep P2 from inflating:
+
+Scope rule — any new UI element (panel/badge/alert/endpoint) is P3, unless that exact UI was explicitly named in the originating task's "done looks like." Check the parent's done-criteria before letting anything with a UI be P2.
+Tests judged by blast radius — a regression test is never automatically P2. It inherits the severity of the breakage it prevents: guards data integrity / report correctness / routing / another P0–P1 behavior → P2; guards something minor or cosmetic → P3.
+Workflow each run:
+
+Pull all drafts with descriptions; cross-check against the latest task changes and fetch any just-created/missing ones (recent ones may already have moved out of drafts).
+Verify "fix X" claims against live data before trusting them — cheap read-only SQL or a grep. If the symptom is already gone → STALE.
+Assign a tier via the discriminator question, applying the scope rule (UI) and blast-radius rule (tests).
+Update only titles whose tier changed — exactly one bracketed prefix, never stacked; strip the old one first.
+Report, always leading with a ranked Top 3–5 to approve next (P0/P1 first), then buckets, count changes, and 2–3 observations.
+Verification before STALE: never mark STALE on the description alone — prove the symptom is gone (layer/routing counts, a grep that the column/endpoint/guard exists, or a more-recent merged task that already delivered it). If inconclusive, leave it at its earned tier and note the uncertainty.
+
+Guardrails: read-only (never implement/cancel/merge while triaging); verification before any STALE; exactly one prefix per title; never expose internal state/tool names — refer to drafts as "Drafts" and tasks as #N (Title).
+
+2. Implementing the skill in another project
+The skill file itself is portable as-is — the discriminator question, the five tiers, the scope rule, and the blast-radius rule are domain-agnostic. Here's the process:
+
+Step 1 — Copy the skill file.
+Place SKILL.md at .agents/skills/triage-drafts/SKILL.md in the new project. (.agents/skills/ is the durable, user-owned skills location; .local/skills/ is an ephemeral cache, so always put the master copy under .agents/.) The YAML frontmatter (name + description) is what makes the agent auto-discover it when you say "triage."
+
+Step 2 — Confirm the prerequisite exists.
+The skill assumes the project uses the project-tasks system with a draft/PROPOSED state and the listProjectTasks / updateProjectTask operations. Any Replit project with the planning/tasks workflow has this — nothing to install. If a project doesn't use project tasks at all, the skill has nothing to label.
+
+Step 3 — Adapt only one section: the verification checks.
+This is the single project-specific part. The current file gives this project's examples (layer counts, quarantine residual, state-media routing via SQL). In a new project, swap those for whatever cheaply proves a "fix" actually landed in that domain, e.g.:
+
+A SaaS app: hit a health endpoint, check a row count, grep for the endpoint/flag a task claims to have added.
+A data pipeline: query the freshness/row counts of the relevant tables.
+A pure frontend: grep the codebase for the component/route a task claims to have created.
+The principle ("never mark STALE without a cheap read-only proof") stays; only the example checks change.
+
+Step 4 — Calibrate the P2/P3 line to the new domain (optional but recommended).
+The tiers are universal, but "what counts as already-intended scope vs. new scope" is judged against that project's goals. The skill already encodes the right instinct (scope rule + blast-radius rule). If the new project has recurring gray areas (e.g. "is a security guard P1 or P2 here?"), add 2–3 domain examples to the file so future runs are consistent — in this project, for instance, security hardening contained behind the auth perimeter is treated as P2, not P1.
+
+That's it. No code, no dependencies, no config — it's a pure instruction file plus a per-project verification cheat-sheet. The only thing you genuinely must edit is the verification examples in Step 3; everything else transfers unchanged.
+
+One note for context: the skill is most valuable in projects with a high volume of drafts and frequent merge waves (like this one, where 50+ drafts churn every cycle). In a project with only a handful of tasks, you'd get the same ranking benefit but the labeling overhead matters less.

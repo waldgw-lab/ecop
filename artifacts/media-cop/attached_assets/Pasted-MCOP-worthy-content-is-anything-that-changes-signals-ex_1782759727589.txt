@@ -1,0 +1,131 @@
+MCOP-worthy content is anything that changes, signals, explains, or contextualizes the defense and national-security operating environment — especially for U.S. forces, allies, adversaries, active conflicts, strategic chokepoints, homeland security, and senior-leader situational awareness.
+
+The key distinction should be:
+
+Topic = what the story is about.
+Importance = how much the story matters right now.
+
+A story should still get the correct topic even if it scores low.
+
+What type of content matters for MCOP
+Content type	Why it matters
+Military operations	Strikes, raids, attacks, battlefield movement, ceasefires, military incidents, and attacks on U.S. forces or allies can change the operational picture quickly.
+Active conflicts / flashpoints	Russia–Ukraine, Gaza, U.S.–Iran, Taiwan Strait, South China Sea, Red Sea, Israel–Lebanon, Korea, and similar crises need direct tracking because developments can span military, diplomatic, humanitarian, maritime, and information domains.
+Force posture and deployments	Troop movements, base access, carrier/bomber deployments, NATO posture, Combatant Command footprint changes, and withdrawals signal deterrence, escalation, readiness, or strategic reprioritization.
+Defense policy and readiness	DoD policy, readiness problems, recruiting, retention, service leadership, force structure, training, and command changes affect the Joint Force even when no crisis is underway.
+Weapons, procurement, and defense industry	Arms sales, munitions production, defense contracts, industrial-base problems, shipbuilding, aircraft programs, and allied transfers affect readiness, deterrence, and long-term capability.
+Nuclear, WMD, and strategic deterrence	Nuclear posture, missile tests, WMD threats, arms control, proliferation, and deterrence signaling carry high escalation risk.
+Cyber, space, and emerging technology	Cyberattacks, satellites, AI warfare, drones, electronic warfare, hypersonics, autonomous systems, and dual-use technology affect future conflict and current vulnerabilities.
+Foreign policy and diplomacy	Negotiations, ceasefire talks, foreign-ministry statements, state visits, aid decisions, recognition issues, and crisis diplomacy shape escalation and alignment.
+Alliances and institutions	NATO, EU, UN, G7, ASEAN, coalition actions, burden-sharing disputes, and treaty decisions affect legitimacy, military access, basing, sanctions, and coalition response.
+Economic pressure and sanctions	Sanctions, export controls, tariffs with security implications, asset freezes, energy leverage, and financial restrictions are tools of statecraft.
+Intelligence and espionage	Spy cases, leaks, counterintelligence, sabotage, covert action, and foreign security-service activity reveal adversary intent or vulnerabilities.
+Information operations	State media narratives, propaganda, disinformation, adversary framing, influence campaigns, and proxy amplification affect perception, legitimacy, and decision space.
+Terrorism, insurgency, and non-state armed groups	ISIS, al-Qaeda, militias, proxies, cartels, hostage threats, terrorist plots, and insurgent activity can drive instability or threaten U.S. interests.
+Domestic security	Border security, political violence, extremist plots, National Guard use, homeland threats, and major law-enforcement actions matter when they affect national security or stability.
+Maritime security and chokepoints	Red Sea, Strait of Hormuz, South China Sea, piracy, naval harassment, undersea cables, and shipping disruptions affect trade, energy, and military movement.
+Infrastructure, energy, and supply chains	Power grids, ports, pipelines, telecoms, rare earths, fuel, undersea cables, and defense supply chains affect resilience and readiness.
+Humanitarian impact	Civilian casualties, displacement, famine, evacuations, aid access, and civilian infrastructure strikes matter when they affect legitimacy, stabilization, escalation, or response planning.
+Governance and political stability	Elections, leadership transitions, major legislation, court rulings, protests, and institutional instability matter when they affect defense, diplomacy, alliances, sanctions, mobilization, or adversary narratives.
+Law and norms	ICC/ICJ actions, maritime law, war-crimes investigations, rules of engagement, sanctions legality, and treaty disputes affect legitimacy and authorities.
+Disaster and health security	Pandemics, Ebola, catastrophic weather, disasters affecting military installations, evacuations, or regional stability matter when they have operational or security consequences.
+Strategic markets	Energy shocks, defense-relevant minerals, food security, inflation, adversary economic weakness, or market disruption matter when tied to security effects.
+What should not matter unless there is a security hook
+
+MCOP should avoid ordinary noise unless it connects to defense, national security, stability, or the strategic environment.
+
+Usually low or excluded:
+
+Routine politics with no security effect
+Ordinary market news
+General weather
+Routine crime
+Celebrity / culture stories
+Sports
+Lifestyle
+Local events with no broader consequence
+Routine campaign coverage
+Commentary with no new claim or insight
+
+But these can become relevant if they create a security effect. For example:
+
+Weather = relevant if it hits a naval base or causes mass evacuation.
+Markets = relevant if energy shocks affect sanctions, conflict financing, or supply chains.
+Politics = relevant if it affects defense aid, alliances, mobilization, or institutional stability.
+Crime = relevant if tied to terrorism, espionage, extremism, cartels, or homeland security.
+How I would instruct MCOP to rate importance
+
+The instruction should be:
+
+Rate importance by consequence, urgency, and national-security relevance — not by how dramatic the headline sounds, how many outlets covered it, or whether the topic label is generally important.
+
+A story should be scored by asking:
+
+What changed?
+Who is affected?
+Does this affect U.S. forces, allies, adversaries, or active conflicts?
+Does it increase or reduce escalation risk?
+Is it operationally relevant now?
+Is it a major policy, diplomatic, economic, or military shift?
+Is it corroborated, official, or still a single-source claim?
+Is it new, or just commentary on something already known?
+Recommended importance scale
+Score range	Meaning	Use for
+95–100	Critical / immediate	Attacks on U.S. forces, major conflict outbreak, nuclear/WMD development, major escalation, direct POTUS/SECDEF/CJCS national-security action, closure/reopening of a strategic chokepoint, confirmed attack on ally with escalation risk.
+85–94	Major strategic development	Major battlefield shift, major diplomatic agreement or breakdown, large force posture change, major sanctions package, significant alliance decision, cyberattack on critical infrastructure, major terrorism event, large humanitarian crisis in an active conflict.
+70–84	Important / monitor closely	Significant military incident, important but limited strike, notable readiness or procurement issue, major official statement, regional security development, active-conflict update, credible threat reporting, important state-media narrative around a real event.
+50–69	Contextual / useful	Analysis, commentary, routine but relevant policy moves, lower-scale diplomatic statements, minor conflict updates, early single-source claims, background on weapons systems, lower-impact domestic political items with possible security relevance.
+20–49	Low relevance / background only	Routine politics, routine economics, routine weather, routine military visits, minor statements, general commentary, or isolated items with weak security connection.
+0–19	Exclude	No defense, national-security, geopolitical, homeland-security, operational, or strategic relevance. Duplicate spam, clickbait, celebrity, sports, lifestyle, ordinary local news.
+Importance factors to weigh
+
+I would instruct it to rate stories using these factors, in this order:
+
+Factor	What to ask
+Operational impact	Does this affect current military operations, force protection, access, basing, deployments, readiness, or crisis response?
+Escalation risk	Could this widen a conflict, trigger retaliation, close a chokepoint, involve U.S. forces, or shift deterrence?
+Strategic actor relevance	Does it involve the U.S., allies, adversaries, major powers, NATO, China, Russia, Iran, North Korea, or key regional actors?
+Decision-maker relevance	Would senior defense, national-security, or public-affairs leaders need to know this today?
+Novelty / change	Is this a new development, a major update, or just restating known facts?
+Scale and severity	How many people, forces, countries, systems, or critical assets are affected?
+Source confidence	Is it corroborated by trusted outlets, an official statement, or still a single-source / attached-source claim?
+Information environment value	Does it reveal adversary framing, state media narratives, blind spots, or public-affairs risk?
+Time sensitivity	Does it need immediate awareness, or can it sit lower as background?
+Suggested plain-language rating instruction
+
+You could describe the priority logic this way:
+
+Assign a 0–100 importance score based on the story’s current defense, national-security, and strategic relevance.
+
+Score highest when the story has immediate operational impact, affects U.S. forces or allies, changes an active conflict or flashpoint, increases escalation risk, involves nuclear/WMD or strategic deterrence, affects major force posture, disrupts a strategic chokepoint, or requires senior-leader awareness.
+
+Score medium-high when the story meaningfully affects diplomacy, alliances, sanctions, military readiness, defense industry, intelligence, cyber/space, terrorism, domestic security, or infrastructure.
+
+Score lower when the story is contextual, analytical, routine, speculative, or only indirectly relevant.
+
+Do not score a story high only because it is political, viral, dramatic, or widely covered. Score it high only if the underlying event changes or clarifies the security environment.
+Important rule for active conflicts
+
+For custom conflict topics, the conflict name should not automatically make everything high priority.
+
+Example:
+
+Russia–Ukraine War · Russia–Ukraine
+
+could be:
+
+P95 if a major escalation occurs.
+P80 if Ukraine strikes a major refinery in Moscow.
+P65 if leaders discuss negotiations.
+P45 if it is routine commentary.
+
+Same topic, different importance.
+
+So the rule should be:
+
+Active conflict topic increases relevance, but the actual development determines importance.
+My simplest scoring principle
+
+The best one-line instruction is:
+
+Rate importance by how much the item changes the security picture, how urgently leaders need to know it, and how directly it affects forces, allies, adversaries, active conflicts, or strategic stability.

@@ -1,0 +1,25 @@
+My Goal: I want to add a link to the "Media Common Operating Picture v2.0" dashboard that leads to a ‘stream’ version.  The link on the mainpage will say ‘stream’. Clicking that link will lead to a new page, that has the same information as the mainpage, but is a complete overhaul the UI to make it visually appealing, modern, and less text-heavy. I also want to add AI summarization capabilities.
+Here are the specific requirements for the ‘Stream’ page:
+1. General Layout & Aesthetics:
+•	Framework: Use a modern CSS utility framework like Tailwind CSS to create a clean, card-based interface with soft shadows and rounded corners. The overall aesthetic should be a clean dark mode suitable for a security operations center.
+•	Columns: Reduce the layout from 5 columns to 4 columns. Completely remove the "Response Feed" column.
+•	The new column structure should be:
+1.	Top Stories (Wider column)
+2.	POTUS Truth Social
+3.	@SecWar X
+4.	DataMinr First Alert
+2. "Top Stories" Column Redesign (Major Feature):
+•	Instead of a vertical list, this column should feature a rotating carousel component.
+•	Display: Show 4 story cards at once in a 2x2 grid within this column.
+•	Rotation: The component should cycle through a total pool of 8 headlines, automatically rotating the visible 4 cards every 15 seconds.
+•	Card Content (Backend Requirements): Each story card must display:
+o	Image: You must implement backend scraping logic to visit the story URL and extract the main article image (look for the og:image meta tag). If no image is found, use a stylish placeholder related to news/defense.
+o	Headline & Source: The existing headline and news source (e.g., CBS News).
+o	AI Summary: Implement a backend integration with an LLM (like OpenAI API). For every one of the 8 stories, fetch the full article text and send it to the LLM with instruction to generate exactly two concise bullet points summarizing the key facts. Display these two bullets below the headline.
+3. Social Media Columns (Truth Social & X):
+•	Convert the current text-only posts into distinct "social cards."
+•	Media Rendering: Update the rendering logic to detect if a post includes attached media (images). If an image exists in the post data, render it prominently within the card below the text.
+4. DataMinr Column:
+•	Update these text alerts to use the same modern card styling as the social media columns for consistency.
+
+All of the stories and posts must still contain the active hyperlinks, so that a user can click on any news story, social media post, or DataMinr post, and have it open up the associated content.  Again, do not change the main page, other than adding a link to the ‘stream’ page.  All of this is a description for the ‘stream’ page, which is a more visually interesting version of the main page.  Example of what this should look like is included.

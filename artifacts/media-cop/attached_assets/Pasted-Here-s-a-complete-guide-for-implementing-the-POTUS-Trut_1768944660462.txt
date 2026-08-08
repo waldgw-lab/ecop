@@ -1,0 +1,761 @@
+Here's a complete guide for implementing the POTUS Truth Social column:
+
+Complete POTUS Truth Social Implementation Guide
+Step 1: Database Schema
+Add this table to your shared/schema.ts:
+
+import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
+export const truthSocialPosts = pgTable("truth_social_posts", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  postId: text("post_id").notNull().unique(),
+  content: text("content").notNull(),
+  postedAt: timestamp("posted_at").notNull(),
+  truthSocialUrl: text("truth_social_url").notNull(),
+  scrapedAt: timestamp("scraped_at").defaultNow().notNull(),
+});
+export const insertTruthSocialPostSchema = createInsertSchema(truthSocialPosts).omit({
+  id: true,
+  scrapedAt: true,
+});
+export type InsertTruthSocialPost = z.infer<typeof insertTruthSocialPostSchema>;
+export type TruthSocialPost = typeof truthSocialPosts.$inferSelect;
+Run npm run db:push to create the table.
+
+Step 2: Storage Interface
+Add these methods to your storage interface in server/storage.ts:
+
+import { truthSocialPosts, TruthSocialPost, InsertTruthSocialPost } from "@shared/schema";
+import { eq, desc, sql } from "drizzle-orm";
+// Add to IStorage interface:
+interface IStorage {
+  // ... other methods
+  getTruthSocialPost(postId: string): Promise<TruthSocialPost | undefined>;
+  getTruthSocialPostByContentPrefix(contentPrefix: string): Promise<TruthSocialPost | undefined>;
+  createTruthSocialPost(post: InsertTruthSocialPost): Promise<TruthSocialPost>;
+  getRecentTruthSocialPosts(limit?: number): Promise<TruthSocialPost[]>;
+}
+// Add to DatabaseStorage class:
+class DatabaseStorage implements IStorage {
+  
+  async getTruthSocialPost(postId: string): Promise<TruthSocialPost | undefined> {
+    const result = await db.select().from(truthSocialPosts)
+      .where(eq(truthSocialPosts.postId, postId))
+      .limit(1);
+    return result[0];
+  }
+  async getTruthSocialPostByContentPrefix(contentPrefix: string): Promise<TruthSocialPost | undefined> {
+    const result = await db.select().from(truthSocialPosts)
+      .where(sql`LEFT(${truthSocialPosts.content}, 50) = ${contentPrefix}`)
+      .limit(1);
+    return result[0];
+  }
+  async createTruthSocialPost(post: InsertTruthSocialPost): Promise<TruthSocialPost> {
+    const result = await db.insert(truthSocialPosts).values(post).returning();
+    return result[0];
+  }
+  async getRecentTruthSocialPosts(limit: number = 10): Promise<TruthSocialPost[]> {
+    return await db.select().from(truthSocialPosts)
+      .orderBy(desc(truthSocialPosts.postedAt))
+      .limit(limit);
+  }
+}
+Step 3: Primary Scraper (TrumpsTruth.org)
+Create server/truthSocialScraper.ts:
+
+import axios from 'axios';
+import * as cheerio from 'cheerio';
+export interface TruthSocialPostData {
+  postId: string;
+  content: string;
+  postedAt: Date;
+  truthSocialUrl: string;
+}
+export async function scrapeTruthSocialPrimary(): Promise<TruthSocialPostData[]> {
+  const posts: TruthSocialPostData[] = [];
+  const seenPostIds = new Set<string>();
+  
+  try {
+    const response = await axios.get('https://trumpstruth.org/', {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'text/html,application/xhtml+xml',
+      },
+      timeout: 30000,
+    });
+    const $ = cheerio.load(response.data);
+    
+    // Find all status divs (each represents a post)
+    $('.status').each((_, element) => {
+      const statusDiv = $(element);
+      
+      // Extract post ID from the status URL
+      const statusLink = statusDiv.find('a[href*="/statuses/"]').first();
+      const statusHref = statusLink.attr('href') || '';
+      const postIdMatch = statusHref.match(/\/statuses\/(\d+)/);
+      
+      if (!postIdMatch) return;
+      const postId = postIdMatch[1];
+      
+      // Skip duplicates
+      if (seenPostIds.has(postId)) return;
+      seenPostIds.add(postId);
+      
+      // Get the Truth Social URL
+      const originalLink = statusDiv.find('a[href^="https://truthsocial.com"]').first();
+      const truthSocialUrl = originalLink.attr('href') || '';
+      if (!truthSocialUrl) return;
+      
+      // Extract content from status body
+      let content = '';
+      const statusContent = statusDiv.find('.status__content').first();
+      if (statusContent.length > 0) {
+        const paragraphs: string[] = [];
+        statusContent.children('p').each((_, p) => {
+          const text = $(p).text().trim();
+          if (text && text.length > 10) {
+            paragraphs.push(text);
+          }
+        });
+        if (paragraphs.length > 0) {
+          content = paragraphs[0]; // Take first paragraph
+        }
+        
+        // Fallback to direct text if no <p> tags
+        if (!content) {
+          content = statusContent.text().trim();
+        }
+      }
+      
+      if (!content || content.length < 10) return;
+      
+      // Skip placeholder content
+      if (content.toLowerCase().includes('click to view')) {
+        console.log(`Skipping placeholder post ${postId}`);
+        return;
+      }
+      
+      // Parse timestamp (format: "October 27, 2025, 4:03 AM")
+      const timestampLink = statusDiv.find('a[href*="/statuses/' + postId + '"]').first();
+      const timestampText = timestampLink.text().trim();
+      
+      let postedAt: Date;
+      try {
+        const timestampWithTZ = `${timestampText} EDT`;
+        postedAt = new Date(timestampWithTZ);
+        
+        if (isNaN(postedAt.getTime())) {
+          postedAt = new Date(`${timestampText} EST`);
+        }
+        
+        if (isNaN(postedAt.getTime())) {
+          console.warn(`Failed to parse timestamp: ${timestampText}`);
+          return;
+        }
+      } catch (e) {
+        console.warn(`Error parsing timestamp: ${timestampText}`);
+        return;
+      }
+      
+      posts.push({
+        postId,
+        content,
+        postedAt,
+        truthSocialUrl,
+      });
+    });
+    
+    console.log(`Primary source: Scraped ${posts.length} Truth Social posts`);
+    return posts;
+    
+  } catch (error) {
+    console.error('Primary scraper error:', error);
+    return [];'s a complete guide for implementing the POTUS Truth Social column:
+---
+## Complete POTUS Truth Social Implementation Guide
+### Step 1: Database Schema
+Add this table to your `shared/schema.ts`:
+```typescript
+import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { createInsertSchema } from "drizzle-zod";
+import { z } from "zod";
+export const truthSocialPosts = pgTable("truth_social_posts", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  postId: text("post_id").notNull().unique(),
+  content: text("content").notNull(),
+  postedAt: timestamp("posted_at").notNull(),
+  truthSocialUrl: text("truth_social_url").notNull(),
+  scrapedAt: timestamp("scraped_at").defaultNow().notNull(),
+});
+export const insertTruthSocialPostSchema = createInsertSchema(truthSocialPosts).omit({
+  id: true,
+  scrapedAt: true,
+});
+export type InsertTruthSocialPost = z.infer<typeof insertTruthSocialPostSchema>;
+export type TruthSocialPost = typeof truthSocialPosts.$inferSelect;
+Run npm run db:push to create the table.
+
+Step 2: Storage Interface
+Add these methods to your storage interface in server/storage.ts:
+
+import { truthSocialPosts, TruthSocialPost, InsertTruthSocialPost } from "@shared/schema";
+import { eq, desc, sql } from "drizzle-orm";
+// Add to IStorage interface:
+interface IStorage {
+  // ... other methods
+  getTruthSocialPost(postId: string): Promise<TruthSocialPost | undefined>;
+  getTruthSocialPostByContentPrefix(contentPrefix: string): Promise<TruthSocialPost | undefined>;
+  createTruthSocialPost(post: InsertTruthSocialPost): Promise<TruthSocialPost>;
+  getRecentTruthSocialPosts(limit?: number): Promise<TruthSocialPost[]>;
+}
+// Add to DatabaseStorage class:
+class DatabaseStorage implements IStorage {
+  
+  async getTruthSocialPost(postId: string): Promise<TruthSocialPost | undefined> {
+    const result = await db.select().from(truthSocialPosts)
+      .where(eq(truthSocialPosts.postId, postId))
+      .limit(1);
+    return result[0];
+  }
+  async getTruthSocialPostByContentPrefix(contentPrefix: string): Promise<TruthSocialPost | undefined> {
+    const result = await db.select().from(truthSocialPosts)
+      .where(sql`LEFT(${truthSocialPosts.content}, 50) = ${contentPrefix}`)
+      .limit(1);
+    return result[0];
+  }
+  async createTruthSocialPost(post: InsertTruthSocialPost): Promise<TruthSocialPost> {
+    const result = await db.insert(truthSocialPosts).values(post).returning();
+    return result[0];
+  }
+  async getRecentTruthSocialPosts(limit: number = 10): Promise<TruthSocialPost[]> {
+    return await db.select().from(truthSocialPosts)
+      .orderBy(desc(truthSocialPosts.postedAt))
+      .limit(limit);
+  }
+}
+Step 3: Primary Scraper (TrumpsTruth.org)
+Create server/truthSocialScraper.ts:
+
+import axios from 'axios';
+import * as cheerio from 'cheerio';
+export interface TruthSocialPostData {
+  postId: string;
+  content: string;
+  postedAt: Date;
+  truthSocialUrl: string;
+}
+export async function scrapeTruthSocialPrimary(): Promise<TruthSocialPostData[]> {
+  const posts: TruthSocialPostData[] = [];
+  const seenPostIds = new Set<string>();
+  
+  try {
+    const response = await axios.get('https://trumpstruth.org/', {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        'Accept': 'text/html,application/xhtml+xml',
+      },
+      timeout: 30000,
+    });
+    const $ = cheerio.load(response.data);
+    
+    // Find all status divs (each represents a post)
+    $('.status').each((_, element) => {
+      const statusDiv = $(element);
+      
+      // Extract post ID from the status URL
+      const statusLink = statusDiv.find('a[href*="/statuses/"]').first();
+      const statusHref = statusLink.attr('href') || '';
+      const postIdMatch = statusHref.match(/\/statuses\/(\d+)/);
+      
+      if (!postIdMatch) return;
+      const postId = postIdMatch[1];
+      
+      // Skip duplicates
+      if (seenPostIds.has(postId)) return;
+      seenPostIds.add(postId);
+      
+      // Get the Truth Social URL
+      const originalLink = statusDiv.find('a[href^="https://truthsocial.com"]').first();
+      const truthSocialUrl = originalLink.attr('href') || '';
+      if (!truthSocialUrl) return;
+      
+      // Extract content from status body
+      let content = '';
+      const statusContent = statusDiv.find('.status__content').first();
+      if (statusContent.length > 0) {
+        const paragraphs: string[] = [];
+        statusContent.children('p').each((_, p) => {
+          const text = $(p).text().trim();
+          if (text && text.length > 10) {
+            paragraphs.push(text);
+          }
+        });
+        if (paragraphs.length > 0) {
+          content = paragraphs[0]; // Take first paragraph
+        }
+        
+        // Fallback to direct text if no <p> tags
+        if (!content) {
+          content = statusContent.text().trim();
+        }
+      }
+      
+      if (!content || content.length < 10) return;
+      
+      // Skip placeholder content
+      if (content.toLowerCase().includes('click to view')) {
+        console.log(`Skipping placeholder post ${postId}`);
+        return;
+      }
+      
+      // Parse timestamp (format: "October 27, 2025, 4:03 AM")
+      const timestampLink = statusDiv.find('a[href*="/statuses/' + postId + '"]').first();
+      const timestampText = timestampLink.text().trim();
+      
+      let postedAt: Date;
+      try {
+        const timestampWithTZ = `${timestampText} EDT`;
+        postedAt = new Date(timestampWithTZ);
+        
+        if (isNaN(postedAt.getTime())) {
+          postedAt = new Date(`${timestampText} EST`);
+        }
+        
+        if (isNaN(postedAt.getTime())) {
+          console.warn(`Failed to parse timestamp: ${timestampText}`);
+          return;
+        }
+      } catch (e) {
+        console.warn(`Error parsing timestamp: ${timestampText}`);
+        return;
+      }
+      
+      posts.push({
+        postId,
+        content,
+        postedAt,
+        truthSocialUrl,
+      });
+    });
+    
+    console.log(`Primary source: Scraped ${posts.length} Truth Social posts`);
+    return posts;
+    
+  } catch (error) {
+    console.error('Primary scraper error:', error);
+    return [];
+  }
+}
+Step 4: Backup Scraper (CivicTracker.us with Playwright)
+Create server/truthSocialBackupScraper.ts:
+
+import { chromium, Browser } from 'playwright';
+export interface TruthSocialPostData {
+  postId: string;
+  content: string;
+  postedAt: Date;
+  truthSocialUrl: string;
+}
+let activeBrowser: Browser | null = null;
+// Parse CivicTracker timestamp format: "Jan 20, 2026 • 1:53 AM"
+function parseTimestamp(timestampStr: string): Date {
+  const cleaned = timestampStr.replace('•', '').trim();
+  
+  const months: Record<string, number> = {
+    'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
+    'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+  };
+  
+  const match = cleaned.match(/([A-Z][a-z]{2})\s+(\d{1,2}),\s+(\d{4})\s+(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+  
+  if (match) {
+    const [, monthStr, day, year, hour, minute, ampm] = match;
+    let hours = parseInt(hour);
+    
+    // Convert to 24-hour format
+    if (ampm.toUpperCase() === 'PM' && hours !== 12) hours += 12;
+    if (ampm.toUpperCase() === 'AM' && hours === 12) hours = 0;
+    
+    return new Date(
+      parseInt(year),
+      months[monthStr],
+      parseInt(day),
+      hours,
+      parseInt(minute)
+    );
+  }
+  
+  // Fallback to current time
+  console.warn(`Could not parse timestamp: ${timestampStr}`);
+  return new Date();
+}
+export async function scrapeTruthSocialBackup(): Promise<TruthSocialPostData[]> {
+  const posts: TruthSocialPostData[] = [];
+  const seenContent = new Set<string>();
+  
+  try {
+    console.log('Starting CivicTracker backup scraper...');
+    
+    const browser = await chromium.launch({ 
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+    });
+    activeBrowser = browser;
+    
+    const context = await browser.newContext({
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    });
+    const page = await context.newPage();
+    
+    await page.goto('https://civictracker.us/executive/member/?uuid=3094abf7-4a95-4b8d-8c8d-af7d1c3747a1', {
+      waitUntil: 'networkidle',
+      timeout: 30000
+    });
+    
+    // Wait for dynamic content to load
+    await page.waitForTimeout(3000);
+    
+    // Extract posts from the page
+    const pageContent = await page.evaluate(() => {
+      const fullText = document.body.innerText || '';
+      const results: Array<{content: string, timestamp: string, imageUrl: string | null}> = [];
+      
+      // CivicTracker timestamp pattern
+      const timestampPattern = /([A-Z][a-z]{2}\s+\d{1,2},\s+\d{4}\s*•\s*\d{1,2}:\d{2}\s*[AP]M)/g;
+      
+      // Find all timestamps
+      const timestamps: Array<{match: string, index: number}> = [];
+      let m;
+      while ((m = timestampPattern.exec(fullText)) !== null) {
+        timestamps.push({ match: m[0], index: m.index });
+      }
+      
+      // Get archive.org image URLs for post IDs
+      const images = Array.from(document.querySelectorAll('img[src*="archive.org"]')) as HTMLImageElement[];
+      const imageUrls = images.map(img => img.src);
+      
+      // For each timestamp, extract content block before it
+      for (let i = 0; i < timestamps.length; i++) {
+        const ts = timestamps[i];
+        const prevEnd = i > 0 ? timestamps[i-1].index + timestamps[i-1].match.length : 0;
+        
+        let contentBlock = fullText.substring(prevEnd, ts.index).trim();
+        
+        // Clean up boilerplate
+        contentBlock = contentBlock
+          .replace(/Donald J\. Trump\s*President of the United States/g, '')
+          .replace(/Loading executive member…/g, '')
+          .replace(/Your browser does not support the video tag\./g, '')
+          .replace(/Post media/g, '')
+          .replace(/\n{3,}/g, '\n\n')
+          .trim();
+        
+        // Get the last substantial line (actual post content)
+        const lines = contentBlock.split('\n').filter(l => l.trim().length > 10);
+        const postContent = lines[lines.length - 1]?.trim() || '';
+        
+        // Filter out placeholder/navigation text
+        if (postContent.length > 15 && 
+            !postContent.includes('CivicTracker') && 
+            !postContent.includes('Sign In') &&
+            !postContent.includes('Upgrade to Pro') &&
+            !postContent.toLowerCase().includes('click to view')) {
+          
+          const imageUrl = imageUrls[i] || null;
+          
+          results.push({
+            content: postContent,
+            timestamp: ts.match,
+            imageUrl: imageUrl
+          });
+        }
+      }
+      
+      return results;
+    });
+    
+    console.log(`CivicTracker: Found ${pageContent.length} potential posts`);
+    
+    for (const item of pageContent) {
+      // Additional content cleanup
+      let content = item.content
+        .replace(/Donald J\. Trump\s*President of the United States/g, '')
+        .replace(/Post media/g, '')
+        .replace(/Your browser does not support the video tag\./g, '')
+        .trim();
+      
+      // Get last substantial paragraph
+      const paragraphs = content.split(/\n/).filter(p => p.trim().length > 10);
+      const lastParagraph = paragraphs[paragraphs.length - 1]?.trim();
+      
+      if (!lastParagraph || lastParagraph.length < 10) continue;
+      if (lastParagraph.toLowerCase().includes('click to view')) continue;
+      
+      // Skip if we've already seen this content in this scrape
+      if (seenContent.has(lastParagraph.substring(0, 50))) continue;
+      seenContent.add(lastParagraph.substring(0, 50));
+      
+      const parsedTime = parseTimestamp(item.timestamp);
+      
+      // Generate post ID from archive.org image URL or content hash
+      let postId = '';
+      if (item.imageUrl) {
+        const match = item.imageUrl.match(/\/(\d{15,20})_media/);
+        if (match) {
+          postId = match[1];
+        }
+      }
+      
+      // Fallback: generate from content hash with ct_ prefix
+      if (!postId) {
+        const contentHash = lastParagraph.split('').reduce((a, b) => {
+          a = ((a << 5) - a) + b.charCodeAt(0);
+          return a & a;
+        }, 0);
+        postId = `ct_${Math.abs(contentHash)}`;
+      }
+      
+      posts.push({
+        postId,
+        content: lastParagraph,
+        postedAt: parsedTime,
+        truthSocialUrl: postId.startsWith('ct_') 
+          ? 'https://truthsocial.com/@realDonaldTrump'
+          : `https://truthsocial.com/@realDonaldTrump/posts/${postId}`,
+      });
+    }
+    
+    await browser.close();
+    activeBrowser = null;
+    
+    console.log(`CivicTracker backup: Scraped ${posts.length} posts`);
+    return posts.slice(0, 20);
+    
+  } catch (error) {
+    console.error('Backup scraper error:', error);
+    if (activeBrowser) {
+      await activeBrowser.close();
+      activeBrowser = null;
+    }
+    return [];
+  }
+}
+// Export function to force-close browser (for watchdog/cleanup)
+export async function forceCloseBrowser() {
+  if (activeBrowser) {
+    try {
+      await activeBrowser.close();
+    } catch (e) {
+      console.error('Error closing browser:', e);
+    }
+    activeBrowser = null;
+  }
+}
+Step 5: Combined Scraper with Deduplication
+Create server/truthSocialService.ts:
+
+import { scrapeTruthSocialPrimary } from './truthSocialScraper';
+import { scrapeTruthSocialBackup } from './truthSocialBackupScraper';
+import { IStorage } from './storage';
+export async function scrapeAllTruthSocial(storage: IStorage): Promise<number> {
+  let addedCount = 0;
+  let primaryCount = 0;
+  let backupCount = 0;
+  
+  // 1. Scrape primary source (TrumpsTruth.org)
+  console.log('Scraping primary source (TrumpsTruth.org)...');
+  const primaryPosts = await scrapeTruthSocialPrimary();
+  
+  for (const post of primaryPosts) {
+    try {
+      // Check if post already exists by post ID
+      const existing = await storage.getTruthSocialPost(post.postId);
+      if (!existing) {
+        await storage.createTruthSocialPost(post);
+        primaryCount++;
+        addedCount++;
+      }
+    } catch (error) {
+      console.error(`Error saving primary post ${post.postId}:`, error);
+    }
+  }
+  
+  console.log(`Primary source: Added ${primaryCount} new posts`);
+  
+  // 2. Scrape backup source (CivicTracker) for any missing posts
+  console.log('Scraping backup source (CivicTracker)...');
+  const backupPosts = await scrapeTruthSocialBackup();
+  
+  for (const post of backupPosts) {
+    try {
+      // Content-based deduplication: check first 50 characters
+      const existingByContent = await storage.getTruthSocialPostByContentPrefix(
+        post.content.substring(0, 50)
+      );
+      
+      if (existingByContent) {
+        console.log(`Skipping duplicate backup post (content match): ${post.content.substring(0, 50)}...`);
+        continue;
+      }
+      
+      // Also check by post ID
+      const existingById = await storage.getTruthSocialPost(post.postId);
+      if (!existingById) {
+        await storage.createTruthSocialPost(post);
+        backupCount++;
+        addedCount++;
+      }
+    } catch (error) {
+      console.error(`Error saving backup post ${post.postId}:`, error);
+    }
+  }
+  
+  console.log(`Backup source: Added ${backupCount} new posts`);
+  console.log(`Added ${addedCount} new Truth Social posts total (${primaryCount} primary, ${backupCount} backup)`);
+  
+  return addedCount;
+}
+Step 6: Scheduler Integration
+In your server/scheduler.ts, add:
+
+import cron from 'node-cron';
+import { scrapeAllTruthSocial } from './truthSocialService';
+import { storage } from './storage';
+let isScrapingInProgress = false;
+export function startScheduler() {
+  // Run every 10 minutes
+  cron.schedule('*/10 * * * *', async () => {
+    if (isScrapingInProgress) {
+      console.log('Previous scrape still in progress, skipping...');
+      return;
+    }
+    
+    isScrapingInProgress = true;
+    try {
+      console.log('Starting scheduled Truth Social scrape...');
+      await scrapeAllTruthSocial(storage);
+    } catch (error) {
+      console.error('Scheduled scrape failed:', error);
+    } finally {
+      isScrapingInProgress = false;
+    }
+  });
+  
+  // Run initial scrape on startup
+  console.log('Running initial Truth Social scrape...');
+  scrapeAllTruthSocial(storage).catch(console.error);
+}
+Step 7: API Endpoint
+In your server/routes.ts, add:
+
+import { Router } from 'express';
+import { storage } from './storage';
+import { scrapeAllTruthSocial } from './truthSocialService';
+const router = Router();
+// Get recent Truth Social posts
+router.get('/api/truth-social', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit as string) || 10;
+    const posts = await storage.getRecentTruthSocialPosts(limit);
+    res.json(posts);
+  } catch (error) {
+    console.error('Error fetching Truth Social posts:', error);
+    res.status(500).json({ error: 'Failed to fetch posts' });
+  }
+});
+// Manual scrape trigger (for admin use)
+router.post('/api/scrape-truth-social', async (req, res) => {
+  try {
+    const count = await scrapeAllTruthSocial(storage);
+    res.json({ success: true, added: count });
+  } catch (error) {
+    console.error('Manual scrape failed:', error);
+    res.status(500).json({ error: 'Scrape failed' });
+  }
+});
+export default router;
+Step 8: Frontend Component
+Create a React component for the column:
+
+import { useQuery } from '@tanstack/react-query';
+import { Card } from '@/components/ui/card';
+import { ExternalLink } from 'lucide-react';
+interface TruthSocialPost {
+  id: string;
+  postId: string;
+  content: string;
+  postedAt: string;
+  truthSocialUrl: string;
+}
+export function TruthSocialColumn() {
+  const { data: posts, isLoading } = useQuery<TruthSocialPost[]>({
+    queryKey: ['/api/truth-social', { limit: 10 }],
+  });
+  const formatTime = (dateStr: string) => {
+    const date = new Date(dateStr);
+    return date.toLocaleTimeString('en-US', { 
+      hour: 'numeric', 
+      minute: '2-digit',
+      hour12: true 
+    });
+  };
+  if (isLoading) {
+    return <div className="p-4">Loading...</div>;
+  }
+  return (
+    <div className="flex flex-col h-full">
+      <div className="flex items-center justify-between p-3 border-b">
+        <h2 className="font-semibold">POTUS Truth Social</h2>
+        <span className="text-sm text-muted-foreground">
+          {posts?.length || 0} posts
+        </span>
+      </div>
+      
+      <div className="flex-1 overflow-y-auto">
+        {posts?.map((post) => (
+          <Card key={post.id} className="m-2 p-3">
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold">
+                  DJT
+                </div>
+                <div>
+                  <div className="font-medium text-sm">Donald J. Trump</div>
+                  <div className="text-xs text-muted-foreground">
+                    {formatTime(post.postedAt)}
+                  </div>
+                </div>
+              </div>
+              <a 
+                href={post.truthSocialUrl} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            </div>
+            <p className="text-sm">{post.content}</p>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+Step 9: Required Dependencies
+Install these packages:
+
+npm install axios cheerio playwright node-cron
+npm install -D @types/node-cron
+For Playwright browsers:
+
+npx playwright install chromium
+Key Points Summary
+Dual-source scraping: Primary (TrumpsTruth.org via Cheerio) + Backup (CivicTracker via Playwright)
+Content-based deduplication: Compare first 50 characters to prevent duplicate posts from different sources
+Placeholder filtering: Skip any posts containing "click to view"
+Post ID prefixing: Backup posts use ct_ prefix to identify source
+Schema field: Use postedAt not publishedAt for the timestamp column
+Re-entrancy guard: Prevent overlapping scrape cycles with a flag
+Scheduled scraping: Run every 10 minutes with initial scrape on startup

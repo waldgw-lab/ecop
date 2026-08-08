@@ -1,0 +1,107 @@
+Take a look at this drafted task to see if you could do better (I pasted my conversation with the chat agent)
+On curated view only - many items are coming in with inconsistent P scores - many are "90" regardless of topic, etc.
+
+Is this mostly occuring based on an automated process somewhere in MCOP or is this a human/tam page thing?
+
+Additionally, I have the ability to modify the P scores from curated view and it only impacts curated view but is there a better system/automation i can institute in curated view that manages this better?
+
+42 minutes ago
+
+Analyzing P score automation origins
+I'll investigate how curated P scores are assigned to answer your questions. Let me dig into the code.
+
+
+4 actions
+Let me wait for the investigation to complete.
+
+
+2 actions
+Let me verify the specifics directly in the code, since the user is seeing "90" widely (and the screenshot's Pin Priority field is pre-filled with 90).
+
+
+10 actions
+Let me read the curated top-stories scoring logic to see how computed priority is derived.
+
+
+2 actions
+Let me confirm the curated AI scoring rubric and what feeds curated via the AI "gate" path.
+
+
+2 actions
+Good — I've traced how curated P scores actually get set. Here's what's going on.
+
+Where the P scores come from
+It's an automated process, not a human/team-page thing. Almost none of those 90s are people typing them in. Here's the breakdown by how items enter the Curated view:
+
+Curated RSS / scraped articles → scored by AI (an OpenAI gpt-4o-mini pass). The rubric tells it: 90–100 = "critical / active ops or WMD," 70–89 = major peer-adversary, 50–69 = regional, etc.
+Team submissions and social/flash posts (X, Truth Social, DataMinr) → these don't get a fresh score at all; they default to a flat 50.
+Your manual pins → stored separately, isolated to Curated only, and only when you explicitly set them.
+Why so many land on "90"
+Two things are stacking up:
+
+The AI over-uses the top of the scale. For a defense-news feed, a lot of headlines plausibly read as "critical" to gpt-4o-mini, so it keeps reaching for 90+. It also likes round numbers. The rubric is absolute (each headline judged on its own), so nothing forces it to spread scores out.
+Cluster cards show the highest member's score. A grouped story card displays the max P across all its sources. So one hot source drags the whole card up to ~90. (There's even a code comment noting an older version "flattened all clusters to ~P90.")
+So a "90 regardless of topic" is the expected output of an absolute AI rubric + max-of-cluster math — not anyone on the team setting it.
+
+On your second question — yes, there's a better way
+Right now your only lever is the manual per-item pin (the field in your screenshot). That field is pre-filled with 90 because that's the item's current score, not because a human chose it. Manual pinning one-at-a-time doesn't scale.
+
+Better automated approaches I'd consider, in Curated only (keeping it isolated, as it is today):
+
+Relative re-ranking — instead of scoring each headline in isolation, have the AI rank the current batch against each other, forcing a real spread (a few 90s, more in the 60s–70s, etc.) instead of everything bunched at the ceiling.
+Rubric recalibration — tighten the prompt so 90+ is genuinely rare, and stop social/team items defaulting to a flat 50.
+Cluster scoring change — stop using pure "max member" so one hot source doesn't pin the whole card to 90.
+Rule/weight layer — let you set topic or source weights that nudge scores automatically, instead of pinning items by hand.
+These aren't mutually exclusive — the strongest fix is usually relative re-ranking + a tighter rubric together.
+
+Before I draft a task, one question so I scope it right:
+
+Which direction do you want for managing Curated P scores better?
+
+Just help me understand for now — don't build anything yet
+Can curated view have the ability to look holistically at ALL AVAILABLE items (regardless of if theyre meeting the threshold to show in the top stories pane) and then score them more consistently/relatively/tighten the AI rubric which allows related items to cluster more quickly and the feed to be actually prioritized with intention
+39 minutes ago
+
+Worked for 3 minutes
+Time worked
+3 minutes
+Work done
+34 actions
+Items read
+4,926 lines
+
+Planning holistic item evaluation strategy (13 seconds)
+The user said don't build yet, but they're asking a real architectural question: can Curated score holistically across all available items (not just what surfaces in Top Stories), more relatively, so clustering happens faster and the feed is prioritized with intention? Let me verify how scoring and clustering actually interact today before I answer.
+
+
+3 actions
+That reasoning is a really good instinct — and it lines up with how the system actually works under the hood. Let me answer it directly, because there's one piece you may not realize that makes your idea even more valuable than it sounds.
+
+Short answer: yes, and it would specifically fix the clustering problem
+Here's the key thing. Priority score isn't just for ranking the feed — it already decides which items even get considered for clustering.
+
+When the system tries to group related stories, it doesn't look at everything. It takes the top ~140 items by priority score and sends those to the AI for clustering (plus some "rescue" slots to claw back items it might've missed). Everything below that line only gets clustered if a safety-net rule happens to catch it.
+
+So today you have a vicious cycle:
+
+Scores are assigned per-batch, in isolation — each item graded on its own, batches scored an hour apart never compared to each other.
+That makes scores bunch at 90 and become basically non-comparable across the pool.
+So "top 140 by priority" is close to a coin flip among a pile of items all sitting at 90.
+Which means two articles about the same event can land on opposite sides of that cutoff and never meet in the clustering pass — so they show up as separate rows instead of one clustered story.
+A lot of complex "rescue" machinery exists purely to patch this. It's a band-aid over inconsistent scoring.
+
+So your idea is the right root-cause fix
+What you're describing — look at all available items holistically and score them relative to each other — would do exactly what you want:
+
+Scores become comparable, because every item is judged against the same set instead of its little batch.
+The clustering candidate pool gets smart. "Top 140" would actually mean the 140 most important things, so related items reliably land in the same pass and cluster faster.
+The feed becomes intentional — a real spread (a handful of 90s, more in the 60s–70s) instead of a wall of 90s, so the ordering means something.
+It can absolutely scope to the full live pool, not just what's clearing the Top Stories bar — that's the whole point.
+
+The honest tradeoffs (so you can decide later)
+It's a new recurring AI pass, not a tweak. You'd re-score the whole live pool on a schedule (or right before clustering), which is bigger/more expensive AI calls than today's per-batch scoring. Manageable with windowing, but real.
+Stability vs. freshness. Pure relative scoring means an item's number shifts as its neighbors change. You'd want guardrails so the feed doesn't reshuffle every few minutes (this has to play nice with the existing time-decay and your manual pins).
+It stays Curated-only. This all lives in the isolated curated path, so nothing here leaks into the main feed — same as today.
+So: yes, it's feasible, and it's the right lever — it attacks the cause (inconsistent absolute scoring) instead of the symptom (manual pinning one item at a time).
+
+I haven't built or queued anything, per your call. When you're ready, just say the word and I'll turn this into a task — I'd recommend the "relative re-scoring over the full pool + tighter rubric" version, since that's the one that also speeds up clustering.

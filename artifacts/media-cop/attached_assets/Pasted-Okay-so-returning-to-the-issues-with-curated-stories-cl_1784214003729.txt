@@ -1,0 +1,315 @@
+Okay so returning to the issues with curated stories (clusters) in MCOP curated view – namely the "megacluster" issue- I would say the "megacluster" is much resolve in the sense that the clusters are doing a better job of recycling out old (decayed/expired) content and updating- with content that hits about 24 hours old being archived, HOWEVER, the 1. Neutral Headline, 2. Lede/narrative line, and 3. corroborated facts aren’t updating to prioritize/account for the more recent information,,, for example – using the current prod megacluster below as the prime example – the general theme of "President Trump considering expanding U.S. military operations in Iran" is the theme of some of the content in the cluster but older coverage and also not much? So it's either not updating with time/new sources or doing it poorly…
+
+An example of more appropriate neutral headline would be like "US-Iran Conflict Escalates as US Expands Strikes and Iran Threatens Key Maritime Chokepoints" or, at minimum, something like: " US-Iran Conflict Escalates as US Expands Strikes and Iran threatens retaliation"
+
+The Lede line and key facts should follow the most up to date information or developments, retiring /archiving the content that no longer fits… or in some instances choosing to section off a group of related and recent content to its own separate clusters when appropriate. Use this example but consider holistically how to modify clustering behavior in ways that 1. Wont undo fixes made previously and 2. Creates sustainable clustering behavior that is reliable and predictable in the future
+
+Additionally, have key claims and attributed statements disappeared from this cluster? Is it because there is so much content that they must exist under the individual content? If that makes the most sense fine… please explore production as well as past use cases and develop a comprehensive but not risky or performance threatening solutions. Medgacluster example:
+
+Military Ops·U.S.–Iran· First seen 10:20 AM 15 Jul 26· Updated 5:24 PM 15 Jul 26· 140 sources
+Trump Weighs Expanding U.S. Military Operations in Iran
+P76
+President Trump is considering options to expand U.S. military operations in Iran, including potential airstrikes, ground forces, and strikes on nuclear sites.
+Corroborated Facts
+•	President Trump is considering expanding U.S. military operations in Iran.
+•	Options under consideration include airstrikes, ground forces, and bombing nuclear sites.
+•	Discussions occurred after briefings from top aides.
+69 Contributing Sources
+
+Jerusalem Post· now
+Iran tells Houthis to close Red Sea gateway if US hits power network, sources say
+Iran has reportedly instructed the Houthi movement to close a key Red Sea gateway if the United States takes action against Iran's power network. This indicates a potential escalation of regional tensions and a threat to vital maritime trade routes.
+Show 3 more from Jerusalem Post
+
+ 
+Military.com· 46 min ago
+3 Islands Help Control Access to the Strait of Hormuz. They’re in the Crosshairs of the Iran War
+Three strategically important islands controlling access to the Strait of Hormuz are now considered to be in the potential crosshairs of a conflict with Iran.
+Show 1 more from Military.com
+ 
+AP News· 53 min ago
+3 islands help control access to the Strait of Hormuz. They’re in the crosshairs of the Iran war
+U.S. military strikes on three strategically vital Iranian-controlled islands near the Strait of Hormuz highlight their critical role in Iran's ability to control maritime traffic and pose a potential flashpoint in the ongoing conflict. These islands, seized by Iran in 1971, are heavily militarized and allow Iran to monitor and potentially disrupt shipping through the vital waterway, impacting global energy supplies.
+
+
+ 
+The Hill· 1 hr ago
+US intensifies strikes on Iran
+The United States has intensified its military strikes against targets in Iran, indicating a significant escalation of conflict in the region.
+Show 2 more from The Hill
+
+ 
+Fox News· 2 hrs ago
+Video
+Trump walking 'tightrope act' with Iran bombing campaign, expert says
+Show 10 more from Fox News
+
+ 
+Reuters· 2 hrs ago
+Iran warns Strait of Hormuz is a 'red line' and will resist until the end
+Iran has declared the Strait of Hormuz a 'red line' and stated its intention to resist until the end, indicating potential escalation and disruption of a critical global shipping lane.
+Show 2 more from Reuters
+ 
+BBC News· 2 hrs ago
+US strikes oil tanker with missiles as it enforces new Iran blockade
+The U.S. military struck an oil tanker with missiles as it reimposed a blockade on Iranian ports, citing the vessel's ignored warnings and trajectory towards Kharg Island, signaling a renewed escalation in tensions and enforcement of sanctions following recent Iranian attacks on commercial shipping. This action directly impacts Iran's oil exports, a critical revenue source, and underscores the U.S. commitment to disrupting Iranian maritime activities in the strategically vital Strait of Hormuz.
+
+
+ 
+USA Today· 2 hrs ago
+Iran threatens Mideast region infrastructure as US strikes expand
+•	Iran threatens Mideast infrastructure as US strikes expand.
+•	US strikes in the Mideast region are expanding.
+Show 1 more from USA Today
+
+
+The Straits Times· 2 hrs ago
+Iran tells Houthis to close Red Sea gateway if US hits power network, sources say
+Iran's strategic threat to disrupt maritime access in response to U.S. actions, significant for regional security.
+Show 7 more from The Straits Times
+
+
+The Guardian· 2 hrs ago
+US intensifies attacks on Iran as Tehran hits back at Gulf states
+•	US intensifies attacks on Iran as Tehran hits back at Gulf states.
+•	Fighting enters its sixth day, threatening all-out war and peace deal doubts.
+•	Chaos and confusion bring US no closer to resolution on Strait of Hormuz.
+Show 3 more from The Guardian
+
+
+The Washington Post· 3 hrs ago
+Iran threatens region’s infrastructure as U.S. strikes expand
+•	Iran threatened to destroy regional infrastructure if President Donald Trump attacked Iranian power plants and bridges.
+•	U.S. military forces expanded their range of strikes within Iran.
+•	Renewed attacks have sharpened rhetoric on both sides.
+Show 1 more from The Washington Post
+
+
+Washington Examiner· 3 hrs ago
+US is bombing Iran at the heaviest rate since start of the war and leaning toward expanding operations further
+The United States is reportedly conducting airstrikes against Iran at the highest frequency since the war began and is considering expanding these operations.
+Show 1 more from Washington Examiner
+
+NewsNation· 6:21 AM
+Iran warns Strait of Hormuz interference is 'red line' for US
+Iran has issued a warning that any interference in the Strait of Hormuz constitutes a 'red line' for the United States.
+
+
+
+Al Jazeera· 4:23 AM
+US strikes Iran, tanker, as Tehran hits Kuwait, Jordan: What’s the latest
+The US conducted strikes on an Iranian tanker, while Iran reportedly targeted sites in Kuwait and Jordan.
+Show 2 more from Al Jazeera
+
+
+Bloomberg· 2:54 AM
+Iran-US Skirmishes Worsen as Hormuz Shipping Traffic Dwindles
+•	Iran-US skirmishes have worsened, leading to dwindling shipping traffic in the Strait of Hormuz.
+Show 2 more from Bloomberg
+
+
+ABC News· 1:28 AM
+US strikes expand into northern Iran as it disables ship trying to run blockade
+The United States has expanded strikes into northern Iran, including near Tehran and Semnan province, and disabled a ship attempting to break a naval blockade, while Iran retaliated with missile and drone fire targeting Bahrain, Jordan, and Kuwait, escalating regional tensions and jeopardizing peace negotiations. These actions, occurring amidst renewed threats to the Strait of Hormuz, risk pushing the region back into full-scale conflict, with significant implications for global energy markets and U.S. political interests.
+Show 2 more from ABC News
+
+
+The Wall Street Journal· 12:53 AM
+Iran Allows U.S. Citizen It Held for More Than a Year to Leave
+Diplomatic gesture by Iran with potential implications for U.S.-Iran relations.
+Show 1 more from The Wall Street Journal
+
+
+The Daily Star· 11:07 PM 15 Jul 26
+Iran says it targeted bases in Kuwait and Jordan after new wave of US strikes
+Iran's retaliatory actions indicate escalating tensions and potential for wider conflict.
+Show 1 more from The Daily Star
+
+
+CNN· 9:26 PM 15 Jul 26
+Video
+Trump says Iran has released an American woman detained since 2024
+Show 1 more from CNN
+
+Axios· 7:30 PM 15 Jul 26
+Iran releases American detainee, Trump says
+•	Iran released an American woman wrongfully detained since December 2024.
+•	The release occurs as President Trump considers expanding U.S. military strikes on Iran.
+•	An Iranian-American dual national was detained in December 2024, according to a past report.
+
+
+
+The War Zone· 7:11 PM 15 Jul 26
+Here Are The U.S. Navy Warships Available To Support The Blockade of Iran
+The U.S. Navy has a number of warships available that could be used to support a blockade of Iran, indicating potential naval capabilities for regional security operations.
+Show 1 more from The War Zone
+
+Ynetnews· 7:11 PM 15 Jul 26
+US attacks Iran for 5th consecutive night, but Trump not ready to send in ground troops
+Ongoing military operations against Iran with significant geopolitical implications.
+
+Stars and Stripes· 6:28 PM 15 Jul 26
+US forces disable tanker heading to Iranian port as blockade resumes
+•	U.S. forces disabled an oil tanker attempting to reach an Iranian port.
+•	The naval blockade against vessels transiting to and from Iranian ports resumed Tuesday.
+•	Two other commercial vessels complied with U.S. warnings and were redirected.
+
+NPR· 4:54 PM 15 Jul 26
+The crews stuck at sea as the Strait of Hormuz crisis grows
+
+The New York Times· 4:29 PM 15 Jul 26
+U.S. and Iran Trade Strikes With No Sign of Backing Down
+
+France 24· 3:07 PM 15 Jul 26
+US launches ‘wave of strikes’ on Iran, Tehran threatens to halt regional energy exports
+The United States has launched a series of strikes against Iran, prompting threats from Tehran to disrupt regional energy exports.
+
+Breaking Defense· 3:04 PM 15 Jul 26
+In first, US uses sea drones in combat in Iran strikes: CENTCOM
+•	US forces used unmanned surface vessels in combat for the first time against Iran.
+•	The strikes targeted a submarine and ship maintenance facility at Bandar Abbas Naval Base.
+•	President Donald Trump declared the ceasefire with Iran "OVER" and reinstated a naval blockade.
+
+Defense News· 10:20 AM 15 Jul 26
+US launches new round of strikes against Iran
+The United States has initiated a new series of strikes targeting Iran, indicating ongoing military actions in the region.
+
+Outlets controlled by biased entities, lack credible sources / objectivity, known to frequently mislead readers and distort facts.
+
+
+
+Xinhua· 2 hrs ago
+Urgent: Iran tells Houthis to close Red Sea gateway if U.S. strikes power network -- media
+•	Iran asked Houthis to close Red Sea oil route if US strikes Iranian power infrastructure.
+•	Reuters reported this on Thursday, citing sources.
+Show 12 more from Xinhua
+
+
+
+Gulf News· 2 hrs ago
+Could the Iran conflict become Trump’s forever war?
+•	Analysts warn the Strait of Hormuz could keep the US locked in a long military standoff.
+•	Donald Trump vowed to end America's "forever wars," not start new ones.
+•	The conflict has moved beyond the nuclear program to focus on the Strait of Hormuz.
+Show 10 more from Gulf News
+
+
+
+CGTN· 2 hrs ago
+US strikes Iranian targets for fifth day as regional tensions flare
+Show 5 more from CGTN
+
+
+
+Sputnik· 3 hrs ago
+US Maximum Pressure on Iran Policy No Longer Working – Iranian Diplomat
+•	US "maximum pressure" policy on Iran has lost all effect, according to an Iranian diplomat.
+•	The policy includes economic sanctions imposed on the Islamic Republic.
+•	The diplomat made the statement in Ashgabat, according to Sputnik International.
+Show 2 more from Sputnik
+
+
+
+Arab News· 3 hrs ago
+Kuwait air defenses intercept Iranian drone attacks
+•	Kuwaiti air defenses intercepted drone attacks from Iran.
+•	The General Staff described the attacks as "criminal Iranian aggression."
+•	Explosions were from air defense systems engaging threats.
+Show 3 more from Arab News
+
+
+
+Global Times· 5:46 AM
+FM spokesperson calls for restoration of normal and safe navigation in Strait of Hormuz amid US order to reinstate naval blockade
+•	Chinese Foreign Ministry Spokesperson Lin Jian called for safe navigation in the Strait of Hormuz.
+•	The US reinstated a naval blockade in the Strait of Hormuz on Monday.
+•	The US-Israeli war against Iran has entered its 34th day.
+Show 1 more from Global Times
+
+
+
+Fars News· 5:08 AM
+Iran Warns of Destroying All Regional Infrastructure If Trump Carries Out Threats
+Show 3 more from Fars News
+
+
+
+New York Post· 4:58 AM
+Iran warns Strait of Hormuz is a ‘red line’ and will resist until the end
+Significant statement from Iran regarding a critical maritime chokepoint with implications for international shipping and security.
+Show 4 more from New York Post
+
+
+
+Mehr News Agency· 4:08 AM
+Iran Army drones attack US Patriots in Kuwait, Bahrain
+•	Iran's Army drones targeted US radar, Patriot batteries, and fuel tanks in Kuwait and Bahrain.
+•	The strikes hit Ali al-Salem airbase in Kuwait and Sheikh Isa airbase in Bahrain.
+•	The Army stated the attacks were in response to enemy audacity, arrogance, threats, and aggression.
+Show 5 more from Mehr News Agency
+ 
+China Daily· 9:05 PM 15 Jul 26
+Crisis intensifies as US resumes Iran blockade
+•	United States resumes Iran blockade and launches new wave of strikes.
+•	Fragile ceasefire collapses amid reciprocal strikes for control of Strait of Hormuz.
+•	US Senate Democrats blocked a defense authorization bill over opposition to Iran campaign.
+ 
+People's Daily· 8:00 PM 15 Jul 26
+India restricts its seafarers from Strait of Hormuz routes
+•	India's Directorate General of Shipping ordered seafarers to avoid the Strait of Hormuz.
+•	Recent attacks on merchant vessels have increased risks in the conflict-affected area.
+•	Two Indian seafarers have been killed and others injured in recent attacks.
+
+
+
+Washington Times· 5:43 PM 15 Jul 26
+Trump willing to wipe out the IRGC as he did ISIS
+Potential shift in U.S. policy towards Iran's military, indicating a willingness for aggressive military action.
+Show 2 more from Washington Times
+
+
+
+Tehran Times· 1:16 PM 15 Jul 26
+Iranian government: Over 30 civilians killed in recent US attacks
+•	Over 30 civilians killed in recent US strikes targeting southern Iran.
+•	US airstrikes contradict claims of targeting commercial shipping in the Strait of Hormuz.
+•	Renewed US bombardment violates the June 17 memorandum of understanding for peace.
+Show 1 more from Tehran Times
+10 Additional Coverage(attached / non-contributing)
+
+Jerusalem Post· now
+Podcast
+Iran claims 'existential war' as Israel and US maintain military cooperation
+
+Fox News· 5:04 AM
+Opinion
+MORNING GLORY: I asked Trump if he was prepared to remove Iran’s new leaders
+
+
+
+The Guardian· 3:15 AM
+Live
+US strikes expand to northern Iran as Tehran fires on Bahrain, Kuwait and Jordan – Middle East crisis live
+Show 1 more from The Guardian
+
+CNN· 12:20 AM
+Live
+US pounds Iranian targets for fifth day, strikes tanker bound for key oil port
+
+Reuters· 11:54 PM 15 Jul 26
+Live
+Iran war: Iran says it targeted bases in Kuwait and Jordan after new wave of US strikes
+
+France 24· 9:10 PM 15 Jul 26
+Live
+Middle East live: US launches fresh strikes on Iran as Hormuz remains paralyzed
+Show 1 more from France 24
+
+Fox News Digital· 4:31 PM 15 Jul 26
+Live
+US resumes blockade on Iran, launches strikes after attacks in Strait of Hormuz
+
+Al Jazeera· 11:03 AM 15 Jul 26
+Opinion
+How US-Iran escalation will test Iraq’s balancing act
+

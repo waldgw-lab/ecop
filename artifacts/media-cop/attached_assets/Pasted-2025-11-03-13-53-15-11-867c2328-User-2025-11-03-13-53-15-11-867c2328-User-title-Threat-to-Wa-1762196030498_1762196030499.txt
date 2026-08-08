@@ -1,0 +1,156 @@
+2025-11-03 13:53:15.11
+867c2328
+User
+},
+2025-11-03 13:53:15.11
+867c2328
+User
+{ title: "Threat to 'Walk Away'...", tags: [] },
+2025-11-03 13:53:15.11
+867c2328
+User
+{ title: "Network 'paid me a lotta money'...", tags: [] },
+2025-11-03 13:53:15.11
+867c2328
+User
+{
+2025-11-03 13:53:15.11
+867c2328
+User
+title: "EYE WIDE SHUT: HEALTH ALARM AFTER PRESIDENT'S RIG",
+2025-11-03 13:53:15.11
+867c2328
+User
+tags: []
+2025-11-03 13:53:15.11
+867c2328
+User
+},
+2025-11-03 13:53:15.11
+867c2328
+User
+{
+2025-11-03 13:53:15.11
+867c2328
+User
+title: 'Bari Weiss security detail costs CBS $10,000 a day',
+2025-11-03 13:53:15.11
+867c2328
+User
+tags: []
+2025-11-03 13:53:15.11
+867c2328
+User
+}
+2025-11-03 13:53:15.11
+867c2328
+User
+]
+2025-11-03 13:53:15.11
+867c2328
+User
+Could not find matching headline for: Administration planning new mission in Mexico against cartels... Sending troops and intelligence officers...
+2025-11-03 13:53:15.11
+867c2328
+User
+Could not find matching headline for: Top 10 billionaires wealth grew by $698 billion in year!
+2025-11-03 13:53:15.11
+867c2328
+User
+AI analyzed and tagged 7 headlines from past 24 hours
+2025-11-03 13:53:15.31
+867c2328
+User
+Error during scrape: error: function similarity(text, unknown) does not exist
+2025-11-03 13:53:15.31
+867c2328
+User
+at file:///home/runner/workspace/node_modules/@neondatabase/serverless/index.mjs:1345:74
+2025-11-03 13:53:15.31
+867c2328
+User
+at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-11-03 13:53:15.31
+867c2328
+User
+at async DatabaseStorage.getSimilarHeadlines (file:///home/runner/workspace/dist/index.js:199:21)
+2025-11-03 13:53:15.31
+867c2328
+User
+at async file:///home/runner/workspace/dist/index.js:1975:34 {
+2025-11-03 13:53:15.31
+867c2328
+User
+length: 218,
+2025-11-03 13:53:15.31
+867c2328
+User
+severity: 'ERROR',
+2025-11-03 13:53:15.31
+867c2328
+User
+code: '42883',
+2025-11-03 13:53:15.31
+867c2328
+User
+detail: undefined,
+2025-11-03 13:53:15.31
+867c2328
+User
+hint: 'No function matches the given name and argument types. You might need to add explicit type casts.',
+2025-11-03 13:53:15.31
+867c2328
+User
+position: '87',
+2025-11-03 13:53:15.31
+867c2328
+User
+internalPosition: undefined,
+2025-11-03 13:53:15.31
+867c2328
+User
+internalQuery: undefined,
+2025-11-03 13:53:15.31
+867c2328
+User
+where: undefined,
+2025-11-03 13:53:15.31
+867c2328
+User
+schema: undefined,
+2025-11-03 13:53:15.31
+867c2328
+User
+table: undefined,
+2025-11-03 13:53:15.31
+867c2328
+User
+column: undefined,
+2025-11-03 13:53:15.31
+867c2328
+User
+dataType: undefined,
+2025-11-03 13:53:15.31
+867c2328
+User
+constraint: undefined,
+2025-11-03 13:53:15.31
+867c2328
+User
+file: 'parse_func.c',
+2025-11-03 13:53:15.31
+867c2328
+User
+line: '629',
+2025-11-03 13:53:15.31
+867c2328
+User
+routine: 'ParseFuncOrColumn'
+2025-11-03 13:53:15.31
+867c2328
+User
+}
+2025-11-03 13:53:15.32
+867c2328
+User
+6:53:15 PM [express] POST /api/scrape 500 in 49226ms :: {"error":"Failed to scrape headlines"}

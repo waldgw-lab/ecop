@@ -1,0 +1,12 @@
+Please update my application to include a continuously scrolling geopolitical and financial ticker. It must be fixed to the very top of the 'main dashboard' page and the 'stream' page.
+UI/UX Requirements:
+•	Add an option to toggle the ticker ON or OFF. Place this toggle directly next to the existing column selection UI on both pages. Ensure the styling of this new toggle matches the existing UI.
+•	Crucial: Store the user's toggle preference (on/off) in localStorage. If a user hides the ticker, it must stay hidden when they refresh the page or navigate between the dashboard and stream pages.
+I need this built using TypeScript and the yahoo-finance2 npm package. To ensure stability and avoid rate limits, please implement the following strict architecture:
+1.	Backend Cache (Server-side): Create a background interval or cron job on the server that fetches the latest data every 15 minutes. It must fetch the current price and daily percentage change for the following symbols:
+o	Broad Markets: S&P 500 (^GSPC)
+o	Energy Security: Crude Oil WTI (CL=F), Brent Crude (BZ=F), Natural Gas (NG=F)
+o	Global Instability/Fear: Volatility Index (^VIX), US Dollar Index (DX-Y.NYB), Gold (GC=F), Bitcoin (BTC-USD) Store this fetched data in memory (a simple variable cache).
+2.	API Endpoint: Create a simple GET endpoint (e.g., /api/ticker) that immediately returns the cached data without making a new call to Yahoo Finance.
+3.	Frontend Fetching: When the ticker is toggled ON, update the frontend to silently fetch from /api/ticker every 60 seconds to keep the data fresh without requiring a page reload. If toggled OFF, stop fetching.
+4.	Ticker UI/CSS: Build a sleek, horizontal, continuously scrolling marquee. Display a human-readable label for each asset (e.g., "Fear Index (VIX)" instead of just "^VIX"), the current price, and the percentage change. Color the percentage change green for positive and red for negative. (Note: For the VIX, a positive change should be colored red, as it indicates rising fear, and a negative change colored green). Ensure the scrolling animation is smooth using pure CSS and does not stutter.

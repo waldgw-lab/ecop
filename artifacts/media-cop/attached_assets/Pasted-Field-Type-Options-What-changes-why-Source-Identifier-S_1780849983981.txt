@@ -1,0 +1,31 @@
+Field	Type	Options	What changes / why
+			
+Source Identifier	Single-select	News – U.S. Domestic; News – International; News – CPC/SWL/EPC
+Social – U.S. Official; Social – International; Social – CPC/SWL/EPC
+Release – U.S. Official; Release – International; Release – CPC/SWL/EPC
+Other Source	News (non-CPC/SWL/EPC): contributing
+This is where we identify “adversary”as CPC/SWL/EPC: Countries of Particular Concern, SWL: Special Watch List Countries, and EPC: Entities of Particular Concern. If selected “News – CPC/SWL/EPC” logic applies=attach-only; needs ≥ 2 contributing items in its cluster to appear; can only join, never seed; never becomes the representative; and is used for contrast/spin only, never for the facts.
+News: News articles
+Social: these are official tweets or social media or government readouts or releases- An attach-only item can never seed or "stand up" a story. It can only JOIN a cluster that has already formed on its own.
+Release: Official Government press releases or wires like U.S. Department of State- An attach-only item can never seed or "stand up" a story. It can only JOIN a cluster that has already formed on its own.
+If identified as “Other Source” the next field is available and renders the item as contributing (shows in the 
+Other Source Type (new)	Single-select	Video; Podcast; Social; Wire; Aggregator; Opinion; Tabloid; Unknown	Can JOIN, cannot SEED. A story FORMS only with ≥ 2 contributing items (MIN_CONTRIBUTING_TO_FORM = 2). An opinion or social item can attach to a story that already cleared that bar, but a cluster made only of opinion/social items is dropped entirely — it never becomes a story.
+Can never be the representative. The headline/lede of a formed story is always the highest-priority contributing item. An opinion/social item is never the face of a story.
+Never informs the facts. In synthesis (curatedSynthesis.ts), attached sources are passed to the model labeled "for CONTRAST ONLY":
+The lede and corroborated facts derive only from contributing sources.
+Facts are diversity-weighted across contributing source TYPES (a wire + an independent + a think-tank beats five outlets of the same kind) — and a claim that appears only in attached sources is explicitly forbidden.
+Each attached source still gets a one-sentence "spin" entry naming its angle/slant, shown in the expanded view.
+Unknown seeds here if unable to be identified (quarantined)
+Ownership (new; can have maximum of 3 per outlet)	Multi-select + Free-text chips (1 per Ownership option)	Multiselect Options: Media Conglomerate; Private Equity; Individual; Government; Telecom; Corporation; Independent; Other	Multiselect Options: 8 categories. Each option carries a tooltip with its definition (transparency).
+
+Each multi-select option gets a free-text chip (1 per)
+Examples: PressTV: Other: Islamic Republic of Iran Broadcasting; Government: Government of the Islamic Republic of Iran
+Origin country	Free text	(unchanged)	Keep.
+Origin region	Single-select	North America · Europe · Asia · Middle East · Africa · South America · Oceania	Keep.
+Factuality	Single-select	high · mostly-factual · mixed · low · very-low	Keep.
+Bias	Single-select	left · lean-left · center · lean-right · right	Remove state- propaganda- now inferred by Source Identifier
+Trust role	Display + manual override	Contributing · Attach-only (+ reason)	Remove: now identified in source identifier
+Logo	Upload	(unchanged)	Keep.
+Provenance per field	System (read-only)	Curated seed · public-reference · AI-suggested · manual override	Shown on every field so the source of each value is visible.
+Add- Last updated: with DTG
+Confirmation status	System	unconfirmed · confirmed	Unchanged; unconfirmed (aka unknown) = attach-only but never hard-blocked.

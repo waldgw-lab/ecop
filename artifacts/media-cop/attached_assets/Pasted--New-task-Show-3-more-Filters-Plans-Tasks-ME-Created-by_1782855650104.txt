@@ -1,0 +1,254 @@
+
+
+
+
+New task
+
+Show 3 more
+
+Filters
+
+Plans
+
+Tasks
+
+ME
+Created by me
+
+Library
+Search
+Other
+Start application
+Website
+
+Documents
+Curated Methodology & Tooltips (editable)
+Slides
+
+MCOP Classification & Priority Rubric (5-column, updated)
+Spreadsheet
+
+Images
+Curated View — non-member visibility preview
+Image
+
+IE Highlights — new bullet styling (preview with demo data)
+IE Highlights — new bullet styling (preview with demo data)
+Image
+
+IE Highlights — updated bullets + tighter intro lines (preview with demo data)
+IE Highlights — updated bullets + tighter intro lines (preview with demo data)
+Image
+
+1. Starting Soon (upcoming) — amber dot
+1. Starting Soon (upcoming) — amber dot
+Image
+
+2. LIVE — red pulsing dot
+2. LIVE — red pulsing dot
+Image
+
+3. Just Ended / Replay — dim grey dot
+3. Just Ended / Replay — dim grey dot
+Image
+
+Review changes
+
+#552 – Upgrade from gpt-4o-mini to gpt-5-mini
+.agents/memory/MEMORY.md
+-2
++2
+- [Writing/cleaning PROD data](prod-data-write-cleanup.md) — deploy has its OWN db; executeSql prod is read-only; mutate/clean prod via authed app endpoints (APP_PASSWORD→authenticated, ADMIN_PASSWORD→adminAuthenticated), run from bash/node not sandbox.
+- [Aerial View blind-spot radar](competing-coverage-backbone.md) — Google News RSS backbone; outletCount uniformly ~5 (useless); Trends RSS=/trending/rss?geo=US; News URLs are opaque redirects; round-robin cap below topic-count drops trailing topics.
+- [Curated non-news (opinion/video) gates](curated-narrative-nonnews-gate.md) — exclude non-news needs BOTH per-URL content-kind AND per-outlet otherSourceType; each headline surface (standalone Top Stories + Top Narratives) gates it SEPARATELY; cluster members exempt.
+- [AI provider routing (OpenRouter)](ai-provider-openrouter.md) — former-OpenAI calls route via server/aiClient.ts on OpenRouter; gate on isAIConfigured(); never `new OpenAI`; gpt-4o/4o-mini map to the gpt-4o family.
+- [gpt-5 safety refusals](gpt5-safety-refusals.md) — gpt-5 refuses conflict-news JSON & hard-blocked Team submissions (422); map REVERTED to gpt-4o; retry wrapper now dormant; system framing doesn't help.
+- [AI provider routing (OpenRouter)](ai-provider-openrouter.md) — former-OpenAI calls route via server/aiClient.ts on OpenRouter; gate on isAIConfigured(); never `new OpenAI`; cost-optimized tiers (gemini-lite/gemini-flash/gpt-4o-mini-pinned/gpt-4o) each with a Claude fallback.
+- [gpt-5 safety refusals](gpt5-safety-refusals.md) — gpt-5 refuses conflict-news JSON & hard-blocked Team submissions (422); REJECTED; light tier now gemini-2.5-flash-lite, clustering/curated-classifier pinned to gpt-4o-mini; gemini fails by TRUNCATION not refusal; retry wrapper dormant.
+- [tsc triage on tsx server](tsx-runtime-tsc-triage.md) — app runs via tsx (no runtime typecheck); TS2304/TS2552 = real ReferenceError on that path, TS2802/2322/2339 usually harmless stale-type noise.
+- [Vite dev vs build transform](vite-dev-vs-build-transform.md) — a JSX error in an unvisited route-split component passes dev (lazy transform) but fails the publish build (eager); run `npm run build` before publishing.
+- [Curated dead-link flag](curated-dead-link-flag.md) — only 404/410 flag (transient/paywall-200 never); replacement is an overlay-redirect (never mutate stored url); clustering ignores flag; curated-lane only.
+.agents/memory/ai-provider-openrouter.md
+-6
++15
+provider-failure circuit breaker live in exactly one place.
+  and use `openai.chat.completions.create(...)`. NEVER `new OpenAI(...)` and NEVER read
+  `process.env.OPENAI_API_KEY` — gate features on `isAIConfigured()` (which checks the
+  OpenRouter env) instead.
+- Keep call sites byte-identical: still pass `model: 'gpt-4o'` / `'gpt-4o-mini'`. The
+  wrapper translates those to `openai/gpt-4o` / `openai/gpt-4o-mini`. Only `gpt-4o`
+  (incl. vision) and `gpt-4o-mini` are mapped; other strings pass through unchanged.
+- The map was briefly pointed at the gpt-5 family but was REVERTED to gpt-4o: gpt-5's
+  stricter safety layer intermittently refused conflict-heavy news JSON prompts and
+  hard-blocked Team link submissions (review-link 422). See `gpt5-safety-refusals.md`.
+- MODEL_MAP is now a COST-OPTIMIZED tier map (logical call-site string -> primary id):
+  `gpt-4o-mini` -> `google/gemini-2.5-flash-lite` (high-volume light tier: relevance /
+  scoring / summaries / RSS+bot filtering; ~33% cheaper than gpt-4o-mini, drop-in clean);
+  `gpt-4o-mini-pinned` -> `openai/gpt-4o-mini` (QUALITY-SENSITIVE light paths kept on the
+  proven model — main-feed + team-submission CLUSTERING and the curated controlled-vocab
+  CLASSIFIER); `gpt-4o-vision` -> `google/gemini-2.5-flash` (vision OCR, ~8x cheaper than
+  gpt-4o); `gpt-4o` -> `openai/gpt-4o` (heavy: curated clustering/synthesis/briefing).
+  Other strings pass through unchanged. **Why pinned vs lite:** grouping is provider-
+  sensitive (Claude over-fragments; gemini-lite unvalidated for grouping) and curated
+  labels are generate-once locked, so those two stay on the eval-proven OpenAI mini even
+  though the bulk light traffic moved to gemini for cost.
+- The map was briefly pointed at the gpt-5 family but gpt-5 was REJECTED (stricter safety
+  layer refused conflict-heavy news JSON + hard-blocked Team link submissions, review-link
+  422). gemini-2.5-flash/flash-lite were eval'd on this app's exact conflict prompts: NO
+  refusals, valid JSON at the tight max_tokens each call site uses. See `gpt5-safety-refusals.md`.
+- gpt-4o via OpenRouter accepts the legacy params each call site sends unchanged:
+  `temperature` (0.1/0.3), `response_format: json_object`, `max_tokens`, and image_url
+  vision input. No per-model param translation is needed in the wrapper.
+-1
++3
+provider-failure circuit breaker live in exactly one place.
+- WHOLE-APP fallback: aiClient `create()` now transparently falls back to the Replit
+  ANTHROPIC integration (`AI_INTEGRATIONS_ANTHROPIC_*`, separate credit pool) on ANY
+  OpenRouter failure OR open breaker, returning the identical ChatCompletion shape
+  (gpt-4o→claude-sonnet-4-5, gpt-4o-mini→claude-haiku-4-5). This is what rescues OpenRouter
+  (gpt-4o/gpt-4o-vision→claude-sonnet-4-5, gpt-4o-mini/gpt-4o-mini-pinned→claude-haiku-4-5;
+  ANTHROPIC_MODEL_MAP also keys the gemini ids directly so EVERY cost-optimized tier keeps a
+  reliable cross-provider fallback). This is what rescues OpenRouter
+  402 "Insufficient credits" (402 is non-transient → not retried, thrown straight to the
+  orchestrator → Anthropic). `isAIConfigured()` is now OR-of-both providers. Verify success
+  by the log line `[AIClient] OpenRouter call failed ...; falling back to Anthropic` —
+.agents/memory/gpt5-safety-refusals.md
+-8
++17
+description: Why the aiClient wrapper retries gpt-5 JSON calls, and how the gpt-
+---
+DECISION: the app was briefly mapped to the gpt-5 family in `server/aiClient.ts`
+but was REVERTED to gpt-4o / gpt-4o-mini. gpt-5 is a reasoning model with a
+STRICTER safety layer than gpt-4o, and the refusals below were not just a
+clustering annoyance — they HARD-BLOCKED a core workflow: Team link submissions
+about strikes/casualties returned `review-link 422 "Could not analyze the
+provided URL"` because `analyzeSubmittedLink` got an empty (refusal) response.
+gpt-4o does not refuse these (verified on the exact CNBC/Politico conflict
+headlines: valid JSON, no refusal). Re-point the map at gpt-5 only if a future
+need justifies re-introducing this refusal risk.
+but gpt-5 was REJECTED. gpt-5 is a reasoning model with a STRICTER safety layer
+than gpt-4o, and the refusals below were not just a clustering annoyance — they
+HARD-BLOCKED a core workflow: Team link submissions about strikes/casualties
+returned `review-link 422 "Could not analyze the provided URL"` because
+`analyzeSubmittedLink` got an empty (refusal) response. Re-point the map at gpt-5
+only if a future need justifies re-introducing this refusal risk.
+CURRENT MAPPING (cost-optimized, see ai-provider-openrouter.md for the full tier
+table): the high-volume light tier (`gpt-4o-mini`) moved to
+`google/gemini-2.5-flash-lite` and vision to `google/gemini-2.5-flash`; the
+quality-sensitive light paths (`gpt-4o-mini-pinned`: clustering + curated
+classifier) stay on `openai/gpt-4o-mini`; heavy (`gpt-4o`) stays on
+`openai/gpt-4o`. NONE of these refuse: verified on the exact CNBC/Politico
+conflict headlines that gpt-5 refused — gpt-4o, gpt-4o-mini AND gemini-2.5-flash/
+flash-lite all return valid JSON with no refusal. The NEW gemini failure mode to
+watch is TRUNCATION (not refusal) when max_tokens is too tight for the JSON — the
+analyzer's 6000-token cap + tolerant parse/salvage handle it; don't shrink caps.
+**Symptom:** on a minority of conflict-heavy news prompts (strikes, casualties,
+graphic content) gpt-5 returns a plain-text refusal ("I'm sorry, but I cannot
+server/aiAnalyzer.ts
+-1
++1
+async function analyzeCuratedChunk(titles: string[]): Promise<CuratedAnalysisRes
+  try {
+    const response = await withAiTimeout(
+      openai.chat.completions.create({
+      model: 'gpt-4o-mini',
+      model: 'gpt-4o-mini-pinned',
+      messages: [
+        { role: 'system', content: CURATED_ANALYZER_SYSTEM_PROMPT },
+        {
+server/aiClient.ts
+-3
++20
+import pLimit from 'p-limit';
+ * Integration. The OpenAI account hit its quota cap (429 insufficient_quota),
+ * so the whole app moves to OpenRouter while keeping behavior identical.
+ *
+ * Model tiers are preserved exactly:
+ *   - gpt-4o-mini  -> openai/gpt-4o-mini  (classification / scoring / summaries)
+ *   - gpt-4o       -> openai/gpt-4o       (synthesis / vision OCR)
+ * Model tiers (cost-optimized after a head-to-head eval on this app's exact
+ * conflict-news prompts — see .agents/memory/gpt5-safety-refusals.md):
+ *   - gpt-4o-mini         -> google/gemini-2.5-flash-lite (high-volume light
+ *                            tier: relevance / scoring / summaries / filtering;
+ *                            ~33% cheaper than gpt-4o-mini and drop-in clean —
+ *                            valid JSON at the app's tight max_tokens, no
+ *                            safety refusals)
+ *   - gpt-4o-mini-pinned  -> openai/gpt-4o-mini (QUALITY-SENSITIVE light-tier
+ *                            paths kept on the proven model: main-feed +
+ *                            team-submission CLUSTERING, which is provider-
+ *                            sensitive grouping, and the curated controlled-
+ *                            vocab CLASSIFIER, whose labels are generate-once
+ *                            locked and costly to get wrong)
+ *   - gpt-4o-vision       -> google/gemini-2.5-flash (vision OCR — image input
+ *                            at ~8x lower cost than gpt-4o)
+ *   - gpt-4o              -> openai/gpt-4o (heavy reasoning: curated clustering,
+ *                            synthesis, briefing cards)
+ * Every tier keeps a reliable cross-provider fallback via ANTHROPIC_MODEL_MAP
+ * below (gemini-flash-lite -> claude-haiku, gemini-flash/gpt-4o -> claude-sonnet),
+ * orchestrated transparently so a primary outage never disables a feature.
+ *
+ * NOTE: these were briefly mapped to the gpt-5 family, but gpt-5's stricter
+ * safety layer intermittently REFUSED conflict-heavy news prompts (e.g. it
+-1
++3
+function getClient(): OpenAI {
+// Translate the legacy OpenAI model strings used across the codebase to their
+// OpenRouter ids. Anything not in this map passes through unchanged.
+const MODEL_MAP: Record<string, string> = {
+  'gpt-4o-mini': 'openai/gpt-4o-mini',
+  'gpt-4o-mini': 'google/gemini-2.5-flash-lite',
+  'gpt-4o-mini-pinned': 'openai/gpt-4o-mini',
+  'gpt-4o-vision': 'google/gemini-2.5-flash',
+  'gpt-4o': 'openai/gpt-4o',
+};
+-0
++9
+const ANTHROPIC_MODEL_MAP: Record<string, string> = {
+  'openai/gpt-4o': 'claude-sonnet-4-5',
+  'gpt-4o-mini': 'claude-haiku-4-5',
+  'openai/gpt-4o-mini': 'claude-haiku-4-5',
+  // Cost-optimized tiers keep an explicit, reliable Claude fallback so a primary
+  // (gemini / gpt-4o) outage transparently routes to Anthropic, never disabling
+  // the feature. Keyed on BOTH the logical call-site string and the mapped
+  // primary id (the orchestrator passes the logical string; the id keys are
+  // belt-and-suspenders in case a mapped id is ever passed through).
+  'gpt-4o-mini-pinned': 'claude-haiku-4-5',
+  'gpt-4o-vision': 'claude-sonnet-4-5',
+  'google/gemini-2.5-flash-lite': 'claude-haiku-4-5',
+  'google/gemini-2.5-flash': 'claude-sonnet-4-5',
+};
+const ANTHROPIC_DEFAULT_MODEL = 'claude-sonnet-4-5';
+const ANTHROPIC_DEFAULT_MAX_TOKENS = 4096;
+server/headlineCluster.ts
+-1
++1
+Return ONLY the JSON array, no other text.`;
+  try {
+    const response = await withAiTimeout(openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      model: "gpt-4o-mini-pinned",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.1,
+      max_tokens: 2000,
+server/imageTextExtractor.ts
+-1
++1
+export async function analyzePostImage(imageUrl: string, postContent: string): P
+    }
+    const response = await withAiTimeout(openai.chat.completions.create({
+      model: "gpt-4o",
+      model: "gpt-4o-vision",
+      messages: [
+        {
+          role: "user",
+server/teamSubmissionCluster.ts
+-1
++1
+Return ONLY the JSON array, no other text.`;
+  try {
+    const response = await withAiTimeout(openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      model: "gpt-4o-mini-pinned",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.1,
+      max_tokens: 2000,

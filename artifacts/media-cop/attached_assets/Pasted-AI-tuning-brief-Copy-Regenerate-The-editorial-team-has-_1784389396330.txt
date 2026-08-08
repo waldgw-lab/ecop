@@ -1,0 +1,1114 @@
+AI tuning brief
+Copy
+Regenerate
+The editorial team has been actively moderating content, with significant actions involving manual linking and priority overrides. Notably, there is a pattern of clustering adjustments around Middle Eastern military operations, particularly involving Iran and the US. The scoring system has shown some discrepancies, with high-score hides and low-score boosts indicating potential areas for rubric refinement. Topic relabeling suggests a need for clearer differentiation in categories related to military operations and governance.
+
+Adjust Scoring for Analysis and Opinion Pieces
+high
+server/scoreAdjustments.ts
+Ensure analysis and opinion pieces are capped by CURATED_ANALYSIS_OPINION_CAP unless they meet strategic criteria.
+Several articles were marked as analysis or opinion, indicating they may have been over-scored initially. This suggests a need to ensure that analysis and opinion pieces are appropriately capped unless they meet strategic criteria.
+Based on:
+Why is Trump risking midterm disaster by resuming an already unpopular war with Iran? — The Guardian · score 29 · Foreign Policy & Diplomacy · Political Analysis
+‘Even Politburo members can be touched’: what the latest purge says about Xi Jinping’s China — The Guardian · score 62 · Governance, Elections & Domestic Stability · China Political Purge
+Refine Clustering Logic for Middle Eastern Military Operations
+medium
+server/curatedCluster.ts
+Adjust clustering thresholds to better group articles related to ongoing military operations in the Middle East, particularly involving US-Iran conflicts.
+Multiple manual links and merges were performed on articles related to US-Iran military actions, indicating that these articles share a common event or theme that the AI clustering did not capture.
+Based on:
+US-Iran war expands to infrastructure targets across the region — Stars and Stripes · score 85 · Military Operations & Armed Conflict · US-Iran Conflict
+Clarify Topic Definitions for Governance and Military Operations
+medium
+curated_classifications
+Refine topic definitions to better distinguish between military operations and governance-related issues, particularly in regions with ongoing conflicts.
+Articles originally labeled under 'Military Operations & Armed Conflict' and 'Foreign Policy & Diplomacy' were relabeled to more specific categories, indicating a need for clearer topic definitions.
+Based on:
+Trump faces voter frustration on economy, Iran: poll — USA Today · Foreign Policy & Diplomacy · Public Opinion
+Cautions: Avoid conflating clustering signals with scoring adjustments; each requires distinct handling. · Do not recommend changes to outlet registry roles, as this is outside the scope of this brief.
+Most-relabeled topics
+Military Operations & Armed Conflict
+3
+Other / Emerging
+2
+Foreign Policy & Diplomacy
+2
+Intelligence, Espionage & Security Services
+1
+Action breakdown
+Priority pin
+56
+Link stories
+46
+Content-kind mark
+23
+Merge stories
+17
+Re-label
+9
+manual-evict
+8
+Hide story
+5
+replace-headline
+4
+Hide image
+2
+Replace image
+1
+Unlink stories
+1
+Score vs. editor conflicts
+(threshold 50)
+High-score hides (AI over-scored)
+4
+AP News
+1
+The Guardian
+1
+Washington Examiner
+1
+Fox News
+1
+Low-score boosts (AI under-scored)
+2
+CNN
+1
+Reuters
+1
+Clustering behavior changes
+(manual grouping — informs clustering tuning)
+Links
+46
+Merges
+17
+Unlinks
+1
+Pattern candidates
+(repeating corrections building toward a rule — observe-only, nothing auto-applied)
+No repeating patterns yet — corrections so far are one-offs spread across different outlets. A candidate appears here once the same outlet gets the same correction twice, and turns into an approvable rule at 3×.
+Suggested rules
+(deterministic patterns mined from repeated corrections — approve to apply)
+Standing must-link
+medium
+4 corrections
+Standing must-link: "Global Times" <-> "People's Daily" manually linked repeatedly (4x)
+Approving biases future clustering to group Global Times and People's Daily stories together.
+Retrospective impact: 4 currently active manual links between this outlet pair.
+Trump announces US will charge fee for protecting Strait of Hormuz shipping
+Shippers balk at Trump's Strait of Hormuz fees: "Dangerous Pandora's Box"
+US Faces Challenges Reopening Strait of Hormuz Amid Iran Tensions
+Approve
+Reject
+Snooze
+Recent adjustments
+Content-kind mark
+The Guardian
+7/18/2026, 11:26:07 AM
+Why is Trump risking midterm disaster by resuming an already unpopular war with Iran?
+article
+AI score: 29
+marked as analysis
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/18/2026, 11:25:46 AM
+linked 2 items: Iran threatens wider war if US strikes persist: 'No political border' will be safe; AI concurred — https://thehill.com/policy/international/5976071-iran-new-threats-us-strikes-infrastructure-energy + [CNN] Iran’s hardliners warn of a ‘coup’ as US truce comes under pressure
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+ABC News
+7/18/2026, 11:05:41 AM
+Venezuela earthquakes death toll surpasses 5,000
+AI score: 65
+pinned to 60
+by chelsea.l.durante.mil@mail.mil
+not imminent
+
+Link stories
+7/18/2026, 10:09:41 AM
+linked 3 items: US hits Iran energy targets, bridges; Fallout persists after Trump election speech — https://thehill.com/homenews/administration/5975853-live-updates-us-iran-war-trump-election-claims-midterms + [Stars and Stripes] US-Iran war expands to infrastructure targets across the region + https://www.theguardian.com/world/2026/jul/17/iran-inflict-damage-us-attacks
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/18/2026, 10:09:24 AM
+linked 7 items: Iran's IRGC claims attacks on US military airbase in Jordan — https://www.newsnationnow.com/world/iran-irgc-claims-attacks-us-military-airbase + https://www.jpost.com/middle-east/article-902856 + https://www.jpost.com/middle-east/iran-news/article-902870 + https://en.mehrnews.com/news/246311/google-darkens-satellite-imagery-of-sites-hit-in-kuwait + [Gulf News] Fire breaks out at Kuwait power and water desalination plant after Iranian attack + [The Daily Star] Iranian army says st
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+7/17/2026, 8:36:00 PM
+marked as opinion
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Fox News
+7/17/2026, 2:46:11 PM
+Leaked Iran report finds record public anger as regime focuses on holding power
+article
+AI score: 70
+pinned to 75
+by chelsea.l.durante.mil@mail.mil
+Re-label
+7/17/2026, 2:45:34 PM
+re-labeled to Governance, Elections & Domestic Stability · Ukraine
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/17/2026, 2:44:48 PM
+linked 2 items: Israeli strike on Gaza funeral killed at least seven people, hospital says; AI concurred — https://www.theguardian.com/world/2026/jul/17/israeli-strike-gaza-funeral-multiple-deaths + https://www.aljazeera.com/news/2026/7/17/israeli-attacks-on-gaza-kill-14-including-mourners-attending-funeral
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/17/2026, 2:44:25 PM
+linked 5 items: China, North Korea Exchange High-Level Visits — https://thediplomat.com/2026/07/china-north-korea-exchange-high-level-visits + https://en.yna.co.kr/view/aen20260717000200315 + https://news.cgtn.com/news/2026-07-17/china-s-top-political-advisor-visits-dprk-meets-kim-jong-un-1ork0qxpgfq/p.html + https://www.aljazeera.com/news/2026/7/17/north-korean-leader-kim-jong-un-meets-with-top-chinese-official + [KCNA] Respected Comrade Kim Jong Un Meets Chinese Party and Government Delegation
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+The Guardian
+7/17/2026, 2:43:53 PM
+Israeli strike on Gaza funeral killed at least seven people, hospital says
+AI score: 75
+pinned to 70
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+CNN
+7/17/2026, 1:10:54 PM
+Powerful earthquake in Mexico shakes Guatemala and El Salvador
+article
+AI score: 45
+pinned to 65
+by chelsea.l.durante.mil@mail.mil
+Link stories
+Fox News
+7/17/2026, 1:10:37 PM
+China dismisses Trump election interference accusations as 'entirely fabricated,' threatens countermeasures
+article
+AI score: 68
+linked 2 items: China dismisses Trump election interference accusations as 'entirely fabricated,' threatens countermeasures — [Fox News] China dismisses Trump election interference accusations as 'entirely fabricated,' threatens countermeasures + https://www.newsnationnow.com/politics/china-dismisses-groundless-trump-election-interference-claim
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/17/2026, 1:09:51 PM
+linked 10 items: 'Whether you're Labour or not', Andy Burnham embodies a 'hope of political stability' — https://www.france24.com/en/whether-you-re-labour-or-not-andy-burnham-embodies-the-uk-s-hope-for-political-stability + https://www.aljazeera.com/news/2026/7/17/burnham-confirmed-as-leader-of-uks-governing-labour-party-headed-for-pm + [Global Times] Andy Burnham becomes Labour leader, paving way to No 10; China policy likely to follow Starmer's approach: expert + https://www.france24.com/en/re
+by chelsea.l.durante.mil@mail.mil
+Link stories
+Bloomberg
+7/17/2026, 1:09:35 PM
+Germany and France to Draw Up Roadmap on China Trade Imbalances
+AI score: 65
+linked 5 items: Germany and France to Draw Up Roadmap on China Trade Imbalances — [Bloomberg] Germany and France to Draw Up Roadmap on China Trade Imbalances + https://www.france24.com/en/europe/20260717-germany-join-french-military-nuclear-exercise-bid-boost-defence-cooperation + https://apnews.com/article/germany-france-nato-nuclear-exercise-macron-merz-2d03bccc2cc3519902597fa3691dc475 + https://www.dw.com/en/germany-news-merz-macron-plan-closer-nuclear-cooperation/live-77998510 + https://www.
+by chelsea.l.durante.mil@mail.mil
+Hide story
+AP News
+7/17/2026, 1:09:04 PM
+Fairlife pauses US production after cyberattack breached milk brand’s systems
+AI score: 55
+hidden
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+7/17/2026, 1:08:42 PM
+marked as opinion
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Reuters
+7/17/2026, 1:08:23 PM
+US consumer sentiment improves in July; renewed Middle East conflict poses downside risk
+AI score: 62
+pinned to 55
+by chelsea.l.durante.mil@mail.mil
+replace-headline
+AP News
+7/17/2026, 1:08:03 PM
+De la Espriella retirará a Colombia del caso de Sudáfrica contra Israel ante máximo tribunal ONU
+AI score: 65
+headline → Colombia will withdraw from South Africa's case against Israel at the UN's top c
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+The Hill
+7/17/2026, 1:00:52 PM
+Coons: ‘No concrete evidence’ foreign actors changed election results
+AI score: 55
+pinned to 45
+by chelsea.l.durante.mil@mail.mil
+Hide story
+The Guardian
+7/17/2026, 12:59:17 PM
+Amazon Web Services customers receive bills for up to $1.5tn after global glitch
+AI score: 55
+hidden
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/17/2026, 12:58:46 PM
+linked 9 items: Meet Andy Burnham, Britain's next prime minister — https://www.dw.com/en/meet-andy-burnham-britain-s-next-prime-minister/a-77664543 + https://www.aljazeera.com/news/2026/7/17/burnham-confirmed-as-leader-of-uks-governing-labour-party-headed-for-pm + [Global Times] Andy Burnham becomes Labour leader, paving way to No 10; China policy likely to follow Starmer's approach: expert + https://www.france24.com/en/replay-andy-burnham-addresses-labour-mps-as-he-becomes-new-party-leader + [S
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/17/2026, 12:58:10 PM
+linked 9 items: Meet Andy Burnham, Britain's next prime minister — https://www.dw.com/en/meet-andy-burnham-britain-s-next-prime-minister/a-77664543 + https://www.aljazeera.com/news/2026/7/17/burnham-confirmed-as-leader-of-uks-governing-labour-party-headed-for-pm + [Global Times] Andy Burnham becomes Labour leader, paving way to No 10; China policy likely to follow Starmer's approach: expert + https://www.france24.com/en/replay-andy-burnham-addresses-labour-mps-as-he-becomes-new-party-leader + [S
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/17/2026, 12:57:53 PM
+linked 2 items: EU, Ukraine sign drone deal to fast-track unmanned systems production; AI concurred — https://breakingdefense.com/2026/07/eu-ukraine-sign-drone-deal-to-fast-track-unmanned-systems-production + https://www.washingtonpost.com/world/2026/07/17/after-years-drone-warfare-ukraine-is-selling-its-blood-experience-allies
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Fox News
+7/17/2026, 12:56:27 PM
+Leaked Iran report finds record public anger as regime focuses on holding power
+AI score: 62
+pinned to 78
+by chelsea.l.durante.mil@mail.mil
+Implications for us Iran conflict
+
+Link stories
+7/17/2026, 12:55:16 PM
+linked 2 items: Ukraine Says It Hit Russia’s Yanos Oil Refinery Thursday — https://www.bloomberg.com/news/articles/2026-07-17/ukraine-says-it-hit-russia-s-yanos-oil-refinery-thursday + [Associated Press] The Mina Al-Ahmadi oil refinery operates in Kuwait, March 20, 2026. (AP Photo, File)
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+The Guardian
+7/17/2026, 12:19:06 PM
+Dismissal of Ukraine’s defence minister highlights wider issues for Zelenskyy
+article
+AI score: 72
+merged 6 items: Dismissal of Ukraine’s defence minister highlights wider issues for Zelenskyy — [The Guardian] Dismissal of Ukraine’s defence minister highlights wider issues for Zelenskyy + https://www.aljazeera.com/news/2026/7/17/ukraine-suffers-port-attacks-as-protests-persist-over-defence-shake-up + [The Straits Times] Zelenskiy shakes up national security post as protesters rally for second day + https://www.aljazeera.com/news/2026/7/17/has-ukraines-zelenskyy-created-a-rival-by-sacking-his-
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/17/2026, 12:17:39 PM
+linked 87 items: US forces destroy Iranian surveillance tower, no troops killed, captured in Syria, CENTCOM says — https://www.jpost.com/middle-east/iran-news/article-902845 + https://www.aljazeera.com/news/2026/7/17/us-attacks-southern-iran-as-tehran-hits-gulf-countries-whats-the-latest + https://www.military.com/as-us-strikes-bridges-in-iran-it-targets-a-water-desalination-plant-in-kuwait + https://thehill.com/policy/defense/5974227-iran-us-strikes + https://farsnews.ir/rahgozar_b/178429833755
+by chelsea.l.durante.mil@mail.mil
+Hide image
+7/17/2026, 12:16:22 PM
+image hidden
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+7/17/2026, 12:14:25 PM
+merged 4 items: Germany to join French nuclear exercise in bid to boost defence cooperation — https://www.france24.com/en/europe/20260717-germany-join-french-military-nuclear-exercise-bid-boost-defence-cooperation + https://apnews.com/article/germany-france-nato-nuclear-exercise-macron-merz-2d03bccc2cc3519902597fa3691dc475 + https://www.dw.com/en/germany-news-merz-macron-plan-closer-nuclear-cooperation/live-77998510 + https://www.france24.com/en/new-defence-dynamic-for-europe-at-the-heart-of-fra
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+7/17/2026, 12:14:06 PM
+merged 17 items: Iran proves it can still inflict damage despite waves of US attacks — https://www.theguardian.com/world/2026/jul/17/iran-inflict-damage-us-attacks + [Stars and Stripes] US-Iran war expands to infrastructure targets across the region + https://nypost.com/2026/07/17/world-news/iranian-strike-damages-a-kuwait-desalination-plant-exposing-water-vulnerability-in-dry-mideast + [Newsweek] US Strikes Hit Bridges Near Hormuz As Iran Responds With New Attacks + [CNN] Iran and US widen atta
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Al Jazeera
+7/17/2026, 12:13:27 PM
+Ukraine ‘cuts off’ Crimea from Russia, plunging it into an energy crisis
+AI score: 82
+pinned to 68
+by chelsea.l.durante.mil@mail.mil
+Link stories
+Stars and Stripes
+7/17/2026, 11:10:49 AM
+US-Iran war expands to infrastructure targets across the region
+article
+AI score: 85
+linked 16 items: US-Iran war expands to infrastructure targets across the region; AI concurred — [Stars and Stripes] US-Iran war expands to infrastructure targets across the region + [Newsweek] US Strikes Hit Bridges Near Hormuz As Iran Responds With New Attacks + https://nypost.com/2026/07/17/world-news/iranian-strike-damages-a-kuwait-desalination-plant-exposing-water-vulnerability-in-dry-mideast + [CNN] Iran and US widen attacks as renewed conflict shows no sign of de-escalating + [The Daily S
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/17/2026, 11:09:06 AM
+linked 4 items: Iran claims bold attack on US airbase and more top headlines — https://www.foxnews.com/us/iran-claims-bold-attack-us-airbase-more-top-headlines + https://www.newsnationnow.com/world/us-iran-war-strait-hormuz-syria-centcom + https://www.jpost.com/middle-east/iran-news/article-902822 + [The Straits Times] Iran’s IRGC say they targeted US command centre in Syria, state media reports
+by chelsea.l.durante.mil@mail.mil
+Hide image
+7/17/2026, 9:07:17 AM
+image hidden
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Jerusalem Post
+7/17/2026, 9:05:10 AM
+Suspected car ramming at checkpoint near Hebron, IDF searching for perpetrator
+AI score: 72
+pinned to 67
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+7/17/2026, 9:04:35 AM
+merged 3 items: Gulf exporters turn to pipelines as Hormuz risks grow — https://www.dw.com/en/gulf-exporters-turn-to-pipelines-as-hormuz-risks-grow/a-77980704 + https://www.dw.com/en/iran-s-oil-supply-threat-extends-beyond-strait-of-hormuz/a-77980704 + https://www.reuters.com/world/china/global-markets-global-markets-2026-07-17
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Newsweek
+7/17/2026, 9:04:00 AM
+Hackers Shut Down Coca-Cola’s $4 Billion Milk Brand in the US
+article
+AI score: 67
+pinned to 60
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+AP News
+7/17/2026, 9:03:37 AM
+Tanker boarded by armed group off Yemen, says British military
+AI score: 72
+pinned to 78
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/17/2026, 9:03:11 AM
+linked 2 items: Iran says it struck US command center in Syria amid Hormuz threats — https://www.newsnationnow.com/world/us-iran-war-strait-hormuz-syria-centcom + https://www.jpost.com/middle-east/iran-news/article-902822
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+7/17/2026, 9:02:57 AM
+merged 3 items: Iran says it struck US command center in Syria amid Hormuz threats — https://www.newsnationnow.com/world/us-iran-war-strait-hormuz-syria-centcom + https://www.jpost.com/middle-east/iran-news/article-902822 + [The Straits Times] Iran’s IRGC say they targeted US command centre in Syria, state media reports
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/17/2026, 9:02:18 AM
+linked 2 items: Tanker boarded by armed group off Yemen, says British military — https://apnews.com/article/yemen-gulf-of-aden-vessel-war-houthis-2d055cb4b17184e4d3637d96a2ce7256 + [The Straits Times] Assailants board chemical products tanker off Yemen in suspected pirate hijacking, sources say
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+7/17/2026, 9:01:30 AM
+merged 3 items: Iran says it struck US command center in Syria amid Hormuz threats — https://www.newsnationnow.com/world/us-iran-war-strait-hormuz-syria-centcom + https://www.jpost.com/middle-east/iran-news/article-902822 + [The Straits Times] Iran’s IRGC say they targeted US command centre in Syria, state media reports
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+7/17/2026, 8:53:36 AM
+merged 4 items: Iran says it struck US command center in Syria amid Hormuz threats — https://www.newsnationnow.com/world/us-iran-war-strait-hormuz-syria-centcom + https://www.foxnews.com/us/iran-claims-bold-attack-us-airbase-more-top-headlines + https://www.jpost.com/middle-east/iran-news/article-902822 + [The Straits Times] Iran’s IRGC say they targeted US command centre in Syria, state media reports
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+7/17/2026, 8:52:25 AM
+merged 4 items: Iran says it struck US command center in Syria amid Hormuz threats — https://www.newsnationnow.com/world/us-iran-war-strait-hormuz-syria-centcom + https://www.foxnews.com/us/iran-claims-bold-attack-us-airbase-more-top-headlines + https://www.jpost.com/middle-east/iran-news/article-902822 + [The Straits Times] Iran’s IRGC say they targeted US command centre in Syria, state media reports
+by chelsea.l.durante.mil@mail.mil
+manual-evict
+The Straits Times
+7/17/2026, 8:43:08 AM
+Iran’s IRGC say they targeted US command centre in Syria, state media reports
+article
+AI score: 79
+evicted [The Straits Times] Iran’s IRGC say they targeted US command centre in Syria, state media reports from US Strikes Bridges and Port Tower in Iran on Sixth Night
+by chelsea.l.durante.mil@mail.mil
+manual-evict
+7/17/2026, 8:42:59 AM
+evicted https://www.jpost.com/middle-east/iran-news/article-902822 from US Strikes Bridges and Port Tower in Iran on Sixth Night
+by chelsea.l.durante.mil@mail.mil
+manual-evict
+7/17/2026, 8:42:55 AM
+evicted https://www.newsnationnow.com/world/us-iran-war-strait-hormuz-syria-centcom from US Strikes Bridges and Port Tower in Iran on Sixth Night
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+7/17/2026, 8:42:21 AM
+marked as explainer
+by chelsea.l.durante.mil@mail.mil
+replace-headline
+France 24
+7/17/2026, 7:31:46 AM
+🔴 UK’s Andy Burnham named Labour leader ahead of taking over as PM
+AI score: 65
+headline → UK’s Andy Burnham named Labour leader ahead of taking over as PM
+by chelsea.l.durante.mil@mail.mil
+replace-headline
+CNBC
+7/17/2026, 7:31:35 AM
+[CNBC] "Chinese startup Moonshot AI unveils Kimi model it says rivals OpenAI, Anthropic"
+AI score: 65
+headline → Chinese startup Moonshot AI unveils Kimi model it says rivals OpenAI, Anthropic
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+NBC News
+7/17/2026, 7:30:49 AM
+Pro-Kremlin blogger who turned on Putin is arrested as Russia steps up crackdown
+AI score: 65
+pinned to 50
+by chelsea.l.durante.mil@mail.mil
+not imminent to US
+
+Link stories
+7/17/2026, 7:30:16 AM
+linked 94 items: U.S. strikes bridges in Iran, Tehran targets U.S. bases in the Gulf — https://www.npr.org/2026/07/17/g-s1-134158/us-iran-war-updates + https://www.aljazeera.com/news/2026/7/17/us-attacks-southern-iran-as-tehran-hits-gulf-countries-whats-the-latest + https://www.telesurenglish.net/at-least-8-dead-in-sixth-night-of-u-s-strikes-on-southern-iran + https://www.washingtonpost.com/world/2026/07/17/us-hits-bridges-energy-targets-iran-says-strikes-widen + [Fox News] US forces launch new
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/17/2026, 7:11:58 AM
+linked 69 items: U.S. hits bridges and energy targets, Iran says, as strikes widen; AI concurred — https://www.washingtonpost.com/world/2026/07/17/us-hits-bridges-energy-targets-iran-says-strikes-widen + https://www.aljazeera.com/news/2026/7/17/us-attacks-southern-iran-as-tehran-hits-gulf-countries-whats-the-latest + [Fox News] US forces launch new strikes on Iran's military and maritime targets + https://www.newsnationnow.com/world/us-iran-war-strait-hormuz-syria-centcom + https://www.military.
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/17/2026, 7:05:39 AM
+linked 69 items: U.S. hits bridges and energy targets, Iran says, as strikes widen — https://www.washingtonpost.com/world/2026/07/17/us-hits-bridges-energy-targets-iran-says-strikes-widen + https://www.aljazeera.com/news/2026/7/17/us-attacks-southern-iran-as-tehran-hits-gulf-countries-whats-the-latest + [Fox News] US forces launch new strikes on Iran's military and maritime targets + https://www.newsnationnow.com/world/us-iran-war-strait-hormuz-syria-centcom + https://www.military.com/us-strikes
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Newsweek
+7/17/2026, 7:03:45 AM
+The Next Oil Shock Might Depend on China
+article
+AI score: 82
+pinned to 74
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/17/2026, 6:41:20 AM
+linked 8 items: Iran says it struck US command center in Syria amid Hormuz threats; AI concurred — https://www.newsnationnow.com/world/us-iran-war-strait-hormuz-syria-centcom + https://www.aljazeera.com/news/2026/7/17/gulf-states-come-under-iranian-fire-as-us-strikes-intensify + https://www.cnbc.com/2026/07/17/iran-war-us-trump-syria-bahrain.html + https://www.telesurenglish.net/iran-strikes-u-s-bases-in-bahrain-and-kuwait-in-retaliation + [The Straits Times] Iran says it targeted US military in
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/17/2026, 6:27:44 AM
+linked 29 items: Fears Mount of US and Iran Escalation After Sixth Day of Clashes; AI concurred — https://www.bloomberg.com/news/articles/2026-07-17/fears-mount-of-us-and-iran-escalation-after-sixth-day-of-clashes + https://www.aljazeera.com/news/2026/7/17/us-attacks-southern-iran-as-tehran-hits-gulf-countries-whats-the-latest + https://www.military.com/us-strikes-bridges-and-collapses-a-tower-at-a-key-port-as-its-iran-campaign-expands + https://www.nbcnews.com/world/iran/us-strikes-bridges-iran
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Al Jazeera
+7/17/2026, 6:27:17 AM
+US attacks southern Iran, as Tehran hits Gulf countries: What’s the latest?
+AI score: 92
+pinned to 80
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/16/2026, 11:13:16 PM
+linked 2 items: Maine shooting and officer’s background raise new questions about ICE’s rapid hiring — https://apnews.com/article/main-shooting-ice-hiring-immigration-68d4a9d7d178311549f01f8fd5144511 + https://apnews.com/article/ice-david-brouillette-johan-guerrero-maine-shooting-dbc30d6d59e2a95fb470afc188e125c6
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Military Times
+7/16/2026, 11:12:26 PM
+Space increasingly becoming a warfighting domain, says Space Force chief nominee
+AI score: 65
+pinned to 67
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/16/2026, 11:10:54 PM
+linked 5 items: Trump Accuses China of Election Meddling, Putting Ties at Risk — https://www.bloomberg.com/news/articles/2026-07-17/trump-accuses-china-of-election-meddling-putting-ties-at-risk + https://www.france24.com/en/americas/20260717-trump-china-largest-compromise-us-election-data-declassify-intelligence + https://www.reuters.com/world/us/trump-alleges-china-committed-2020-election-fraud-2026-07-17 + https://www.dw.com/en/trump-unveils-report-on-alleged-chinese-election-meddling/a-779967
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/16/2026, 11:10:23 PM
+linked 2 items: AP Exclusive: ICE officer in Maine shooting has history of violent behavior, family and records say — https://apnews.com/article/ice-david-brouillette-johan-guerrero-maine-shooting-dbc30d6d59e2a95fb470afc188e125c6 + https://apnews.com/article/main-shooting-ice-hiring-immigration-68d4a9d7d178311549f01f8fd5144511
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+The Guardian
+7/16/2026, 11:09:29 PM
+‘Even Politburo members can be touched’: what the latest purge says about Xi Jinping’s China
+article
+AI score: 62
+marked as analysis
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+AP News
+7/16/2026, 11:08:20 PM
+Maine shooting and officer’s background raise new questions about ICE’s rapid hiring
+AI score: 65
+pinned to 50
+by chelsea.l.durante.mil@mail.mil
+Immigration and domestic
+
+Priority pin
+Breaking Defense
+7/16/2026, 10:57:36 PM
+Canada to invest $1.4B in armored vehicles in partnership with GDLS-Canada
+article
+AI score: 72
+pinned to 58
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/16/2026, 10:57:05 PM
+linked 12 items: Senate Republicans balk at Mike Johnson’s defense bill push — https://www.washingtonexaminer.com/news/senate/4651716/senate-republicans-balk-mike-johnson-defense-bill-push + [Associated Press] House Republicans’ $95 billion Iran war package clears first hurdle + https://www.jpost.com/american-politics/article-902809 + [Gulf News] House Republicans' $95 billion Iran war package clears first hurdle + https://abcnews.com/politics/speaker-johnsons-latest-challenge-funding-trumps-war
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+7/16/2026, 10:56:36 PM
+merged 3 items: Senate Republicans balk at Mike Johnson’s defense bill push — https://www.washingtonexaminer.com/news/senate/4651716/senate-republicans-balk-mike-johnson-defense-bill-push + https://www.bloomberg.com/news/articles/2026-07-16/gop-blueprint-to-spend-up-to-95-billion-advanced-by-house-panel + [CNN] GOP leaders forced to abandon signature veterans benefits bill amid intra-party dispute
+by chelsea.l.durante.mil@mail.mil
+manual-evict
+7/16/2026, 10:55:23 PM
+evicted https://breakingdefense.com/2026/07/as-gop-debates-defense-spending-air-force-chief-pushes-for-supplemental-1-5t-budget from Debris from intercepted Iranian strikes causes fires in Kuwait
+by chelsea.l.durante.mil@mail.mil
+manual-evict
+Politico
+7/16/2026, 10:55:11 PM
+Trump’s $1.5T defense budget is in trouble
+article
+AI score: 66
+evicted [Politico] Trump’s $1.5T defense budget is in trouble from Debris from intercepted Iranian strikes causes fires in Kuwait
+by chelsea.l.durante.mil@mail.mil
+manual-evict
+Associated Press
+7/16/2026, 10:55:02 PM
+House Republicans’ $95 billion Iran war package clears first hurdle
+article
+AI score: 78
+evicted [Associated Press] House Republicans’ $95 billion Iran war package clears first hurdle from Debris from intercepted Iranian strikes causes fires in Kuwait
+by chelsea.l.durante.mil@mail.mil
+manual-evict
+7/16/2026, 10:54:58 PM
+evicted https://abcnews.com/politics/speaker-johnsons-latest-challenge-funding-trumps-war-iran/story?id=134819979 from Debris from intercepted Iranian strikes causes fires in Kuwait
+by chelsea.l.durante.mil@mail.mil
+manual-evict
+7/16/2026, 10:54:44 PM
+evicted https://www.jpost.com/american-politics/article-902809 from Debris from intercepted Iranian strikes causes fires in Kuwait
+by chelsea.l.durante.mil@mail.mil
+Hide story
+BBC News
+7/16/2026, 10:53:31 PM
+One man's hunger strike changed India's map. Can it still change politics?
+article
+AI score: 45
+hidden
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Fox News
+7/16/2026, 10:52:32 PM
+'Woke' military academies targeted in new blueprint for sweeping warfighting overhaul
+AI score: 68
+pinned to 64
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Jerusalem Post
+7/16/2026, 10:51:30 PM
+Knesset passes bill to extend mandatory military service to 32 months
+AI score: 65
+pinned to 65
+by chelsea.l.durante.mil@mail.mil
+Relevant to us and Israel military operations
+
+Link stories
+CNN
+7/16/2026, 10:50:41 PM
+National Guard deployment to DC will last through Trump’s term
+article
+AI score: 50
+linked 2 items: National Guard deployment to DC will last through Trump’s term — [CNN] National Guard deployment to DC will last through Trump’s term + https://apnews.com/article/national-guard-deployment-extended-trump-dc-39b886397af1a335694630d27930eb7b
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+The Washington Post
+7/16/2026, 10:49:21 PM
+Appeals court keeps Pentagon’s escort policy for journalists in place
+article
+AI score: 55
+pinned to 65
+by chelsea.l.durante.mil@mail.mil
+Pentagon relevant
+
+Re-label
+USA Today
+7/16/2026, 10:47:11 PM
+Trump faces voter frustration on economy, Iran: poll
+article
+AI score: 63
+re-labeled to Governance, Elections & Domestic Stability · North America · United States
+by chelsea.l.durante.mil@mail.mil
+Replace image
+Bloomberg
+7/16/2026, 10:46:10 PM
+China Lauds Papua New Guinea Over Decision to Shut Taiwan Office
+AI score: 65
+photo uploaded
+by chelsea.l.durante.mil@mail.mil
+replace-headline
+The Guardian
+7/16/2026, 10:44:23 PM
+Ukraine war briefing: Kyiv ‘will win this war’, Keir Starmer tells Zelenskyy on final trip as PM
+article
+AI score: 75
+headline → Kyiv ‘will win this war’, Keir Starmer tells Zelenskyy on final trip as PM
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Reuters
+7/16/2026, 10:34:51 PM
+Canada will not share bridge tolls with US until debt repaid, Carney says
+AI score: 45
+pinned to 63
+by chelsea.l.durante.mil@mail.mil
+U.S. and allied tensioned should be higher score
+
+Re-label
+7/16/2026, 10:34:24 PM
+re-labeled to Border, Homeland & Internal Security · U.S.
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+7/16/2026, 10:33:31 PM
+merged 4 items: Trump accuses China of 'largest compromise' US election data, vows to declassify intelligence — https://www.france24.com/en/americas/20260717-trump-china-largest-compromise-us-election-data-declassify-intelligence + https://www.dw.com/en/trump-unveils-report-on-alleged-chinese-election-meddling/a-77996793 + https://www.cbsnews.com/video/trump-expected-allege-chinese-meddling-us-elections-sources-say + https://www.reuters.com/world/us/trump-alleges-china-committed-2020-election-fr
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Inside Defense
+7/16/2026, 10:31:41 PM
+DOD IG memo on intel analytic tradecraft standards at STRATCOM
+article
+AI score: 50
+pinned to 60
+by chelsea.l.durante.mil@mail.mil
+Re-label
+7/16/2026, 10:25:22 PM
+re-labeled to Intelligence, Espionage & Security Services · U.S.-China
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Jerusalem Post
+7/16/2026, 10:04:46 PM
+Syria arrests former officer accused of overseeing production of sarin bombs
+AI score: 88
+pinned to 79
+by chelsea.l.durante.mil@mail.mil
+Not imminent to the US
+
+Link stories
+7/16/2026, 7:21:58 PM
+linked 2 items: Iran continues to talk to U.S., wants to make a deal, White House says; AI concurred — https://www.reuters.com/world/middle-east/iran-continues-talk-us-wants-make-deal-white-house-says-2026-07-16 + https://apnews.com/article/iran-war-trump-strait-hormuz-negotiations-476de0b0c341ead38126e617234d0939
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+Politico
+7/16/2026, 7:18:42 PM
+Trump’s $1.5T defense budget is in trouble
+article
+AI score: 66
+merged 9 items: Trump’s $1.5T defense budget is in trouble — [Politico] Trump’s $1.5T defense budget is in trouble + [Associated Press] House Republicans’ $95 billion Iran war package clears first hurdle + https://abcnews.com/politics/wirestory/house-republicans-95-billion-iran-war-package-clears-134828867 + https://www.reuters.com/legal/government/us-house-republicans-push-forward-trump-funding-plan-iran-war-election-overhaul-2026-07-16 + https://www.foxnews.com/politics/gops-95b-defense-packag
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Fox News
+7/16/2026, 7:17:14 PM
+More than a quarter-million noncitizens may be registered to vote in 4 key states, DHS alleges
+AI score: 65
+pinned to 55
+by chelsea.l.durante.mil@mail.mil
+domestic - non defense related
+
+Priority pin
+Fox News
+7/16/2026, 6:22:09 PM
+FBI investigating after ICE headquarters in Phoenix riddled with gunfire
+AI score: 88
+pinned to 65
+by chelsea.l.durante.mil@mail.mil
+Domestic crime
+
+Content-kind mark
+7/16/2026, 12:49:06 PM
+marked as explainer
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+7/16/2026, 12:37:30 PM
+marked as explainer
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+7/16/2026, 12:33:43 PM
+marked as analysis
+by chelsea.l.durante.mil@mail.mil
+Hide story
+Washington Examiner
+7/16/2026, 12:30:08 PM
+Nitazenes prove that the problem of synthetic drug use can always worsen
+AI score: 65
+hidden
+by chelsea.l.durante.mil@mail.mil
+Re-label
+7/16/2026, 12:29:26 PM
+re-labeled to Border, Homeland & Internal Security · North America · United States
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/16/2026, 12:28:03 PM
+linked 4 items: Ousted defence chief Mykhailo Fedorov, whose reforms riled Ukraine's army bosses — https://www.france24.com/en/europe/20260716-ousted-defence-chief-mykhailo-fedorov-whose-reforms-riled-ukraine-s-army-bosses + https://www.washingtonpost.com/world/2026/07/16/zelensky-ousts-popular-defense-minister-an-architect-ukraines-drone-program + https://www.washingtontimes.com/news/2026/jul/16/zelenskyys-ouster-defense-chief-sparks-backlash-questions-ukraines + [NPR] Zelenskyy fires Ukraine's
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+7/16/2026, 12:27:10 PM
+merged 9 items: Protests erupt in Ukraine after Zelensky dismisses defense minister; AI concurred — https://www.france24.com/en/protests-erupt-in-ukraine-as-zelensky-removes-defence-minister-his-most-popular + [Newsweek] Thousands of Ukrainians Are Protesting Zelensky Decision Today—Why? + https://www.bbc.co.uk/news/articles/cdx76069n3do + [Gulf News] Protests erupt across Ukraine against removal of defence minister + https://apnews.com/article/russia-ukraine-war-defense-minister-reshuffle-fedor
+by chelsea.l.durante.mil@mail.mil
+Link stories
+Newsweek
+7/16/2026, 12:26:13 PM
+Thousands of Ukrainians Are Protesting Zelensky Decision Today—Why?
+article
+AI score: 66
+linked 7 items: Thousands of Ukrainians Are Protesting Zelensky Decision Today—Why? — [Newsweek] Thousands of Ukrainians Are Protesting Zelensky Decision Today—Why? + https://www.france24.com/en/protests-erupt-in-ukraine-as-zelensky-removes-defence-minister-his-most-popular + https://www.bbc.co.uk/news/articles/cdx76069n3do + [Gulf News] Protests erupt across Ukraine against removal of defence minister + https://apnews.com/article/russia-ukraine-war-defense-minister-reshuffle-fedorov-88083e4381b
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+Newsweek
+7/16/2026, 12:25:47 PM
+Thousands of Ukrainians Are Protesting Zelensky Decision Today—Why?
+article
+AI score: 66
+marked as explainer
+by chelsea.l.durante.mil@mail.mil
+Manual links & merges
+56 active
+Every manual link or merge an editor made. The AI's opinion is advisory — the editor's decision is what applied.
+
+Link
+Active
+AI: Concurs
+2 items
+Iran threatens wider war if US strikes persist: 'No political border' will be safe
+AI: Both articles discuss Iran's threats of wider war and internal political pressure related to US actions, indicating a shared underlying event.
+chelsea.l.durante.mil@mail.mil · 7/18/2026, 11:25:45 AM
+Remove link
+Link
+Active
+AI: No opinion
+3 items
+US hits Iran energy targets, bridges; Fallout persists after Trump election speech
+chelsea.l.durante.mil@mail.mil · 7/18/2026, 10:09:40 AM
+Remove link
+Link
+Active
+AI: No opinion
+7 items
+Iran's IRGC claims attacks on US military airbase in Jordan
+chelsea.l.durante.mil@mail.mil · 7/18/2026, 10:09:24 AM
+Remove link
+Link
+Active
+AI: Concurs
+2 items
+Israeli strike on Gaza funeral killed at least seven people, hospital says
+AI: Both articles report on an Israeli strike during a funeral in Gaza, resulting in multiple fatalities, indicating they cover the same event.
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 2:44:48 PM
+Remove link
+Link
+Active
+AI: No opinion
+5 items
+China, North Korea Exchange High-Level Visits
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 2:44:24 PM
+Remove link
+Link
+Active
+AI: No opinion
+2 items
+China dismisses Trump election interference accusations as 'entirely fabricated,' threatens countermeasures
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 1:10:35 PM
+Remove link
+Link
+Active
+AI: No opinion
+10 items
+'Whether you're Labour or not', Andy Burnham embodies a 'hope of political stability'
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 1:09:50 PM
+Remove link
+Link
+Active
+AI: No opinion
+5 items
+Germany and France to Draw Up Roadmap on China Trade Imbalances
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 1:09:33 PM
+Remove link
+Link
+Active
+AI: No opinion
+9 items
+Meet Andy Burnham, Britain's next prime minister
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 12:58:09 PM
+Remove link
+Link
+Active
+AI: Concurs
+2 items
+EU, Ukraine sign drone deal to fast-track unmanned systems production
+AI: Both articles focus on Ukraine's role in drone technology, with one detailing a new EU production deal and the other highlighting Ukraine's expertise gained from warfare.
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 12:57:41 PM
+Remove link
+Link
+Active
+AI: No opinion
+2 items
+Ukraine Says It Hit Russia’s Yanos Oil Refinery Thursday
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 12:55:05 PM
+Remove link
+Merge
+Active
+AI: No opinion
+6 items
+Dismissal of Ukraine’s defence minister highlights wider issues for Zelenskyy
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 12:19:04 PM
+Remove link
+Link
+Active
+AI: No opinion
+87 items
+US forces destroy Iranian surveillance tower, no troops killed, captured in Syria, CENTCOM says
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 12:17:39 PM
+Remove link
+Merge
+Active
+AI: No opinion
+4 items
+Germany to join French nuclear exercise in bid to boost defence cooperation
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 12:14:25 PM
+Remove link
+Merge
+Active
+AI: No opinion
+17 items
+Iran proves it can still inflict damage despite waves of US attacks
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 12:14:05 PM
+Remove link
+Link
+Active
+AI: Concurs
+16 items
+US-Iran war expands to infrastructure targets across the region
+AI: Both articles report on the escalating conflict between the US and Iran, specifically mentioning strikes on infrastructure targets in the Gulf region within a similar timeframe.
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 11:10:48 AM
+Remove link
+Link
+Active
+AI: No opinion
+4 items
+Iran claims bold attack on US airbase and more top headlines
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 11:09:04 AM
+Remove link
+Merge
+Active
+AI: No opinion
+3 items
+Gulf exporters turn to pipelines as Hormuz risks grow
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 9:04:34 AM
+Remove link
+Link
+Active
+AI: No opinion
+2 items
+Iran says it struck US command center in Syria amid Hormuz threats
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 9:03:11 AM
+Remove link
+Merge
+Active
+AI: No opinion
+3 items
+Iran says it struck US command center in Syria amid Hormuz threats
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 9:01:29 AM
+Remove link
+Link
+Active
+AI: No opinion
+2 items
+Tanker boarded by armed group off Yemen, says British military
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 9:02:18 AM
+Remove link
+Merge
+Active
+AI: No opinion
+4 items
+Iran says it struck US command center in Syria amid Hormuz threats
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 8:52:23 AM
+Remove link
+Link
+Active
+AI: No opinion
+94 items
+U.S. strikes bridges in Iran, Tehran targets U.S. bases in the Gulf
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 7:30:15 AM
+Remove link
+Link
+Active
+AI: Concurs
+69 items
+U.S. hits bridges and energy targets, Iran says, as strikes widen
+AI: Both articles report on US strikes against bridges and energy targets in Iran, occurring on the same night, involving the same primary actors.
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 7:05:38 AM
+Remove link
+Link
+Active
+AI: Concurs
+8 items
+Iran says it struck US command center in Syria amid Hormuz threats
+AI: Both articles report on Iran's escalating attacks in the region, specifically mentioning strikes on US interests in Syria and broader threats to Gulf states, indicating a connected series of events.
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 6:41:11 AM
+Remove link
+Link
+Active
+AI: Concurs
+29 items
+Fears Mount of US and Iran Escalation After Sixth Day of Clashes
+AI: Both articles report on US military actions against Iranian targets and the resulting escalation fears, occurring within the same timeframe.
+chelsea.l.durante.mil@mail.mil · 7/17/2026, 6:27:36 AM
+Remove link
+Link
+Active
+AI: No opinion
+2 items
+Maine shooting and officer’s background raise new questions about ICE’s rapid hiring
+chelsea.l.durante.mil@mail.mil · 7/16/2026, 11:10:04 PM
+Remove link
+Link
+Active
+AI: No opinion
+5 items
+Trump Accuses China of Election Meddling, Putting Ties at Risk
+chelsea.l.durante.mil@mail.mil · 7/16/2026, 11:10:54 PM
+Remove link
+Link
+Active
+AI: No opinion
+12 items
+Senate Republicans balk at Mike Johnson’s defense bill push
+chelsea.l.durante.mil@mail.mil · 7/16/2026, 10:57:04 PM
+Remove link
+Merge
+Active
+AI: No opinion
+3 items
+Senate Republicans balk at Mike Johnson’s defense bill push
+chelsea.l.durante.mil@mail.mil · 7/16/2026, 10:56:35 PM
+Remove link
+Link
+Active
+AI: No opinion
+2 items
+National Guard deployment to DC will last through Trump’s term
+chelsea.l.durante.mil@mail.mil · 7/16/2026, 10:50:41 PM
+Remove link
+Merge
+Active
+AI: No opinion
+4 items
+Trump accuses China of 'largest compromise' US election data, vows to declassify intelligence
+chelsea.l.durante.mil@mail.mil · 7/16/2026, 10:33:28 PM
+Remove link
+Link
+Active
+AI: Concurs
+2 items
+Iran continues to talk to U.S., wants to make a deal, White House says
+AI: Both articles discuss ongoing US-Iran diplomacy and negotiations, with the second article adding context about intensified fighting in the Strait of Hormuz, which is directly related to the diplomatic efforts.
+chelsea.l.durante.mil@mail.mil · 7/16/2026, 7:21:58 PM
+Remove link
+Merge
+Active
+AI: No opinion
+9 items
+Trump’s $1.5T defense budget is in trouble
+chelsea.l.durante.mil@mail.mil · 7/16/2026, 7:18:41 PM
+Remove link
+Link
+Active
+AI: No opinion
+4 items
+Ousted defence chief Mykhailo Fedorov, whose reforms riled Ukraine's army bosses
+chelsea.l.durante.mil@mail.mil · 7/16/2026, 12:28:02 PM
+Remove link
+Merge
+Active
+AI: Concurs
+9 items
+Protests erupt in Ukraine after Zelensky dismisses defense minister
+AI: All three articles report on the same event: protests in Ukraine following President Zelenskyy's dismissal of the defense minister, involving the same key actors and occurring within the same timeframe.
+chelsea.l.durante.mil@mail.mil · 7/16/2026, 12:27:09 PM
+Remove link
+Link
+Active
+AI: No opinion
+7 items
+Thousands of Ukrainians Are Protesting Zelensky Decision Today—Why?
+chelsea.l.durante.mil@mail.mil · 7/16/2026, 12:26:06 PM
+Remove link
+Merge
+Active
+AI: Concurs
+3 items
+Syria intercepts massive Hezbollah arms shipment hidden inside oil tanker from Iraq
+AI: All three articles report on Syrian actions to intercept weapons destined for Hezbollah, indicating a single, ongoing story about arms smuggling and regional dynamics.
+chelsea.l.durante.mil@mail.mil · 7/16/2026, 12:22:05 PM
+Remove link
+Link
+Active
+AI: Concurs
+2 items
+Teenager accused of carrying out sabotage actions in Poland for Russia
+AI: Both articles report on the same event: a man charged in Poland for alleged sabotage activities and for inflaming Polish-Ukrainian tensions, reportedly paid by Russia.
+joseph.r.holstead.civ@mail.mil · 7/16/2026, 9:26:57 AM
+Remove link
+Link
+Active
+AI: No opinion
+2 items
+Iran releases U.S. citizen in goodwill gesture, Trump says
+joseph.r.holstead.civ@mail.mil · 7/16/2026, 9:21:15 AM
+Remove link
+Link
+Active
+AI: No opinion
+4 items
+Iran warns Strait of Hormuz interference is 'red line' for US
+chelsea.l.durante.mil@mail.mil · 7/16/2026, 8:36:55 AM
+Remove link
+Link
+Active
+AI: Concurs
+32 items
+First Thing: US attacks tanker in continuing Iran conflict as Tehran releases US citizen
+AI: Both articles report on US strikes against Iran, indicating a continuing conflict and escalating tensions within a similar timeframe.
+chelsea.l.durante.mil@mail.mil · 7/16/2026, 6:51:09 AM
+Remove link
+Link
+Active
+AI: No opinion
+2 items
+US military disables first tanker in Arabian Sea since blockade was reimposed
+chelsea.l.durante.mil@mail.mil · 7/15/2026, 8:02:50 PM
+Remove link
+Link
+Active
+AI: Concurs
+5 items
+Auterion, Ukrainian drone-maker Skyfall to supply 50,000 FPVs
+AI: Both articles report on a significant development in drone production and supply involving Ukraine, indicating a shared underlying story about bolstering Ukraine's drone capabilities.
+chelsea.l.durante.mil@mail.mil · 7/15/2026, 5:56:24 PM
+Remove link
+Merge
+Active
+AI: No opinion
+3 items
+US strikes on Iran strengthen Trump's escalation options, officials say
+chelsea.l.durante.mil@mail.mil · 7/15/2026, 4:49:56 PM
+Remove link
+Link
+Active
+AI: Concurs
+2 items
+US strikes on Iran strengthen Trump's escalation options, officials say
+AI: Both articles discuss potential US military actions against Iran under President Trump, indicating a shared focus on the same developing story.
+chelsea.l.durante.mil@mail.mil · 7/15/2026, 4:46:22 PM
+Remove link
+Link
+Active
+AI: No opinion
+4 items
+US Launches Strikes on Iran Amid Resumed Port Blockade
+chelsea.l.durante.mil@mail.mil · 7/15/2026, 4:38:17 PM
+Remove link
+Link
+Active
+AI: Concurs
+2 items
+U.S. and Iran Trade Strikes With No Sign of Backing Down
+AI: Both articles report on the same US-Iran military exchanges and strikes occurring in the Strait of Hormuz, indicating a shared, immediate event.
+chelsea.l.durante.mil@mail.mil · 7/15/2026, 4:35:13 PM
+Remove link
+Link
+Active
+AI: Concurs
+3 items
+House Democratic leaders split over U.S. aid to Israel as public opinion shifts
+AI: Both articles report on the same core event: a division within the House Democratic party regarding US aid to Israel, with similar actors and timeframe.
+chelsea.l.durante.mil@mail.mil · 7/15/2026, 4:06:53 PM
+Remove link
+Link
+Active
+AI: Concurs
+2 items
+US launches ‘wave of strikes’ on Iran, Tehran threatens to halt regional energy exports
+AI: Both articles describe US military actions against Iran and Iran's retaliatory threats within a similar timeframe, indicating they cover the same core event.
+chelsea.l.durante.mil@mail.mil · 7/15/2026, 3:21:17 PM
+Remove link
+Link
+Active
+AI: Concurs
+5 items
+Moscow, Kyiv fight over Black Sea
+AI: Both articles focus on the ongoing conflict in the Black Sea region, specifically mentioning fighting over the area and an attack on Odesa, indicating a shared event and actors within the same timeframe.
+chelsea.l.durante.mil@mail.mil · 7/15/2026, 3:05:50 PM
+Remove link
+Link
+Revoked
+AI: Concurs
+2 items
+US House panel unveils $95 billion plan to fund defense and parts of Trump's voter ID bill
+AI: Both articles report on the same $95 billion defense funding plan unveiled by the US House, mentioning its inclusion of parts of Trump's voter ID bill.
+chelsea.l.durante.mil@mail.mil · 7/15/2026, 12:56:09 PM
+Link
+Active
+AI: No opinion
+2 items
+Massive cyberattack leaks thousands of files from India's largest nuclear plant on dark web
+chelsea.l.durante.mil@mail.mil · 7/15/2026, 1:53:31 PM
+Remove link
+Link
+Active
+AI: No opinion
+2 items
+US attacks Iran as IRGC claims strikes on US military sites in Gulf
+chelsea.l.durante.mil@mail.mil · 7/15/2026, 1:51:37 PM
+Remove link
+Merge
+Active
+AI: Concurs
+5 items
+Trump threatens strikes on Iranian energy plants and bridges without talks
+AI: Both articles report on President Trump's threats to strike Iranian infrastructure, specifically mentioning energy plants and bridges, in the same timeframe and involving the same primary actor.
+chelsea.l.durante.mil@mail.mil · 7/15/2026, 8:36:03 AM
+Remove link
+Link
+Active
+AI: Concurs
+7 items
+World shares are mixed and oil prices climb as Iran threatens to block Middle East energy exports
+AI: Both articles report on Iran's threat to block Middle East energy exports following the reimposition of US blockades, indicating the same core event and actors.
+chelsea.l.durante.mil@mail.mil · 7/15/2026, 8:32:14 AM
+Remove link
+Merge
+Active
+AI: Concurs
+3 items
+Russian attack on Odesa kills three as Ukraine targets vessels in Black Sea
+AI: All three articles report on the same event: a Russian attack on Odesa that resulted in three fatalities, with Ukraine also targeting vessels in the Black Sea.
+chelsea.l.durante.mil@mail.mil · 7/15/2026, 7:57:18 AM
+Remove link

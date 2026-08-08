@@ -1,0 +1,21 @@
+Stored label	UI label	Sub-topics it accounts for
+Military Operations & Armed Conflict	Military Ops	strikes, airstrikes, missile/drone attacks, shelling, bombardment, offensives, invasions, incursions, ground ops, captures/seizures, clashes, fighting, combat, frontlines, troops, military sites/bases/targets. Legacy: Military Operations/Incident/Action, Combat Operations, Iran/Middle East/Regional Conflict, US-Iran Military Action, Ukraine Battlefield, Iran-Israel/Gaza/Israel-Lebanon Conflict
+Force Posture & Deployments	Force Posture	deployments, troop/military buildup, reinforcements, mobilization, carrier strike groups. Legacy: Missile Buildup, Adversary Military Buildup, Missile Threats/Program, Military Modernization, Arms Buildup
+Defense Policy & Military Readiness	Defense Policy	defense policy, force readiness, posture reviews (AI-classified; no keyword remap)
+Weapons, Procurement & Defense Industry	Defense Industry	Defense Procurement, Defense Technology
+Nuclear, WMD & Strategic Deterrence	Nuclear & WMD	nuclear, uranium, enrichment, warheads, ICBM, WMD, chemical/biological weapons; Iran Nuclear Program/Deal/Agreement, Nuclear Policy
+Cyber, Space & Emerging Technology	Space & Tech	cyberattacks, ransomware, malware, data breach, hacking, satellites, Space Force; Military/AI/Space Tech, Cyber Espionage, Cybersecurity
+Foreign Policy & Diplomacy	Diplomacy	summit, negotiations, ceasefire, peace talks/deal/plan, diplomat, envoy, ambassador, bilateral talks; US-Iran/Ukraine/US Foreign-Policy relations + the …relations / …diplomacy suffix catch
+Alliances & Multilateral Institutions	Alliances	G7 Summit/Diplomacy, NATO Force Posture
+Economic Statecraft & Sanctions	Economic Pressure	sanctions, embargo, asset freeze, export controls; Sanctions/Economic Diplomacy
+Intelligence, Espionage & Security Services	Intel & Espionage	intelligence, espionage, security services (AI-classified)
+Information Environment & Influence	Information Ops	Information Environment/Warfare, Press Freedom, Political Commentary
+Terrorism, Insurgency & Non-State Armed Groups	Terrorism & Insurgency	terrorism, ISIS, al-Qaeda, al-Shabaab, Boko Haram, suicide bombing; Counterterrorism, Domestic Terrorism, Transnational Crime, Drug Trafficking, Insurgency, Militancy
+Border, Homeland & Internal Security	Domestic Security	Immigration/Border/Migration/Visa/Asylum/Refugee Policy, Homeland/Internal Security, Public Safety
+Maritime Security & Chokepoints	Maritime Security	Hormuz, straits, chokepoints, shipping/sea lanes, freedom of navigation, oil/LNG/crude tankers, Bab-el-Mandeb, Suez, Malacca, South China Sea, Red Sea
+Critical Infrastructure, Energy & Supply Chains	Infrastructure & Energy	oil/gas/fuel supply/output/exports, pipelines, refineries, power grid/plants, natural gas, LNG, supply chains; Energy Security/Policy
+Humanitarian, Civilian Harm & Displacement	Humanitarian Impact	Humanitarian Crisis, civilian harm, displacement, large scale natural disasters
+Governance, Elections & Domestic Stability	Governance & Stability	Domestic/US/Indian/Israeli Politics, Election Integrity, Civil Unrest, Political Instability, Government Shutdown, Legislation + the …politics suffix catch
+Law, Courts & International Norms	Legal & Norms	Human Rights, Legal Proceedings, Court Ruling, Litigation, Criminal Charges, Indictment, War Crimes
+Public Health, Disaster & Environmental Security	Disaster & Health	Natural Disaster, Public Health, Climate Change
+Global Markets & Strategic Economics	Strategic Markets	Economic/Trade Policy, Russian Economy, Trade Relations, Economic/Market Impact

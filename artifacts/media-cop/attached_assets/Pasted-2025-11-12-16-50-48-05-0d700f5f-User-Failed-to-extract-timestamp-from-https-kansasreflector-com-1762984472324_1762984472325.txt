@@ -1,0 +1,97 @@
+2025-11-12 16:50:48.05
+0d700f5f
+User
+Failed to extract timestamp from https://kansasreflector.com/2025/11/11/marion-county-agrees-to-pay-out-3m-for-newspaper-raid-express-regret/ : The operation was aborted due to timeout
+2025-11-12 16:50:49.25
+0d700f5f
+User
+Failed to extract timestamp from https://www.msn.com/en-us/news/us/ar-AA1QhQf2: The operation was aborted due to timeout
+2025-11-12 16:50:49.75
+0d700f5f
+User
+Failed to extract timestamp from https://nypost.com/2025/11/11/us-news/jonathan-braun-drug-dealer-freed-by-trump-convicted-again/: The operation was aborted due to timeout
+2025-11-12 16:50:50.75
+0d700f5f
+User
+Failed to extract timestamp from https://www.telegraph.co.uk/tennis/2025/11/12/serbia-has-turned-on-disgrace-novak-djokovic/: The operation was aborted due to timeout
+2025-11-12 16:50:51.05
+0d700f5f
+User
+Failed to extract timestamp from https://archive.is/ohTiw: The operation was aborted due to timeout
+2025-11-12 16:50:51.65
+0d700f5f
+User
+Failed to extract timestamp from https://www.cnbc.com/2025/11/12/white-house-october-data-release.html: The operation was aborted due to timeout
+2025-11-12 16:50:52.15
+0d700f5f
+User
+Failed to extract timestamp from https://www.yahoo.com/news/articles/actually-weakening-economy-why-trump-105500609.html: The operation was aborted due to timeout
+2025-11-12 16:50:53.25
+0d700f5f
+User
+Failed to extract timestamp from https://www.dailymail.co.uk/yourmoney/article-15277813: The operation was aborted due to timeout
+2025-11-12 16:50:54.05
+0d700f5f
+User
+Failed to extract timestamp from https://www.wsj.com/tech/ai/the-ai-boom-is-looking-more-and-more-fragile-bd546022: The operation was aborted due to timeout
+2025-11-12 16:50:54.35
+0d700f5f
+User
+Failed to extract timestamp from https://archive.ph/gKgWf: The operation was aborted due to timeout
+2025-11-12 16:50:54.95
+0d700f5f
+User
+Failed to extract timestamp from https://deadline.com/2025/11/tom-ford-cry-to-heaven-adele-nicholas-hoult-1236614051/: The operation was aborted due to timeout
+2025-11-12 16:50:55.75
+0d700f5f
+User
+Failed to extract timestamp from https://www.theguardian.com/film/2025/nov/12/adele-tom-ford-movie-acting-debut: The operation was aborted due to timeout
+2025-11-12 16:50:56.25
+0d700f5f
+User
+Failed to extract timestamp from https://www.wsj.com/world/americas/arrival-of-u-s-s-largest-warship-ratchets-up-pressure-on-venezuela-b520463e: The operation was aborted due to timeout
+2025-11-12 16:50:56.65
+0d700f5f
+User
+Failed to extract timestamp from https://www.cnn.com/2025/11/11/americas/venezuela-military-mobilization-us-buildup-intl-latam: The operation was aborted due to timeout
+
+2025-11-12 16:50:56.95
+0d700f5f
+User
+Failed to extract timestamp from https://slguardian.org/venezuela-prepares-guerrilla-style-defense-as-u-s-threat-looms/: The operation was aborted due to timeout
+2025-11-12 16:50:57.35
+0d700f5f
+User
+Failed to extract timestamp from https://archive.ph/RbTok: The operation was aborted due to timeout
+2025-11-12 16:50:58.05
+0d700f5f
+User
+Failed to extract timestamp from https://www.timesofisrael.com/a-vast-demand-for-posthumous-sperm-retrieval-creates-new-life-and-new-questions/: The operation was aborted due to timeout
+2025-11-12 16:50:58.25
+0d700f5f
+User
+Failed to extract timestamp from https://www.jewishnews.co.uk/revealed-the-animal-rights-group-sharing-obscene-anti-jewish-hate/: The operation was aborted due to timeout
+2025-11-12 16:51:00.55
+0d700f5f
+User
+Failed to extract timestamp from https://www.barrons.com/news/iran-says-dismantled-us-israeli-spy-network-ed775fff: The operation was aborted due to timeout
+2025-11-12 16:51:00.95
+0d700f5f
+User
+Failed to extract timestamp from https://www.jpost.com/middle-east/article-873638: The operation was aborted due to timeout
+2025-11-12 16:51:01.45
+0d700f5f
+User
+Failed to extract timestamp from https://apnews.com/7f5fc4e0ce6fe0991ace53e22546d23e: The operation was aborted due to timeout
+2025-11-12 16:51:01.75
+0d700f5f
+User
+Failed to extract timestamp from https://www.nytimes.com/2025/11/12/magazine/antidepressants-ssris-teen-sexual-side-effects.html?unlocked_article_code=1.0k8.H9RB.S5SlD45fN9HB&smid=url-share: The operation was aborted due to timeout
+2025-11-12 16:51:01.95
+0d700f5f
+User
+Failed to extract timestamp from https://metro.co.uk/2025/11/12/tourists-paid-70000-to-shoot-innocent-people-in-human-safari-hunting-trips-to-sarajevo-24686135/: The operation was aborted due to timeout
+2025-11-12 16:51:01.95
+0d700f5f
+User
+Checking archive links for Daily Beast content...

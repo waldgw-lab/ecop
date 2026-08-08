@@ -1,0 +1,204 @@
+The runtime behavior is coherent, but several comments and metadata fields are stale or misleading:
+The social account catalog labels many U.S. official accounts with an attachPolicy of corroborating, but the trust engine does not use that field for clustering behavior. Those accounts actually derive as attach-only.
+Some registry comments say Social–U.S. Official is corroborating or a primary origin, while the actual behavior function makes ordinary social attach-only. –--------- this should be a little different – the idea is to treat them somewhat like releases but not classified as releases
+Some representative-selection comments still say “official Social/Release,” even though only primary releases currently reach the primary representative pool.
+The UI’s Contributing Sources section includes primary-origin anchors that do not contribute formation weight or facts.
+
+BLUF:
+For the source types you currently use:
+Ordinary official social: Additional Coverage only.
+Unofficial social/OSINT/journalists/DataMinr: Additional Coverage only.
+Future international social: same attach-only behavior.
+Future CPC social: Contrast, not Additional Coverage.
+Combatant-command accounts classified as official releases: may anchor an already-corroborated story, but cannot form it or establish facts.
+Only trusted news corroboration forms and factually defines a normal story.
+
+The ideal behavior for source types: Social–U.S. Official
+Join an existing formed story	Yes
+--------(can attach to 3 other contributing sources minimum – therefore if removed – the story doesn’t disappear)
+Appear in Additional Coverage	Yes
+Supply an attributed statement	Yes — e.g. “President Trump said…”
+Count toward the two-publisher formation gate	No
+Keep a cluster alive after news corroboration disappears	No
+Turn their statements into corroborated facts	No
+-------For this – it should be yes – but can contribute/corroborate (not alter existing or guide) – if this is an existing behavior type for anchor then use it- if not we can reconsider
+Become the story representative/headline source	No
+Supply the story’s image or video	No
+Form a story with another official social account	No
+
+Executive summary
+The current Curated trust model has four practical behaviors:
+1.	Corroborating trusted news
+•	Forms and sustains stories.
+•	Supplies the factual core.
+•	Can represent the story.
+2.	Primary/origin anchor
+•	Currently applies to acceptable-factuality official releases, including some command-account X posts classified as releases.
+•	Cannot form a story or establish corroborated facts.
+•	Can represent an already-formed story as its official origin.
+3.	Contrast
+•	CPC/SWL/EPC or mixed/low/very-low-factuality sources, including any future Social–CPC account.
+•	Cannot form, sustain, or represent a story.
+•	Cannot alter corroborated facts.
+•	Can contribute attributed claims, framing, and align/diverge analysis.
+4.	Attached / Additional Coverage
+•	Includes normal official social posts, unofficial social/OSINT, journalists’ X posts, and DataMinr.
+•	Cannot form, sustain, anchor, represent, or supply story media.
+•	Cannot alter corroborated facts.
+•	Can contribute an explicitly attributed statement or a characterization of its framing.
+The automatic formation threshold is currently at least two corroborating items from at least two distinct publishers.
+________________________________________
+Current social-source matrix
+Registry type	Current examples	Actual behavior	Forms/sustains story?	Representative/headline?	Story image/video?	Corroborated facts?	Attributed claims/framing?
+Social — U.S. official	POTUS Truth Social, SecWar/Pete Hegseth, PressSec, StateDept, TheJointStaff, SecArmy, SecAFOfficial, SecRubio, RapidResponse47, DOWResponse, DoW CIO	Attached / attach-only	No	No	No	No	Yes, explicitly attributed
+Social — international	None currently	Attached / attach-only	No	No	No	No	Yes, explicitly attributed
+Social — CPC/SWL/EPC	None currently	Contrast	No	No	No	No	Yes, with contrast/alignment treatment
+Other Source — Social (unofficial)	OSINT613, OSINTtechnical, MATA_osint, FirstSquawk, AggregateOsint, pizzintwatch, Global_Mil_Info, sentdefender; Curated journalist accounts; DataMinr	Attached / attach-only	No	No	No	No	Yes, explicitly attributed
+Release — U.S. official, even when collected from X	CENTCOM, SOUTHCOM, EUCOM, USPACOM, AFRICOM, NORTHCOM, SPACECOM, CYBERCOM, SOCOM, STRATCOM, TRANSCOM	Primary/origin anchor	Cannot form or sustain	Yes, after trusted news forms the story	Normally eligible	No	Yes, explicitly attributed
+Important exception: X does not always mean “Social”
+Several combatant-command accounts are collected from X but intentionally registered as Release — U.S. official.
+That gives them anchor-only / primary behavior rather than normal social attach-only behavior. Consequently:
+•	CENTCOM cannot create a story by itself.
+•	CENTCOM does not count as one of the two corroborating publishers.
+•	CENTCOM’s statement cannot become a corroborated fact by itself.
+•	But once two trusted news publishers form the story, CENTCOM can become its primary/origin representative and its statement can be presented as “CENTCOM announced/said…”.
+That distinction comes from the Outlet Registry classification, not from the website or scraper lane where the item arrived.
+________________________________________
+What “contributing” and “anchoring” mean
+There are three engine classes, with two kinds of anchor-only behavior.
+1. Corroborating
+Primarily acceptable-factuality news sources.
+They can:
+•	Count toward the two-source/two-publisher formation gate.
+•	Keep a story above that gate on later clustering passes.
+•	Supply the neutral headline, lede, and corroborated facts.
+•	Become the representative if no primary-origin release exists.
+Only these sources inform the factual synthesis.
+2. Anchor-only / primary
+Primarily official releases.
+They:
+•	Do not count toward formation.
+•	Do not turn an official assertion into a corroborated fact.
+•	Can be the representative of a story already formed by two corroborating publishers.
+•	Can establish the official origin/context: “The Pentagon announced…” or “CENTCOM said…”.
+•	Can be included in attributed claims and source-specific framing.
+The UI currently places these in Contributing Sources with an Origin indication. That display label is potentially confusing: an origin source appears prominently, but it is not “contributing” to formation or corroborated facts in the engine sense.
+3. Anchor-only / contrast
+This is used for CPC/SWL/EPC designations and mixed-or-lower factuality.
+Despite the internal anchor-only class name, a contrast item is not allowed to be the representative.
+It:
+•	Has no formation weight.
+•	Cannot sustain the cluster.
+•	Cannot supply the headline, lede, facts, or media.
+•	Appears under Contrast Sources.
+•	Receives an alignment analysis showing what its claims align with or diverge from.
+•	May supply attributed claims, always presented as claims rather than facts.
+4. Attach
+Normal official social and unofficial social/OSINT use this class.
+It:
+•	Has no formation weight.
+•	Cannot bootstrap against another social post.
+•	Cannot represent the story.
+•	Cannot supply story imagery.
+•	Appears in Additional Coverage.
+•	Can be characterized in the per-source framing.
+•	Can provide a noteworthy attributed statement, such as “The White House said…” or “OSINT613 claimed…”.
+________________________________________
+Facts versus claims
+This is the central distinction.
+Social cannot change the corroborated factual core
+The neutral:
+•	Headline
+•	Lede
+•	Corroborated facts
+are instructed to use corroborating sources only.
+A social post cannot turn an assertion into fact merely by being attached, even if it is an official account.
+Social can be mentioned as an attributed claim
+The synthesis can extract attributed statements from any source, including social:
+•	“President Trump said…”
+•	“The Pentagon claimed…”
+•	“OSINT613 reported…”
+•	“Iranian state media claimed…”
+Those appear separately from corroborated facts. They should not be written as unattributed truth.
+Social can affect framing analysis
+Every member can receive a source-specific framing or “spin” description. Contrast sources additionally receive align/diverge analysis.
+Therefore an attached post can change:
+•	The source list.
+•	Its own framing description.
+•	The cluster’s attributed-claims section.
+It should not change:
+•	Which facts are considered corroborated.
+•	The neutral lede.
+•	The story’s representative or media.
+•	Whether the story meets formation requirements.
+________________________________________
+Formation, attachment, and survival
+Automatic formation
+A normal story requires:
+•	At least two corroborating items.
+•	From at least two distinct publishers.
+The following combinations do not form a story:
+•	Two official social posts.
+•	One news article plus ten social posts.
+•	One news article plus an official release.
+•	Two official releases.
+•	Two OSINT posts.
+•	One trusted news source repeated several times.
+•	Two CPC/contrast sources.
+A valid example is:
+•	AP + Reuters form the story.
+•	POTUS Truth Social, CENTCOM, OSINT613, and a future CPC social source can then join under their respective roles.
+Social matching cannot bootstrap itself
+The social rescue path only gives a social post a chance to enter clustering alongside an already-selected corroborating or primary-origin story reference.
+It does not match social to social to manufacture a story. The grouping and coherence checks still have to accept the relationship.
+Direct editor attachment
+The card attachment workflow added in Task #1166:
+•	Requires an approved/current social candidate.
+•	Requires an active, already-formed target story.
+•	Revalidates both at commit time.
+•	Creates a soft link only.
+•	Cannot escalate into a merge.
+•	Cannot create or promote a story.
+Cluster survival
+On ordinary clustering passes, the cluster must retain its corroborating core. Social, contrast, and primary-origin members cannot keep a cluster alive if it falls below the two-publisher corroboration floor.
+Continuity/archive rescue can help recover the missing corroborating members, but attached social membership is not self-sustaining formation evidence.
+Manual force-merge exception
+Editors have a privileged force-merge path that can bypass the normal formation gate and staleness phase-out. That is the only route by which an all-social grouping can exist as a formed story.
+This is an explicit human override, not ordinary clustering behavior.
+________________________________________
+Secondary display effects worth knowing
+Although social posts cannot affect the factual synthesis or formation gate, confirmed attached members currently participate in some generic card aggregation:
+•	They count in the displayed source count.
+•	They can affect the displayed freshest-member time.
+•	The cluster priority calculation currently considers confirmed members generically, including attached members, although late singleton lifts are capped and social usually enters around a low P50 baseline.
+So “non-contributing” currently means no formation, factual, representative, or media authority. It does not mean the post is ignored by every secondary display metric.
+That priority/freshness behavior is the main area I would flag if the intended rule is truly “social can never promote or refresh a cluster in any way.”
+________________________________________
+Task review
+Both tasks now show as Ready.
+Task #1167 — Prevent all-social editor merges from becoming story media
+Assessment
+This is consistent with the normal rules and closes a legitimate override-path hole.
+Normal clustering cannot elect social as a representative. But an editor force-merge can bypass formation with an all-social group, leaving the representative fallback with nothing except social members. Task #1167 prevents that fallback from supplying story image or video.
+Remaining scope caveat
+The task is about media, not about forbidding all-social force merges.
+Therefore, based on its plan:
+•	An editor may still deliberately create an all-social forced story.
+•	It may still exist despite having no corroborating sources.
+•	It will not have normal corroborated synthesis because synthesis fails closed when there are no corroborating members.
+•	It may still need a social-derived fallback title/source because there is no non-social member.
+•	It simply cannot use social image/video as the story’s media.
+If your absolute policy is:
+“Social posts can never form or sustain a story, even under an editor merge,”
+then Task #1167 does not go far enough. It enforces the media restriction, not the formation restriction. If manual authority is intentionally allowed to override formation, the task is appropriately scoped.
+Task #1168 — Keep broad aliases from grouping news outlets as social accounts
+Assessment
+No contradiction with the trust rules.
+It protects the Source Oversight interface from treating an unrelated registry row as an approved social account merely because it happens to match a descriptive catalog alias. Explicit handles, registry names, and legacy display handles remain the approved identities.
+Scope caveat
+Task #1168 protects Source Oversight grouping. It does not change runtime Outlet Registry resolution.
+The runtime registry matcher still intentionally uses registry aliases when resolving stored source names. Therefore:
+•	A future overly broad alias on an Outlet Registry social row could still misresolve runtime content.
+•	Task #1168 would stop that unrelated row from appearing in the social section of Source Oversight, but it would not necessarily prevent the underlying runtime trust classification collision.
+Current catalog entries were assessed as safe, so this is a future-proofing distinction rather than a known live defect.
+

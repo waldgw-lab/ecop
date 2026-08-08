@@ -1,0 +1,22 @@
+#	Stored label	UI label	Sub-topics it accounts for
+1	Military Operations & Armed Conflict	Military Ops	strikes, airstrikes, missile/drone attacks, shelling, bombardment, offensives, invasions, incursions, ground ops, captures/seizures, clashes, fighting, combat, frontlines, troops, military sites/bases/targets. Legacy: Military Operations/Incident/Action, Combat Operations, Iran/Middle East/Regional Conflict, US-Iran Military Action, Ukraine Battlefield, Iran-Israel/Gaza/Israel-Lebanon Conflict
+2	Force Posture & Deployments	Force Posture	deployments, troop/military buildup, reinforcements, mobilization, carrier strike groups. Legacy: Missile Buildup, Adversary Military Buildup, Missile Threats/Program, Military Modernization, Arms Buildup
+3	Defense Policy & Military Readiness	Defense Policy	defense policy, force readiness, posture reviews (AI-classified; no keyword remap)
+4	Weapons, Procurement & Defense Industry	Defense Industry	Defense Procurement, Defense Technology
+5	Nuclear, WMD & Strategic Deterrence	Nuclear & WMD	nuclear, uranium, enrichment, warheads, ICBM, WMD, chemical/biological weapons; Iran Nuclear Program/Deal/Agreement, Nuclear Policy
+6	Cyber, Space & Emerging Technology	Space & Tech	cyberattacks, ransomware, malware, data breach, hacking, satellites, Space Force; Military/AI/Space Tech, Cyber Espionage, Cybersecurity
+7	Foreign Policy & Diplomacy	Diplomacy	summit, negotiations, ceasefire, peace talks/deal/plan, diplomat, envoy, ambassador, bilateral talks; US-Iran/Ukraine/US Foreign-Policy relations + the …relations / …diplomacy suffix catch
+8	Alliances & Multilateral Institutions	Alliances	G7 Summit/Diplomacy, NATO Force Posture
+9	Economic Statecraft & Sanctions	Economic Pressure	sanctions, embargo, asset freeze, export controls; Sanctions/Economic Diplomacy
+10	Intelligence, Espionage & Security Services	Intel & Espionage	intelligence, espionage, security services (AI-classified)
+11	Information Environment & Influence	Information Ops	Information Environment/Warfare, Press Freedom, Political Commentary
+12	Terrorism, Insurgency & Non-State Armed Groups	Terrorism & Insurgency	terrorism, ISIS, al-Qaeda, al-Shabaab, Boko Haram, suicide bombing; Counterterrorism, Domestic Terrorism, Transnational Crime, Drug Trafficking, Insurgency, Militancy
+13	Border, Homeland & Internal Security	Domestic Security	Immigration/Border/Migration/Visa/Asylum/Refugee Policy, Homeland/Internal Security, Public Safety
+14	Maritime Security & Chokepoints	Maritime Security	Hormuz, straits, chokepoints, shipping/sea lanes, freedom of navigation, oil/LNG/crude tankers, Bab-el-Mandeb, Suez, Malacca, South China Sea, Red Sea
+15	Critical Infrastructure, Energy & Supply Chains	Infrastructure & Energy	oil/gas/fuel supply/output/exports, pipelines, refineries, power grid/plants, natural gas, LNG, supply chains; Energy Security/Policy
+16	Humanitarian, Civilian Harm & Displacement	Humanitarian Impact	Humanitarian Crisis, civilian harm, displacement, large scale natural disasters
+17	Governance, Elections & Domestic Stability	Governance & Stability	Domestic/US/Indian/Israeli Politics, Election Integrity, Civil Unrest, Political Instability, Government Shutdown, Legislation + the …politics suffix catch
+18	Law, Courts & International Norms	Legal & Norms	Human Rights, Legal Proceedings, Court Ruling, Litigation, Criminal Charges, Indictment, War Crimes
+19	Public Health, Disaster & Environmental Security	Disaster & Health	Natural Disaster, Public Health, Climate Change
+20	Global Markets & Strategic Economics	Strategic Markets	Economic/Trade Policy, Russian Economy, Trade Relations, Economic/Market Impact
+—	Other / Emerging (catch-all)	(no short label)	anything off-list; the card shows the row's specific free-form category instead, else a neutral "—"

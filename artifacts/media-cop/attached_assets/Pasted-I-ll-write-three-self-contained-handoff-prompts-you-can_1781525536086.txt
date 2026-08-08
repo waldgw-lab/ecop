@@ -1,0 +1,127 @@
+I'll write three self-contained handoff prompts you can drop straight into background tasks. First let me confirm the exact insertion points (where production static serving is wired, and how the routes/Switch are structured) so the prompts are precise and conflict-free.
+
+
+4 actions
+I have everything I need. App.tsx has real auth-gating logic below the imports (not just a plain Switch), so the code-splitting prompt has to flag that. Here are three self-contained handoff prompts — each is file-isolated, so they can run in parallel as separate background tasks with no merge conflicts.
+
+Task 1 — Faster first load: split each page into its own download
+GOAL
+Speed up first page load across the whole MCOP app by code-splitting the React
+routes so opening one view no longer downloads the JavaScript for all 16 pages.
+Today the production bundle is a single ~2 MB file because every page is eagerly
+imported.
+CONTEXT
+- File: client/src/App.tsx
+- Lines 8–23 eagerly import all 16 page components (Dashboard, Stream, Curated,
+  Team, War, WarAdmin, CustomMcop, CustomMcopAdmin, AdditionalMcops, Curated*,
+  Privacy, Terms, etc.).
+- IMPORTANT: App.tsx is NOT a simple <Switch>. Below the imports (lines ~35–212)
+  there is real logic: a dev-only redirect to /curated, route flags
+  (isCuratedRoute, isTeamRoute, isWarRoute, isCustomMcopRoute…), and
+  authentication gating with useState/useEffect. Read the ENTIRE file before
+  changing anything — do not assume the structure.
+- Routing is wouter (<Switch>/<Route component={...}>).
+WHAT TO DO
+- Convert the page imports to React.lazy(() => import("@/pages/Xxx")).
+- Keep Login eager (it is the auth gate and renders immediately) — lazy-load the
+  rest.
+- Wrap the route-rendering area in a single <Suspense> with a lightweight
+  fallback (reuse an existing spinner/skeleton if one exists; otherwise a minimal
+  centered loader). With wouter, Suspense must sit ABOVE the <Switch>/route
+  output so any lazy route can suspend.
+- Preserve ALL existing behavior: the auth gating, the dev /curated redirect, and
+  every route flag must work exactly as before. Pages use default exports
+  (React.lazy requires that) — verify each.
+CONSTRAINTS
+- Do NOT modify server/vite.ts, vite.config.ts, drizzle.config.ts, or
+  package.json.
+- No visual or behavioral change other than a brief fallback while a page chunk
+  loads.
+DONE LOOKS LIKE
+- `npm run build` produces multiple JS chunks (one per page) instead of one giant
+  main chunk; the main/entry chunk is dramatically smaller.
+- Every route still loads and renders correctly (Dashboard, Stream, Curated,
+  Curated archive/methodology, Team, StreamManager, War, WarAdmin, CustomMcop +
+  admin, AdditionalMcops, Privacy, Terms, NotFound).
+- Auth gating and the dev redirect behave identically to before.
+- tsc is clean; no console errors on navigation.
+
+Task 2 — Stop re-downloading the app: cache static assets in the browser
+GOAL
+Make returning visits much faster by telling browsers to cache the version-hashed
+static assets (JS/CSS) long-term. Today they are served with no long-lived
+cache, so returning users re-download the whole bundle every visit.
+CONTEXT
+- Production static serving happens in server/index.ts: in the `else` branch
+  (non-development), around lines 106–110, it calls `serveStatic(app)`.
+- serveStatic lives in server/vite.ts and is OFF-LIMITS — do NOT edit
+  server/vite.ts. Built assets live under dist/public/assets/ with content-hashed
+  filenames (e.g. main-DoVbhH-9.js), which are safe to cache forever.
+WHAT TO DO
+- In server/index.ts, in the production `else` branch, BEFORE the call to
+  serveStatic(app), mount a dedicated long-cache static handler for the hashed
+  assets only, e.g.:
+    import path from "path";   // if not already imported
+    app.use("/assets", express.static(
+      path.resolve(import.meta.dirname, "public", "assets"),
+      { immutable: true, maxAge: "1y" }
+    ));
+  Because this is registered first, it serves /assets/* with a long cache;
+  serveStatic still handles everything else (notably index.html) with its normal
+  short/no cache. This is critical: index.html must NEVER be long-cached or users
+  get stuck on a stale app.
+CONSTRAINTS
+- Do NOT modify server/vite.ts, vite.config.ts, drizzle.config.ts, or
+  package.json.
+- Development mode (Vite) must be untouched — this only affects the production
+  serveStatic path.
+- This must coexist cleanly with the existing `compression` middleware already in
+  server/index.ts (gzip + long cache together is fine).
+DONE LOOKS LIKE
+- After `npm run build` and running in production mode, a request to a hashed
+  asset returns `Cache-Control: public, max-age=31536000, immutable`
+  (verify with `curl -D - <asset-url>`).
+- A request for `/` (index.html) does NOT carry that long cache header.
+- App still loads and serves correctly in both dev and production.
+
+Task 3 — Smooth out the Stream page: briefly cache its feed
+GOAL
+Remove the recurring ~200 ms cost on the Stream page by adding a short in-memory
+cache to the /api/stream endpoint. It currently runs 6 database queries on every
+request with no caching; the feed is identical for all authenticated users.
+CONTEXT
+- File: server/routes.ts
+- Handler: app.get("/api/stream", headlineFeedGuard, async (req, res) => { ... })
+  starting around line 3374. It builds a combined payload from getPrimaryFeed +
+  several social feeds.
+- There is an EXISTING in-memory TTL cache pattern to mirror in the same file:
+  `curatedReadCache` (a Map with at/ttl entries + getter/setter + size cap),
+  around lines 928–951. Follow that same style for consistency.
+WHAT TO DO
+- Add a short-TTL in-memory cache (suggested 20–30s) for the fully-computed
+  /api/stream response payload. The feed is the same for every authenticated
+  user, so a single global cached payload is correct — do NOT key by user/session.
+- Auth still applies: keep `headlineFeedGuard` on the route. Only the computed
+  data is cached, never the auth decision.
+- On a cache hit within TTL, return the cached payload directly. On miss,
+  compute, store, and return.
+- Do NOT cache error responses. Do NOT change the response shape/contents at all
+  — same JSON as today, just served from memory when warm.
+CONSTRAINTS
+- Do NOT modify server/vite.ts, vite.config.ts, drizzle.config.ts, or
+  package.json.
+- Keep the TTL small so freshness is preserved (scrapers add content every few
+  minutes; 20–30s staleness is fine).
+DONE LOOKS LIKE
+- Two back-to-back authenticated calls to /api/stream: the first computes (~200ms),
+  the second within the TTL returns the same data with much lower latency
+  (single-digit ms).
+- After the TTL elapses, the next call recomputes (fresh data).
+- Response body is byte-identical to the pre-change output for the same data.
+- tsc is clean.
+
+On running them: these three are fully independent — Task 1 touches only client/src/App.tsx, Task 2 only server/index.ts, Task 3 only server/routes.ts — so you can launch all three as background tasks at once with no merge conflicts.
+
+On the review + republish step: I can't review code that doesn't exist yet, so here's the sequence — kick off the three background tasks, and once they finish and merge back into the main app, tell me they've landed. I'll then run a comprehensive code review across all three changes plus the compression work already in place, sanity-check that every view still loads, and give you a clear go / no-go on republishing. I won't trigger a republish on my own.
+
+Want me to tweak the scope or wording of any of these three prompts before you hand them off?

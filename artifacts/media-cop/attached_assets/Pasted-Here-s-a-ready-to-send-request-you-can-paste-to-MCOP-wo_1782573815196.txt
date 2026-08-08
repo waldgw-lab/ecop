@@ -1,0 +1,32 @@
+Here's a ready-to-send request you can paste to MCOP (works whether you're messaging an operator or an MCOP query/agent interface). It's grounded in exactly what I found:
+
+Subject: Request — add adversary state-media outlets to the MCOP feed/API
+Context: We ingest MCOP through the public API (/api/v1/articles, /alerts, /social)
+for an Iran-conflict information-environment dashboard. We pull every content lane
+with no source filter, so we already receive everything MCOP serves.
+Gap: The feed currently carries no adversary state-media outlets, which we need for
+adversary-messaging analysis (Iran / Russia / China / Cuba).
+What we're observing:
+- /articles (team submissions) carried adversary outlets Feb–Apr 2026 (e.g. TASS,
+  ~224 items in March) then stopped — nothing since April 2026.
+- The live /articles feed today is ~100% Western/allied (Bloomberg, Al Jazeera,
+  The Diplomat, CBS, France 24, Jerusalem Post, AP, BBC, DW...).
+- /social is US political + OSINT accounts only; /alerts is DataMinr breaking-news.
+- /status advertises only 4 endpoints — there is no adversary/state-media lane.
+Request — either of:
+  (A) Include the adversary/state outlets below in the team_submission curated lane, OR
+  (B) Expose a dedicated state-media/adversary lane (or a source / country / dataSource
+      filter on /articles) so we can pull them specifically.
+Outlets needed (by country):
+  • Iran:   Press TV, IRNA, Tasnim, Fars, Mehr, Tehran Times, Nour News, Al Alam
+  • Russia: TASS, RT, Sputnik, RIA Novosti
+  • China:  CGTN, Xinhua, Global Times, China Daily, People's Daily
+  • Cuba:   Granma, Prensa Latina, Cubadebate, ACN
+  • If available — North Korea: KCNA · Lebanon/proxy: Al Mayadeen, Al Manar · Venezuela: teleSUR
+Per-article fields we need (to attribute by outlet):
+  outlet/source name, article URL, published timestamp (UTC/ISO), headline,
+  summary or body text, language, and country of origin.
+Scope / cadence: daily, conflict-relevant (Iran / Israel / U.S.-strike topics) plus
+general adversary messaging from these outlets.
+
+No code was changed — this is the message only. Trim the outlet list to whatever set you actually want MCOP to prioritize. If they go with option (B) and expose a filter/lane, tell me the param or endpoint and I'll wire our sync to pull it.

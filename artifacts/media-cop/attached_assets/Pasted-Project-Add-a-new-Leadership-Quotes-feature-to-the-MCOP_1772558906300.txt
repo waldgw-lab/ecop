@@ -1,0 +1,21 @@
+Project: Add a new "Leadership Quotes" feature to the MCOP application.
+Part 1: Frontend UI & Layout
+•	Create a collapsible bottom-sheet component on both the 'Main Page' and the 'Stream' page. The default state is 'collapsed'.
+•	When expanded, it opens into a full-page view titled "What Leaders are Saying".
+•	Slide-Style Motif: The expanded view should resemble a PowerPoint presentation slide. To achieve this, contain the layout within a fixed 16:9 aspect ratio container that centers on the screen. Use clean, distinct headers for each section, bold presentation-style typography, and clear borders around the panels.
+•	Layout: The "slide" should feature a 3-column CSS Grid layout with 4 distinct panels:
+o	Left Column (Blue background): "US Leader Quotes"
+o	Middle Column (Green background): Split into two horizontal rows. Top row: "ISR Leadership". Bottom row: "Allies / Partners / Regional Leadership".
+o	Right Column (Red background): "Other"
+•	Pagination / Overflow: Because it is styled like a presentation slide, avoid infinite scrolling on the whole page. If a panel has too many quotes, display the most important up top and visible, with additional quotes accessible by scrolling. Make that specific panel internally scrollable, or use a simple page 1/2 pagination inside the card.
+•	Quote Card UI: Each quote displayed must show the Speaker, Quote text, Time (EST), and Location in a clean, legible format suitable for a briefing.
+•	Search Bar: Add an expandable search bar at the top of the view. Allow filtering by text search, specific panel/category, and date.
+Part 2: Backend & Input (The 'Team' Page)
+•	On the 'Team' page, create a button called 'Leadership Quotes' that opens an input dashboard.
+•	Manual Entry: Create a form to input individual quotes (Fields: Speaker, Source, Category Dropdown [US / ISR / A&P&R / Other], Time, Location).
+•	AI Bulk Entry: Create a large textarea where users can paste a block of text. Integrate an LLM (e.g., OpenAI API) to parse this text, extract quotes, and automatically categorize them into the database using the schema mentioned above.
+Part 3: Display Logic & Background Sorting
+•	In the input dashboard, add a global toggle switch: 'Locked' vs 'Unlocked'.
+•	Locked Mode: The display on the Main/Stream pages shows the quotes statically based on the time they were entered.
+•	Unlocked Mode (Auto-Sort): Set up a backend scheduler (like node-cron) that runs every 10 minutes. When unlocked, this job will pass the current active quotes to an AI model to evaluate their "importance to senior military leadership." The frontend panels should re-order themselves based on this AI-determined importance ranking.
+

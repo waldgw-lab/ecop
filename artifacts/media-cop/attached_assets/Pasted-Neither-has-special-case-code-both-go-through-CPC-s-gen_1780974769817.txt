@@ -1,0 +1,30 @@
+Neither has special-case code — both go through CPC's generic image extraction. Let me look at how that generic image-picking works.
+
+
+2 actions
+Let me read the two key parts of the generic image-picking logic.
+
+
+3 actions
+Both Axios and France 24 use CPC's generic image pipeline — neither has any site-specific image code (unlike TASS or ABC News, which needed custom fixes because they serve logo placeholders). So the answer is the same for both, and it comes down to two sources tried in priority order.
+
+The selection logic
+In extractArticle (server/routes.ts ~4940):
+
+const ogImage = extractImage(html);      // meta-tag fallback
+let articleImage = best.image || ogImage; // structured source wins
+
+1. best.image (preferred) — the image from whichever extraction method won (Readability / Cheerio / JSON-LD). For the JSON-LD path, buildResultFromLdData digs the image out of the NewsArticle blob, trying in order:
+image.url → image.contentUrl → image (string) → image[0] (array) → thumbnailUrl → thumbnail.
+
+2. ogImage (fallback) — if the winning method had no image, extractImage() reads the page's social meta tags in this order:
+og:image → og:image:url → twitter:image → twitter:image:src → article:image.
+
+After that, one transform runs for everyone: if the URL is an AMP-cache wrapper (cdn.ampproject.org/i/s/…), it's unwrapped back to the original CDN URL.
+
+So, concretely
+France 24 — its pages carry a proper JSON-LD NewsArticle block whose image points at the s.france24.com CDN, plus a matching og:image. CPC takes it from the JSON-LD image field (and og:image is there as a redundant fallback). This is exactly what the France 24 regression test locks in.
+Axios — no JSON-LD article image in play, so CPC falls through to the meta tags and grabs the article's hero from og:image / twitter:image, which Axios sets per-article.
+Both then go through the same SSRF-protected /api/proxy/image route on the client so the image can be fetched cross-origin for copy-to-clipboard.
+
+The only reason a site needs special-casing is when these sources lie — e.g. TASS and ABC News point og:image at a generic logo, so they have dedicated recovery code. Axios and France 24 don't have that problem, so the generic path is enough.

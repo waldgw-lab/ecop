@@ -1,0 +1,71 @@
+Day	Organic	User		Day	Organic	User
+04-30	62	12		05-31	63	1
+05-01	68	9		06-01	105	3
+05-02	42	2		06-02	90	3
+05-03	44	2		06-03	122	5
+05-04	72	3		06-04	104	2
+05-05	95	5		06-05	85	7
+05-06	106	7		06-06	55	1
+05-07	71	14		06-07	87	3
+05-08	83	3		06-08	152	3
+05-09	48	9		06-09	134	12
+05-10	47	3		06-10	139	12
+05-11	60	5		06-11	126	18
+05-12	75	0		06-12	71	12
+05-13	102	3		06-13	58	12
+05-14	105	8		06-14	78	10
+05-15	74	0		06-15	117	18
+05-16	66	2		06-16	96	15
+05-17	54	6		06-17	107	12
+05-18	91	8		06-18	118	11
+05-19	109	13		06-19	73	4
+05-20	105	7		06-20	86	7
+05-21	62	6		06-21	106	17
+05-22	71	6		06-22	185	15
+05-23	47	0		06-23	190	6
+05-24	50	4		06-24	204	5
+05-25	52	2		06-25	141	14
+05-26	136	1		06-26	162	10
+05-27	98	5		06-27	47	5
+05-28	138	6		06-28	82*	2
+05-29	106	7		06-29	133*	4
+05-30	60	4		06-30	110*	0
+* Jun 28–30 organic includes the surviving web-scraper rows (19 / 67 / 9) on top of bot/RSS auto-promotions.
+
+Bar graph — organic stories by input (which feed each story arrived from)
+Full two months, the Bot: <outlet> auto-promotions (5,730 stories). Note: outlets like BBC appear twice because the same outlet flows through two distinct inputs — the RSS Feed Monitor (BBC) and the dedicated scraper bot (BBC News).
+
+Al Jazeera         █████████████████████████████████████████ 654
+Jerusalem Post     █████████████████████████████████████████ 649
+France 24          ████████████████████████████ 444
+Bloomberg          ███████████████████████████ 430
+AP News            ███████████████████ 297
+Times of Israel    █████████████████ 264
+Washington Examiner███████████████ 247
+Washington Times   ███████████████ 247
+DW                 █████████████ 215
+The Hill           █████████████ 208
+ABC News           █████████████ 206
+CBS News           ███████████ 170
+NBC News           ███████████ 169
+Military Times     ██████████ 160
+Fox News           ██████████ 158
+Defense News       ██████████ 157
+Breaking Defense   ████████ 129
+NPR                ████████ 123
+CNBC               ███████ 110
+Yonhap             ███████ 110
+BBC (RSS)          ██████ 102
+The War Zone       ██████ 93
+NewsNation         ██████ 92
+BBC News (bot)     ████ 70
+The Diplomat       ████ 67
+Washington Post    ███ 50
+Foreign Policy     ██ 36
+War on the Rocks   ██ 28
+Defense One        █ 12
+Foreign Affairs    █ 12
+Politico           █ 12
+Reuters            ▏3
+Wall St. Journal   ▏3
+(long tail ≤1)     ▏~5

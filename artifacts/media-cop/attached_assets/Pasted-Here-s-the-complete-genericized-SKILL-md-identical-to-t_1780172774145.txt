@@ -1,0 +1,80 @@
+Here's the complete, genericized SKILL.md — identical to the working version except the verification section now uses placeholders instead of this project's SQL. As a planning agent I can't write outside task files, so drop this into .agents/skills/triage-drafts/SKILL.md in the target project (create the folder if needed), then edit only the two clearly-marked <<< … >>> placeholder blocks.
+
+---
+name: triage-drafts
+description: Re-label every draft (PROPOSED) project task with a single priority prefix ([P0]/[P1]/[P2]/[P3]/[STALE]) so the user can see what to approve next and in what order. Read-only planning routine — it never implements, cancels, or merges. Use when the user says "triage", "triage drafts", "re-triage", or "what should I do next", and naturally after heavy task churn so surviving drafts get re-judged in the new context.
+---
+# Triage Drafts
+A read-only planning routine that re-labels every draft task with a single priority prefix so the user can see, at a glance, what's worth approving and in what order. It **re-labels and reports — it never implements, cancels, or merges.** The user archives stale drafts themselves.
+"Drafts" is the user-facing name for tasks in the `PROPOSED` state. Pull them with `listProjectTasks({ state: "PROPOSED", includeDescription: true })`.
+## When It Runs
+On "triage" / "triage drafts" / "re-triage" / "what should I do next", and naturally after heavy task churn so survivors get re-judged in the new context.
+## The Single Question
+Don't sort by *type* of work (test / perf / monitoring). Sort by one question for every draft:
+> Is something broken, is this finishing/protecting an outcome that was already intended, or is this adding something new?
+That collapses to the tiers:
+- **[P0]** — broken now. Production down, data wrong, security hole. Drop everything.
+- **[P1]** — will break, or a malfunction already exists (app still usable / workaround exists). e.g. a breached prompt-budget margin.
+- **[P2]** — completes or protects an already-intended outcome, strictly in scope. Almost always advantageous to approve, and it does **not** add expansive new UI/capability.
+- **[P3]** — adds new scope: net-new UI, new capability, new alert/automation, or polish.
+- **[STALE]** — verification proves the symptom is gone; recommend archiving.
+## The Two Rules That Keep P2 Honest
+1. **The scope rule.** Any new UI element is **P3** — unless that exact UI was explicitly named in the originating task's "done looks like". Before anything with a panel/badge/alert can be P2, check the parent task's done-criteria. If the UI wasn't promised there, it's new scope → P3, however small or useful.
+2. **Tests judged by blast radius.** A regression test is never automatically P2. It inherits the severity of the breakage it prevents: guards data integrity / report correctness / routing / another P0–P1 behavior → **P2**; guards something minor or cosmetic → **P3**.
+## Project-Specific Calibration
+<<< EDIT FOR THIS PROJECT — domain tier examples >>>
+Add 2–3 examples of recurring gray-area calls in THIS project so runs stay consistent. Examples of the kind of rule to pin here:
+- "Security hardening contained behind <the auth perimeter> is P2, not P1."
+- "Perf optimization where current behavior is already correct is P3."
+- "A green-the-suite fix for a currently-red test inherits the blast radius of what that test guards."
+Delete this guidance text once you've filled in the project's real examples.
+<<< END EDIT >>>
+## Workflow Each Run
+1. **Pull all drafts** with descriptions (`listProjectTasks({ state: "PROPOSED", includeDescription: true })`). Cross-check against the latest task changes and fetch any just-created or missing ones — recent tasks may already have moved out of drafts.
+2. **Verify "fix X" claims against live data before trusting them** — cheap read-only checks (see "Verification Before STALE"). If the symptom is already gone → STALE.
+3. **Assign a tier** using the discriminator question, applying the scope rule for UI and the blast-radius rule for tests.
+4. **Update only titles whose tier changed** — one prefix, never stacked, no noisy re-saves. Use `updateProjectTask({ taskRef, title })`. Strip any existing bracketed prefix before adding the new one so there is exactly one prefix per title.
+5. **Report**, always leading with a ranked **Top 3–5 to approve next** (across tiers, P0/P1 first), then the buckets, count changes, and 2–3 observations (trends, clusters to batch, cheap wins).
+## Verification Before STALE
+Never mark a draft STALE on the description alone. Run a cheap read-only check that proves the symptom is gone.
+<<< EDIT FOR THIS PROJECT — verification checks >>>
+List the cheap, read-only checks that prove a "fix" actually landed in THIS project's domain. Pick whatever is cheapest and most direct:
+- Read-only SQL against key tables (row counts, freshness timestamps, routing/category counts).
+- A health/status endpoint that reflects the symptom.
+- A grep of the codebase confirming the column / endpoint / guard / component a task claims to have added actually exists.
+- Whether a more recent merged task already delivered the same outcome.
+Replace this block with the concrete checks for this project.
+<<< END EDIT >>>
+If verification is inconclusive, do **not** mark STALE — leave the draft at its earned tier and note the uncertainty in the report.
+## Title Prefix Mechanics
+- Exactly **one** bracketed prefix per title: `[P0] `, `[P1] `, `[P2] `, `[P3] `, or `[STALE] `.
+- Never stack prefixes. If a title already starts with one of these, replace it.
+- Only call `updateProjectTask` when the tier actually changed — avoid noisy re-saves.
+## Guardrails
+- **Read-only.** Never implement, cancel, retire, or merge a task while triaging.
+- **Verification before any STALE.**
+- **Never expose internal state/tool names** to the user. Refer to PROPOSED tasks as "Drafts"; refer to tasks as `#N (Title)`. Do not mention `listProjectTasks`, `updateProjectTask`, `PROPOSED`, `PENDING`, etc.
+- **Exactly one bracketed prefix per title.**
+## Report Format
+```markdown
+## Top to approve next
+1. #N (Title) — [tier] one-line why
+2. ...
+## Buckets
+- [P0] (count): #N, #N
+- [P1] (count): #N, #N
+- [P2] (count): #N, ...
+- [P3] (count): #N, ...
+- [STALE] (count): #N, ...
+## Changes this run
+- #N moved [old] → [new] (reason)
+## Observations
+- 2–3 trends, clusters worth batching, or cheap wins.
+```
+
+To use it in a new project:
+
+Save the block above as .agents/skills/triage-drafts/SKILL.md.
+Fill in the two <<< … >>> blocks — Verification checks (required) and Project-Specific Calibration (recommended). Everything else works unchanged.
+Say "triage drafts" in that project and it'll run.
+The only genuinely required edit is the Verification checks block; the calibration block just keeps gray-area calls consistent over time. Want me to pre-fill a version of these placeholders tuned to a specific other project of yours — if so, tell me what that project does and how I'd verify a fix there (a table, an endpoint, etc.)?

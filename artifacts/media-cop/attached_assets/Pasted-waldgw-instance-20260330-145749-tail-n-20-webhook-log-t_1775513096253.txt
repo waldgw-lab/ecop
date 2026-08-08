@@ -1,0 +1,25 @@
+waldgw@instance-20260330-145749:~$ tail -n 20 webhook_log.txt
+2026-04-03 18:38:46,977 - ERROR - 167.94.146.52 - - [03/Apr/2026 18:38:46] code 400, message Bad request syntax ('\x16\x03\x01\x00î\x01\x00\x00ê\x03\x03\x99õõÂ§µ')
+2026-04-03 18:38:46,977 - INFO - 167.94.146.52 - - [03/Apr/2026 18:38:46] "îêõõÂ§µ" HTTPStatus.BAD_REQUEST -
+2026-04-03 18:38:47,230 - INFO - 167.94.146.52 - - [03/Apr/2026 18:38:47] "GET / HTTP/1.1" 404 -
+2026-04-03 18:38:47,476 - ERROR - 167.94.146.52 - - [03/Apr/2026 18:38:47] code 505, message Invalid HTTP version (2.0)
+2026-04-03 18:38:47,476 - INFO - 167.94.146.52 - - [03/Apr/2026 18:38:47] "PRI * HTTP/2.0" HTTPStatus.HTTP_VERSION_NOT_SUPPORTED -
+2026-04-03 18:38:50,731 - ERROR - 167.94.146.52 - - [03/Apr/2026 18:38:50] code 400, message Bad request version ('À\x14À')
+2026-04-03 18:38:50,732 - INFO - 167.94.146.52 - - [03/Apr/2026 18:38:50] "îê´#&
+                                                                                áÜ??t±Ü£û´¼6ØÖaÄ@9´ÇÄ<{ ËYMk+Tÿcm(;ú`YÇ7Û!º©¹¾çÉ"ÁPt:&Ì¨Ì©À/À0À+À,ÀÀ    ÀÀ" HTTPStatus.BAD_REQUEST -
+2026-04-03 18:38:50,981 - INFO - 167.94.146.52 - - [03/Apr/2026 18:38:50] "GET /.well-known/security.txt HTTP/1.1" 404 -
+2026-04-03 18:42:13,529 - ERROR - 147.185.133.83 - - [03/Apr/2026 18:42:13] code 400, message Bad request version ('À\x13À')
+2026-04-03 18:42:13,529 - INFO - 147.185.133.83 - - [03/Apr/2026 18:42:13] "ÆÂ\zÁÿþ&¥fr6¥ZÀQ7W¬e[/Â|äX¶çP $Í¿M::+Ö4rÝþ²Á
+´I4Ý%HNÌdÀ+À/À,À0Ì©Ì¨À  ÀÀ" HTTPStatus.BAD_REQUEST -
+2026-04-03 18:42:13,783 - ERROR - 147.185.133.83 - - [03/Apr/2026 18:42:13] code 400, message Bad request version ('À(À$À\x14À')
+Å026-04-03 18:42:13,783 - INFO - 147.185.133.83 - - [03/Apr/2026 18:42:13] "ÊÆöÇ?¹3
+îÂönÝ{ÉäXzÑâ?0¤2KhÌÌÀ/À+À0À,ÀÀÀ'À#ÀÀ    À(À$ÀÀ" HTTPStatus.BAD_REQUEST -
+2026-04-03 19:50:27,471 - INFO - 205.210.31.105 - - [03/Apr/2026 19:50:27] "GET / HTTP/1.1" 404 -
+2026-04-03 20:02:39,974 - INFO - 45.156.129.188 - - [03/Apr/2026 20:02:39] "GET /api/session/properties HTTP/1.1" 404 -
+2026-04-03 20:02:45,768 - INFO - 45.156.129.197 - - [03/Apr/2026 20:02:45] "GET / HTTP/1.1" 404 -
+2026-04-03 20:03:04,698 - INFO - 45.156.129.188 - - [03/Apr/2026 20:03:04] "GET /cgi-bin/authLogin.cgi HTTP/1.1" 404 -
+2026-04-06 21:07:38,710 - WARNING - Unauthorized access attempt from 127.0.0.1
+2026-04-06 21:14:10,053 - INFO - JSON Received from 127.0.0.1: {'test': 'system_check', 'message': 'Gunicorn is loud and clear!'}
+2026-04-06 21:58:41,509 - INFO - JSON Received from 127.0.0.1: {'posts': [{'postId': 'vm-relay-test-001', 'content': 'Houston, we have liftoff! This is coming through the Google VM bridge.', 'postedAt': '2026-04-06T12:00:00Z', 'truthSocialUrl': 'https://truthsocial.com/test/vm-relay'}]}
+2026-04-06 21:58:41,921 - INFO - Relayed to Replit! Status Code: 403
+waldgw@instance-20260330-145749:~$ 

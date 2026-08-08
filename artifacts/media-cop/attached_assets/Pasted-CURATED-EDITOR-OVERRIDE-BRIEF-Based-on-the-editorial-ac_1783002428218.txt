@@ -1,0 +1,37 @@
+CURATED EDITOR-OVERRIDE BRIEF
+
+Based on the editorial actions over the past 30 days, several adjustments to scoring and clustering filters are recommended to better align AI-driven content curation with human editorial judgment. These adjustments focus on refining relevance thresholds and clustering logic for specific topics and regions.
+
+1. Adjust MAIN_FEED_PROMOTION_THRESHOLD for 'Foreign Policy & Diplomacy' related to U.S.-Iran relations  [high]
+   Location: server/relevanceDefinition.ts
+   Change: Increase MAIN_FEED_PROMOTION_THRESHOLD for 'Foreign Policy & Diplomacy' articles related to U.S.-Iran relations from 50 to 65.
+   Why: Multiple articles related to U.S.-Iran relations were pinned up, indicating a higher editorial value than initially scored. This suggests the threshold for promoting such content should be adjusted to reflect its importance.
+   Based on:
+     - US and Iran hold talks in Qatar; Vance says no return to war unless needed  (Reuters · score 72 · Foreign Policy & Diplomacy · U.S.-Iran Talks)
+     - Trump says the U.S. and Iran getting along very well  (The Straits Times · score 62 · Foreign Policy & Diplomacy · U.S.-Iran Relations)
+
+2. Refine clustering logic for 'Nord Stream Incident'  [medium]
+   Location: server/curatedCluster.ts
+   Change: Adjust clustering parameters to ensure articles related to the 'Nord Stream Incident' are grouped together based on shared event and region.
+   Why: Multiple articles about the Nord Stream incident were manually linked, indicating a need to adjust clustering logic to automatically group such related content.
+   Based on:
+     - Ukrainian charged in Germany over Nord Stream blasts  (BBC · Intelligence, Espionage & Security Services · Nord Stream Incident)
+
+3. Adjust scoring for 'Military Operations & Armed Conflict' in Europe  [medium]
+   Location: server/scoreAdjustments.ts
+   Change: Decrease initial scoring for 'Military Operations & Armed Conflict' articles in Europe by 10 points.
+   Why: Articles related to military operations in Europe, particularly involving Ukraine, were consistently pinned down, suggesting an overestimation of their initial scores.
+   Based on:
+     - Kyiv launches mechanism allowing allies to buy Ukrainian weapons  (The Straits Times · score 85 · Military Operations & Armed Conflict · Ukrainian Military Support)
+     - Ukraine is launching strike-drones from everything – including Black Sea robo-boats  (Military Times · score 85 · Military Operations & Armed Conflict · Drone Warfare)
+
+4. Enhance clustering for 'Maritime Security & Chokepoints' in the Persian Gulf  [medium]
+   Location: server/curatedCluster.ts
+   Change: Refine clustering logic to better group articles under 'Maritime Security & Chokepoints' in the Persian Gulf region.
+   Why: Manual linking of articles related to shipping incidents in the Strait of Hormuz suggests a need for improved clustering in this area.
+   Based on:
+     - Ship runs aground in Strait of Hormuz: Report  (The Hill · Maritime Security & Chokepoints · Shipping Incident)
+
+Cautions:
+- No strong signals were found to justify changes to the CURATED_SOFT_CAP or CURATED_STRATEGIC_GUARD settings.
+- The absence of highScoreHides or lowScoreBoosts indicates current scoring thresholds are generally aligned with editorial actions, except for specific cases noted.

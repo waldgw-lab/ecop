@@ -1,0 +1,341 @@
+Okay so since task 954 was applied and I republished – the aforementioned production side MCOP curated view megacluster that looked good but wasn’t altering the cluster information appropriately to the content – now it doesn’t look good, it's grown, and there's a bunch of items clustered in that shouldn't be etc… holistically diagnose, fix, and consider also future behavior and being able to correct the content without damaging it
+
+see below:
+
+Military Ops
+·
+U.S.–Iran
+· First seen 11:35 AM 15 Jul 26
+· Updated 20 min ago
+· 160 sources
+
+US strikes expand into northern Iran as it disables ship trying to run blockade
+Hide photo
+
+
+
+
+P85
+The US has expanded strikes into northern Iran, disabling a ship attempting to run a blockade.
+This action is part of ongoing US military operations in the region.
+77 Contributing Sources
+
+Jerusalem Post
+Jerusalem Post
+· 43 min ago
+Iran tells Houthis to close Red Sea gateway if US hits power network, sources say
+Iran has reportedly instructed the Houthi movement to close a key Red Sea gateway if the United States takes action against Iran's power network. This indicates a potential escalation of regional tensions and a threat to vital maritime trade routes.
+Show 4 more from Jerusalem Post
+France 24
+France 24
+· 1 hr ago
+As the war rekindles, what options are left to the US and Iran?
+The article discusses the limited options available to the United States and Iran as a war between them potentially rekindles.
+Show 1 more from France 24
+Military.com
+Military.com
+· 2 hrs ago
+3 Islands Help Control Access to the Strait of Hormuz. They’re in the Crosshairs of the Iran War
+Three strategically important islands controlling access to the Strait of Hormuz are now considered to be in the potential crosshairs of a conflict with Iran.
+Show 1 more from Military.com
+AP News
+AP News
+· 2 hrs ago
+3 islands help control access to the Strait of Hormuz. They’re in the crosshairs of the Iran war
+U.S. military strikes on three strategically vital Iranian-controlled islands near the Strait of Hormuz highlight their critical role in Iran's ability to control maritime traffic and pose a potential flashpoint in the ongoing conflict. These islands, seized by Iran in 1971, are heavily militarized and allow Iran to monitor and potentially disrupt shipping through the vital waterway, impacting global energy supplies.
+The Hill
+The Hill
+· 2 hrs ago
+US intensifies strikes on Iran
+The United States has intensified its military strikes against targets in Iran, indicating a significant escalation of conflict in the region.
+Show 3 more from The Hill
+USA Today
+USA Today
+· 3 hrs ago
+US escalate in Gulf but release of American signals path to climb down
+U.S. military actions in the Gulf have direct implications for regional security and potential escalation with adversaries.
+Show 2 more from USA Today
+Fox News
+Fox News
+· 3 hrs ago
+Video
+Trump walking 'tightrope act' with Iran bombing campaign, expert says
+Show 9 more from Fox News
+Reuters
+Reuters
+· 3 hrs ago
+Iran warns Strait of Hormuz is a 'red line' and will resist until the end
+Iran has declared the Strait of Hormuz a 'red line' and stated its intention to resist until the end, indicating potential escalation and disruption of a critical global shipping lane.
+Show 4 more from Reuters
+BBC News
+BBC News
+· 3 hrs ago
+US strikes oil tanker with missiles as it enforces new Iran blockade
+The U.S. military struck an oil tanker with missiles as it reimposed a blockade on Iranian ports, citing the vessel's ignored warnings and trajectory towards Kharg Island, signaling a renewed escalation in tensions and enforcement of sanctions following recent Iranian attacks on commercial shipping. This action directly impacts Iran's oil exports, a critical revenue source, and underscores the U.S. commitment to disrupting Iranian maritime activities in the strategically vital Strait of Hormuz.
+The Straits Times
+The Straits Times
+· 7:56 AM
+Iran tells Houthis to close Red Sea gateway if US hits power network, sources say
+Iran has instructed Houthi rebels to close the Bab el-Mandeb Strait if the US strikes Iran's power network.
+The Bab el-Mandeb Strait is a key shipping waterway and the gateway to the Red Sea.
+This directive comes from sources, with the article published on July 16, 2026.
+Show 8 more from The Straits Times
+The Guardian
+The Guardian
+· 7:47 AM
+US intensifies attacks on Iran as Tehran hits back at Gulf states
+US intensifies attacks on Iran as Tehran hits back at Gulf states.
+Fighting enters its sixth day, threatening all-out war and peace deal doubts.
+Chaos and confusion bring US no closer to resolution on Strait of Hormuz.
+Show 3 more from The Guardian
+The Washington Post
+The Washington Post
+· 7:31 AM
+Iran threatens region’s infrastructure as U.S. strikes expand
+Iran threatened to destroy regional infrastructure if President Donald Trump attacked Iranian power plants and bridges.
+U.S. military forces expanded their range of strikes within Iran.
+Renewed attacks have sharpened rhetoric on both sides.
+Show 1 more from The Washington Post
+Washington Examiner
+Washington Examiner
+· 7:22 AM
+US is bombing Iran at the heaviest rate since start of the war and leaning toward expanding operations further
+The United States is reportedly conducting airstrikes against Iran at the highest frequency since the war began and is considering expanding these operations.
+Show 1 more from Washington Examiner
+NewsNation
+NewsNation
+· 6:21 AM
+Iran warns Strait of Hormuz interference is 'red line' for US
+Iran has issued a warning that any interference in the Strait of Hormuz constitutes a 'red line' for the United States.
+Al Jazeera
+Al Jazeera
+· 4:23 AM
+US strikes Iran, tanker, as Tehran hits Kuwait, Jordan: What’s the latest
+The US conducted strikes on an Iranian tanker, while Iran reportedly targeted sites in Kuwait and Jordan.
+Show 3 more from Al Jazeera
+Bloomberg
+Bloomberg
+· 4:21 AM
+Ukraine Hit Two Large Russia-Linked Oil Tankers in Black Sea
+Ukraine has reportedly struck two large oil tankers linked to Russia in the Black Sea, escalating maritime conflict in the region.
+Show 3 more from Bloomberg
+ABC News
+ABC News
+· 1:28 AM
+US strikes expand into northern Iran as it disables ship trying to run blockade
+The United States has expanded strikes into northern Iran, including near Tehran and Semnan province, and disabled a ship attempting to break a naval blockade, while Iran retaliated with missile and drone fire targeting Bahrain, Jordan, and Kuwait, escalating regional tensions and jeopardizing peace negotiations. These actions, occurring amidst renewed threats to the Strait of Hormuz, risk pushing the region back into full-scale conflict, with significant implications for global energy markets and U.S. political interests.
+Show 2 more from ABC News
+The Wall Street Journal
+The Wall Street Journal
+· 12:53 AM
+Iran Allows U.S. Citizen It Held for More Than a Year to Leave
+Diplomatic gesture by Iran with potential implications for U.S.-Iran relations.
+Show 1 more from The Wall Street Journal
+The Daily Star
+The Daily Star
+· 11:07 PM 15 Jul 26
+Iran says it targeted bases in Kuwait and Jordan after new wave of US strikes
+Iran's retaliatory actions indicate escalating tensions and potential for wider conflict.
+Show 2 more from The Daily Star
+CNN
+CNN
+· 9:26 PM 15 Jul 26
+Video
+Trump says Iran has released an American woman detained since 2024
+Show 1 more from CNN
+Axios
+Axios
+· 7:30 PM 15 Jul 26
+Iran releases American detainee, Trump says
+Iran released an American woman wrongfully detained since December 2024.
+The release occurs as President Trump considers expanding U.S. military strikes on Iran.
+An Iranian-American dual national was detained in December 2024, according to a past report.
+The War Zone
+The War Zone
+· 7:11 PM 15 Jul 26
+Here Are The U.S. Navy Warships Available To Support The Blockade of Iran
+The U.S. Navy has a number of warships available that could be used to support a blockade of Iran, indicating potential naval capabilities for regional security operations.
+Show 1 more from The War Zone
+Ynetnews
+Ynetnews
+· 7:11 PM 15 Jul 26
+US attacks Iran for 5th consecutive night, but Trump not ready to send in ground troops
+Ongoing military operations against Iran with significant geopolitical implications.
+Stars and Stripes
+Stars and Stripes
+· 6:28 PM 15 Jul 26
+US forces disable tanker heading to Iranian port as blockade resumes
+U.S. forces disabled an oil tanker attempting to reach an Iranian port.
+The naval blockade against vessels transiting to and from Iranian ports resumed Tuesday.
+Two other commercial vessels complied with U.S. warnings and were redirected.
+NPR
+NPR
+· 4:54 PM 15 Jul 26
+The crews stuck at sea as the Strait of Hormuz crisis grows
+The New York Times
+The New York Times
+· 4:29 PM 15 Jul 26
+U.S. and Iran Trade Strikes With No Sign of Backing Down
+Breaking Defense
+Breaking Defense
+· 3:04 PM 15 Jul 26
+In first, US uses sea drones in combat in Iran strikes: CENTCOM
+US forces used unmanned surface vessels in combat for the first time against Iran.
+The strikes targeted a submarine and ship maintenance facility at Bandar Abbas Naval Base.
+President Donald Trump declared the ceasefire with Iran "OVER" and reinstated a naval blockade.
+Outlets controlled by biased entities, lack credible sources / objectivity, known to frequently mislead readers and distort facts.
+
+Global Times
+Global Times
+· 20 min ago
+US, Iran exchange attacks amid Hormuz Strait dual blockades row; cycles of clashes and diplomacy to persist as brinkmanship drags on: expert
+US and Iran exchanged attacks amid dual blockades row in the Strait of Hormuz.
+Diplomatic efforts are underway as the US-Iran conflict approaches a potential turning point.
+Iran's Islamic Revolutionary Guard Corps (IRGC) Navy announced further actions.
+Show 2 more from Global Times
+Xinhua
+Xinhua
+· 48 min ago
+Iran asks Yemen's Houthis to close Bab el-Mandeb if U.S. attacks power plants -- media
+Iran requested Houthis close Bab el-Mandeb if U.S. attacks Iranian power plants.
+Houthis prepared to attack ships in Bab el-Mandeb with missiles and drones.
+Iranian Islamic Revolution Guard Corps representatives in Yemen will control the decision.
+Show 12 more from Xinhua
+Fars News
+Fars News
+· 1 hr ago
+Iran Strongly Condemns US Attack Near Children's Cancer Hospital as Barbaric
+Show 3 more from Fars News
+Sputnik
+Sputnik
+· 1 hr ago
+Pentagon Yet to Launch Final Phase of Probe Into Deadly Strike on Iran's Minab - Reports
+The Pentagon has not yet launched the final phase of its probe into a deadly strike on Iran's Minab.
+The strike occurred during Operation Epic Fury, a US-Israeli military operation against Iran.
+Iran stated its nuclear program was peaceful and retaliated against US-Israeli attacks.
+Show 4 more from Sputnik
+CGTN
+CGTN
+· 1 hr ago
+Kuwait, Bahrain say air defenses intercept new Iranian drone attacks
+Military response to Iranian drone threats, indicating regional security dynamics.
+Show 6 more from CGTN
+Gulf News
+Gulf News
+· 2 hrs ago
+Is Trump mulling bigger Iran operation as Hormuz crisis deepens?
+President Donald Trump is considering operations to weaken Iran's control of the Strait of Hormuz.
+Commercial shipping through the Strait of Hormuz has significantly decreased amid the crisis.
+India has barred its seafarers from transiting the strait, while Pakistan seeks renewed diplomacy.
+Show 11 more from Gulf News
+Mehr News Agency
+Mehr News Agency
+· 2 hrs ago
+Iran to resist until US leaves region: Army spokesperson
+Iran will resist until US interventions in the region are neutralized.
+Iran asserts full control over the Strait of Hormuz, warning against US strikes.
+Iran believes the US lacks the capacity for a prolonged conflict.
+Show 6 more from Mehr News Agency
+Arab News
+Arab News
+· 7:30 AM
+Kuwait air defenses intercept Iranian drone attacks
+Kuwaiti air defenses intercepted drone attacks from Iran.
+The General Staff described the attacks as "criminal Iranian aggression."
+Explosions were from air defense systems engaging threats.
+Show 6 more from Arab News
+New York Post
+New York Post
+· 4:58 AM
+Iran warns Strait of Hormuz is a ‘red line’ and will resist until the end
+Significant statement from Iran regarding a critical maritime chokepoint with implications for international shipping and security.
+Show 4 more from New York Post
+China Daily
+China Daily
+· 9:05 PM 15 Jul 26
+Crisis intensifies as US resumes Iran blockade
+United States resumes Iran blockade and launches new wave of strikes.
+Fragile ceasefire collapses amid reciprocal strikes for control of Strait of Hormuz.
+US Senate Democrats blocked a defense authorization bill over opposition to Iran campaign.
+People's Daily
+People's Daily
+· 8:00 PM 15 Jul 26
+India restricts its seafarers from Strait of Hormuz routes
+India's Directorate General of Shipping ordered seafarers to avoid the Strait of Hormuz.
+Recent attacks have increased risks for seafarers and commercial ships in the region.
+Two Indian seafarers have been killed and others injured in recent attacks.
+Washington Times
+Washington Times
+· 5:43 PM 15 Jul 26
+Trump willing to wipe out the IRGC as he did ISIS
+Potential shift in U.S. policy towards Iran's military, indicating a willingness for aggressive military action.
+Show 2 more from Washington Times
+teleSUR
+teleSUR
+· 2:23 PM 15 Jul 26
+Russia Strikes Odesa Ports for Second Consecutive Day
+Russia conducted strikes on Odesa ports for the second consecutive day.
+14 Additional Coverage
+(attached / non-contributing)
+Jerusalem Post
+Jerusalem Post
+· 1 hr ago
+Podcast
+Iran claims 'existential war' as Israel and US maintain military cooperation
+Newsweek
+Newsweek
+· 2 hrs ago
+Opinion
+Trump Is Giving Iran the ‘Forever War’ It Wants
+Al Jazeera
+Al Jazeera
+· 6:27 AM
+Opinion
+‘Safe passage’: The fatal ambiguity at the heart of the Hormuz MoU
+DW
+DW
+· 6:04 AM
+Explainer
+What's behind the Iran regime's 'revenge propaganda'?
+The Straits Times
+The Straits Times
+· 6:00 AM
+Opinion
+Iran risks overplaying its hand on Hormuz
+The Hill
+The Hill
+· 6:00 AM
+Explainer
+Why fully reopening Strait of Hormuz is such a challenge
+Fox News
+Fox News
+· 5:04 AM
+Opinion
+MORNING GLORY: I asked Trump if he was prepared to remove Iran’s new leaders
+The Guardian
+The Guardian
+· 3:15 AM
+Live
+US strikes expand to northern Iran as Tehran fires on Bahrain, Kuwait and Jordan – Middle East crisis live
+Show 1 more from The Guardian
+CNN
+CNN
+· 12:20 AM
+Live
+US pounds Iranian targets for fifth day, strikes tanker bound for key oil port
+Reuters
+Reuters
+· 11:54 PM 15 Jul 26
+Live
+Iran war: Iran says it targeted bases in Kuwait and Jordan after new wave of US strikes
+France 24
+France 24
+· 9:10 PM 15 Jul 26
+Live
+Middle East live: US launches fresh strikes on Iran as Hormuz remains paralyzed
+Show 1 more from France 24
+Fox News Digital
+Fox News Digital
+· 4:31 PM 15 Jul 26
+Live
+US resumes blockade on Iran, launches strikes after attacks in Strait of Hormuz

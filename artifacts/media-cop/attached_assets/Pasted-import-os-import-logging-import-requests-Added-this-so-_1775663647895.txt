@@ -1,0 +1,89 @@
+import os
+import logging
+import requests  # <-- Added this so python can send data to Replit
+from flask import Flask, request, jsonify
+from werkzeug.utils import secure_filename
+
+app = Flask(__name__)
+
+# --- NEW: PERMANENT LOGGING CONFIGURATION ---
+# This creates a file called 'webhook_log.txt' that saves everything
+logging.basicConfig(
+    filename='webhook_log.txt',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+# Create a folder to store downloaded media files
+UPLOAD_FOLDER = 'uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+@app.route('/webhook', methods=['POST'])
+def handle_incoming_data():
+    client_ip = request.remote_addr  # Tracks who is connecting
+    try:
+        # --- AUTHENTICATION CHECK ---
+        auth_header = request.headers.get('Authorization')
+        if auth_header != "Bearer sec_token_8xV9qL2pM5zN1wKy":
+            logging.warning(f"Unauthorized access attempt from {client_ip}")
+            return jsonify({"status": "error", "message": "Unauthorized"}), 401
+
+        # 1. Handle JSON (Text/Links)
+        if request.is_json:
+            data = request.get_json()
+            logging.info(f"JSON Received from {client_ip}: {data}")
+            print("--- Received JSON Data ---")
+
+            # --- RELAY TO REPLIT ---
+            try:
+                # The exact published endpoint your Replit AI built
+                replit_url = "https://mcop2.replit.app/api/webhooks/truth-social-relay"
+                
+                # The exact headers Replit is expecting to let the data in
+                replit_headers = {
+                    "Content-Type": "application/json",
+                    "X-API-Key": "relay_key_9xV4pL2mK7zN1wQy" 
+                }
+
+                # Forwarding the exact JSON payload we just received
+                relay_response = requests.post(replit_url, json=data, headers=replit_headers)
+                
+                # Log the result of the relay
+                logging.info(f"Relayed to Replit! Status Code: {relay_response.status_code}")
+                print(f"Relayed to Replit! Status Code: {relay_response.status_code}")
+            except Exception as relay_error:
+                logging.error(f"Failed to relay to Replit: {relay_error}")
+                print(f"Relay failed: {relay_error}")
+            # ------------------------
+
+            return jsonify({"status": "success", "message": "JSON received and relayed"}), 200
+
+        # 2. Handle Raw Files (Videos/Images/Attachments)
+        elif 'multipart/form-data' in request.content_type:
+            logging.info(f"Media upload started from {client_ip}")
+            
+            if request.files:
+                for file_key in request.files:
+                    file = request.files[file_key]
+                    if file.filename:
+                        filename = secure_filename(file.filename)
+                        save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                        file.save(save_path)
+                        logging.info(f"File Saved: {filename} from {client_ip}")
+                        print(f"Saved file: {filename}")
+
+            return jsonify({"status": "success", "message": "Files saved"}), 200
+
+        else:
+            logging.warning(f"Unsupported format from {client_ip}")
+            return jsonify({"status": "error", "message": "Unsupported data format"}), 400
+
+    except Exception as e:
+        logging.error(f"SYSTEM ERROR: {e}")
+        print(f"Error: {e}")
+        return jsonify({"status": "error", "message": str(e)}), 500
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
+waldgw@instance-20260330-145749:~$ 

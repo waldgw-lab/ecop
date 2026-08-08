@@ -1,0 +1,156 @@
+2025-11-12 11:26:13.97
+f1bdfa2d
+User
+at async updateXPosts (/home/runner/workspace/dist/index.js:1474:17)
+2025-11-12 11:26:13.97
+f1bdfa2d
+User
+at async file:///home/runner/workspace/dist/index.js:2867:22 {
+2025-11-12 11:26:13.97
+f1bdfa2d
+User
+name: 'TimeoutError'
+2025-11-12 11:26:13.97
+f1bdfa2d
+User
+}
+2025-11-12 11:26:55.37
+f1bdfa2d
+User
+Added 0 new X posts
+2025-11-12 11:26:55.37
+f1bdfa2d
+User
+Initial X scrape complete: 0 new posts added
+2025-11-12 11:26:55.37
+f1bdfa2d
+User
+Running initial RapidResponse scrape...
+2025-11-12 11:26:55.57
+f1bdfa2d
+User
+Starting X/Twitter scraper for @Rapidresponse47...
+2025-11-12 11:26:56.67
+f1bdfa2d
+User
+Using Chromium at: /nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium
+2025-11-12 11:27:38.60
+f1bdfa2d
+User
+4:27:38 PM [express] GET /api/auth/status 304 in 1ms :: {"authenticated":false}
+2025-11-12 11:27:42.02
+f1bdfa2d
+User
+4:27:42 PM [express] POST /api/auth/login 200 in 1ms :: {"success":true}
+2025-11-12 11:27:42.14
+f1bdfa2d
+User
+4:27:42 PM [express] GET /api/first-alerts 401 in 1ms :: {"error":"Authentication required"}
+2025-11-12 11:27:42.14
+f1bdfa2d
+User
+4:27:42 PM [express] GET /api/x-posts 401 in 1ms :: {"error":"Authentication required"}
+2025-11-12 11:27:42.14
+f1bdfa2d
+User
+4:27:42 PM [express] GET /api/headlines 401 in 1ms :: {"error":"Authentication required"}
+2025-11-12 11:27:42.14
+f1bdfa2d
+User
+4:27:42 PM [express] GET /api/manual-submissions 401 in 1ms :: {"error":"Authentication required"}
+2025-11-12 11:27:42.15
+f1bdfa2d
+User
+4:27:42 PM [express] GET /api/dowresponse-posts 401 in 1ms :: {"error":"Authentication required"}
+2025-11-12 11:27:42.15
+f1bdfa2d
+User
+4:27:42 PM [express] GET /api/rapidresponse-posts 401 in 0ms :: {"error":"Authentication required"}
+2025-11-12 11:27:42.15
+f1bdfa2d
+User
+4:27:42 PM [express] GET /api/truth-social-posts 401 in 1ms :: {"error":"Authentication required"}
+2025-11-12 11:27:47.25
+f1bdfa2d
+User
+4:27:47 PM [express] POST /api/scrape 401 in 1ms :: {"error":"Authentication required"}
+2025-11-12 11:27:50.24
+f1bdfa2d
+User
+4:27:50 PM [express] POST /api/scrape 401 in 1ms :: {"error":"Authentication required"}
+2025-11-12 11:28:53.30
+f1bdfa2d
+User
+4:28:53 PM [express] POST /api/scrape 401 in 1ms :: {"error":"Authentication required"}
+2025-11-12 11:29:40.90
+f1bdfa2d
+User
+Found 0 tweet elements
+2025-11-12 11:29:40.90
+f1bdfa2d
+User
+Successfully scraped 0 X posts from @Rapidresponse47
+2025-11-12 11:29:41.05
+f1bdfa2d
+User
+Added 0 new RapidResponse posts
+2025-11-12 11:29:41.05
+f1bdfa2d
+User
+Initial RapidResponse scrape complete: 0 new posts added
+2025-11-12 11:29:41.05
+f1bdfa2d
+User
+Running initial DOWResponse scrape...
+2025-11-12 11:29:41.05
+f1bdfa2d
+User
+Starting X/Twitter scraper for @DOWResponse...
+2025-11-12 11:29:41.08
+f1bdfa2d
+User
+Using Chromium at: /nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium
+2025-11-12 11:29:41.27
+f1bdfa2d
+User
+4:29:41 PM [express] GET /api/auth/status 304 in 3ms :: {"authenticated":false}
+2025-11-12 11:29:44.12
+f1bdfa2d
+User
+4:29:44 PM [express] POST /api/auth/login 200 in 2ms :: {"success":true}
+2025-11-12 11:29:44.24
+f1bdfa2d
+User
+4:29:44 PM [express] GET /api/manual-submissions 401 in 1ms :: {"error":"Authentication required"}
+2025-11-12 11:29:44.25
+f1bdfa2d
+User
+4:29:44 PM [express] GET /api/rapidresponse-posts 401 in 0ms :: {"error":"Authentication required"}
+2025-11-12 11:29:44.25
+f1bdfa2d
+User
+4:29:44 PM [express] GET /api/dowresponse-posts 401 in 0ms :: {"error":"Authentication required"}
+2025-11-12 11:29:44.25
+f1bdfa2d
+User
+4:29:44 PM [express] GET /api/x-posts 401 in 0ms :: {"error":"Authentication required"}
+2025-11-12 11:29:44.26
+f1bdfa2d
+User
+4:29:44 PM [express] GET /api/first-alerts 401 in 1ms :: {"error":"Authentication required"}
+2025-11-12 11:29:44.27
+f1bdfa2d
+User
+4:29:44 PM [express] GET /api/truth-social-posts 401 in 1ms :: {"error":"Authentication required"}
+2025-11-12 11:29:44.27
+f1bdfa2d
+User
+4:29:44 PM [express] GET /api/headlines 401 in 1ms :: {"error":"Authentication required"}
+2025-11-12 11:29:49.23
+f1bdfa2d
+User
+4:29:49 PM [express] POST /api/scrape 401 in 1ms :: {"error":"Authentication required"}
+2025-11-12 11:30:04.57
+f1bdfa2d
+User
+Running scheduled scrape...

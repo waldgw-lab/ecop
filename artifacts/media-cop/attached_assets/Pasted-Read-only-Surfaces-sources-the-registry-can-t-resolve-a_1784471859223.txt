@@ -1,0 +1,720 @@
+Read-only. Surfaces sources the registry can't resolve and confirmed outlets that are overdue for enrichment. No edits are made here.
+
+Stale after
+
+30 days
+Pipeline health
+
+3 degraded
+2 healthy
+1 unknown
+Read-only health of the main-feed ingestion subsystems (Classic / Visual / custom-MCOP). Each verdict is corroborated by both a runtime signal (scrape metadata / relay heartbeat) and the subsystem's own table freshness. Quiet windows aren't failures; missing signals read as unknown.
+
+
+General scrapers
+Degraded
+Scraper ran 5m ago but no fresh headlines (newest 7h ago).
+
+
+Truth Social relay
+Healthy
+Relay live (heartbeat 14m ago); 2 post(s) ingested in the last 3h.
+
+
+X / Twitter relay
+Degraded
+Relay live (heartbeat 3m ago) but 1 lane(s) show suspected scraper blocking.
+
+
+RSS Feed Monitor
+Healthy
+RSS monitor producing — 124 relevant post(s) in the last 6h.
+
+
+Stream media pre-fetch
+Degraded
+No recent enrichment (newest 7h ago) but also no fresh headlines to enrich — likely idle, not broken.
+
+
+Priority scoring / clustering
+Unknown
+No headlines in the last 6h to evaluate priority/clustering against.
+
+Meltwater API
+
+Curated-only data pipe (2 saved searches, runs hourly + every 2h in production). Throttled = quota pause, not a fault. Shared daily quota across both searches.
+
+Combined daily calls remaining:
+52 / 50 shared limit
+Combined remaining is below the warning floor (100 calls). Both searches draw from this shared quota — they may pause before the next daily reset.
+
+
+CPC/SWL/EPC (adversary media)
+Healthy
+(hourly)
+Running on cadence — last run 12m ago, 8 item(s) admitted.
+
+
+Int/US (international & US press)
+Healthy
+(every 2 hours)
+Running on cadence — last run 2h ago, 11 item(s) admitted.
+
+Configured feeds & scrapers
+
+29 silent
+31 delivering
+Every configured curated feed/scraper (60 total) and how many items it delivered in the last 72h. A silent source delivered zero — it may be unreachable/blocked (e.g. a 403'd RSS feed) or simply published nothing that passed the curation gate. Open the URL to check.
+
+ABC News (Australia)
+RSS feed
+Silent
+https://www.abc.net.au/news/feed/1534/rss.xml
+Al Jazeera
+RSS feed
+Silent
+https://www.aljazeera.com/xml/rss/all.xml
+Al-Monitor
+RSS feed
+Silent
+https://www.al-monitor.com/rss
+Breitbart
+RSS feed
+Silent
+https://feeds.feedburner.com/breitbart
+Der Spiegel
+RSS feed
+Silent
+https://www.spiegel.de/international/index.rss
+Deutsche Welle
+RSS feed
+Silent
+https://rss.dw.com/rdf/rss-en-all
+El País
+RSS feed
+Silent
+https://feeds.elpais.com/mrss-s/pages/ep/site/english.elpais.com/portada
+France 24
+RSS feed
+Silent
+https://www.france24.com/en/rss
+HuffPost
+RSS feed
+Silent
+https://www.huffpost.com/section/politics/feed
+Kyiv Post
+RSS feed
+Silent
+https://www.kyivpost.com/feed
+Le Monde
+RSS feed
+Silent
+https://www.lemonde.fr/en/rss/une.xml
+NewsNation
+RSS feed
+Silent
+https://www.newsnationnow.com/feed/
+Prensa Latina
+RSS feed
+Silent
+https://www.prensa-latina.cu/feed/
+Press TV
+RSS feed
+Silent
+https://www.presstv.ir/rss.xml
+RT
+RSS feed
+Silent
+https://www.rt.com/rss/news/
+Taipei Times
+RSS feed
+Silent
+https://www.taipeitimes.com/xml/index.rss
+TASS
+RSS feed
+Silent
+https://tass.com/rss/v2.xml
+The Blaze
+RSS feed
+Silent
+https://www.theblaze.com/feeds/feed.rss
+The Daily Wire
+RSS feed
+Silent
+https://www.dailywire.com/feeds/rss.xml
+The Diplomat
+RSS feed
+Silent
+https://thediplomat.com/feed/
+The Gateway Pundit
+RSS feed
+Silent
+https://www.thegatewaypundit.com/feed/
+The Hill
+RSS feed
+Silent
+https://thehill.com/policy/defense/feed/
+The Hindu
+RSS feed
+Silent
+https://www.thehindu.com/news/international/feeder/default.rss
+The Japan Times
+RSS feed
+Silent
+https://www.japantimes.co.jp/feed/
+The Jerusalem Post
+RSS feed
+Silent
+https://www.jpost.com/rss/rssfeedsfrontpage.aspx
+The National
+RSS feed
+Silent
+https://www.thenationalnews.com/arc/outboundfeeds/rss/?outputType=xml
+The New York Times
+RSS feed
+Silent
+https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml
+War on the Rocks
+RSS feed
+Silent
+https://warontherocks.com/feed/
+Yonhap News Agency
+RSS feed
+Silent
+https://en.yna.co.kr/RSS/news.xml
+Show 31 delivering sources
+RSS feed health
+
+42 healthy
+Per-feed outcome tracking for the RSS Monitor & Warfighter feeds across scrape cycles. A feed is flagged stale/broken after it hard-errors or returns zero items for 3+ consecutive cycles — so a quietly-dead feed surfaces here instead of only spamming logs. Resets on restart; re-converges within a few cycles.
+
+Every observed RSS feed is delivering.
+Show 42 healthy feeds
+Intake admission funnel
+
+88 silent
+144 tracked
+Per-source admission snapshot from the last curated ingest pass. A silent source had candidates but admitted zero — the drop-reason breakdown shows why (aged-out, relevance-rejected, dup, blocked, etc.).
+
+War on the Rocks
+rss
+0 admitted
+fetched 100
+aged-out 98
+Last run: 7/19/2026, 10:32:09 AM
+The Diplomat
+rss
+0 admitted
+fetched 96
+aged-out 92
+Last run: 7/19/2026, 10:32:07 AM
+Axios
+rss
+0 admitted
+fetched 100
+aged-out 88
+dup-url 1
+Last run: 7/19/2026, 10:34:14 AM
+RT
+rss
+0 admitted
+fetched 100
+aged-out 76
+Last run: 7/19/2026, 10:32:07 AM
+AP News
+ap-bot-rejects
+0 admitted
+dup-url 1
+relevance-rejected 59
+Last run: 7/19/2026, 9:48:14 AM
+CGTN
+cgtn-curated
+0 admitted
+dup-url 47
+relevance-rejected 13
+Last run: 7/19/2026, 9:56:18 AM
+China Daily
+china-daily-curated
+0 admitted
+dup-url 33
+relevance-rejected 27
+Last run: 7/19/2026, 9:48:47 AM
+Global Times
+global-times-curated
+0 admitted
+dup-url 45
+relevance-rejected 15
+Last run: 7/19/2026, 9:46:23 AM
+Politico
+rss
+0 admitted
+fetched 60
+aged-out 54
+Last run: 7/19/2026, 10:32:08 AM
+CNN
+cnn-curated
+0 admitted
+dup-url 19
+relevance-rejected 32
+Last run: 7/19/2026, 9:42:50 AM
+People's Daily
+peoples-daily-curated
+0 admitted
+dup-url 40
+relevance-rejected 8
+Last run: 7/19/2026, 9:50:10 AM
+El País
+rss
+0 admitted
+fetched 63
+aged-out 47
+Last run: 7/19/2026, 10:32:07 AM
+The War Zone
+rss
+0 admitted
+fetched 38
+aged-out 32
+dup-url 3
+Last run: 7/19/2026, 10:34:14 AM
+HuffPost
+rss
+0 admitted
+fetched 50
+aged-out 31
+Last run: 7/19/2026, 10:32:08 AM
+Ynetnews
+rss
+0 admitted
+fetched 30
+aged-out 30
+Last run: 7/19/2026, 10:32:07 AM
+The Daily Wire
+rss
+0 admitted
+fetched 50
+aged-out 27
+Last run: 7/19/2026, 10:32:08 AM
+teleSUR
+telesur-curated
+0 admitted
+dup-url 13
+relevance-rejected 14
+Last run: 7/19/2026, 9:58:37 AM
+Defense News
+rss
+0 admitted
+fetched 25
+aged-out 21
+dup-url 2
+Last run: 7/19/2026, 10:34:14 AM
+Defense One
+rss
+0 admitted
+fetched 21
+aged-out 20
+Last run: 7/19/2026, 10:32:09 AM
+Der Spiegel
+rss
+0 admitted
+fetched 20
+aged-out 20
+Last run: 7/19/2026, 10:32:06 AM
+The Guardian
+rss
+0 admitted
+fetched 38
+aged-out 12
+dup-url 7
+Last run: 7/19/2026, 10:34:14 AM
+ABC News (Australia)
+rss
+0 admitted
+fetched 25
+aged-out 17
+Last run: 7/19/2026, 10:32:07 AM
+BBC
+rss-bot-rejects
+0 admitted
+dup-url 4
+relevance-rejected 12
+Last run: 7/19/2026, 10:34:43 AM
+Sputnik
+rss
+0 admitted
+fetched 26
+dup-url 16
+Last run: 7/19/2026, 10:34:14 AM
+The Guardian
+rss-bot-rejects
+0 admitted
+relevance-rejected 16
+Last run: 7/19/2026, 10:34:43 AM
+Foreign Policy
+rss
+0 admitted
+fetched 25
+aged-out 15
+Last run: 7/19/2026, 10:32:07 AM
+Breaking Defense
+rss
+0 admitted
+fetched 15
+aged-out 9
+dup-url 5
+Last run: 7/19/2026, 10:34:14 AM
+Military Times
+rss
+0 admitted
+fetched 25
+aged-out 11
+dup-url 2
+Last run: 7/19/2026, 10:34:14 AM
+USA Today
+usa-today-offhost
+0 admitted
+dup-url 2
+relevance-rejected 10
+Last run: 7/19/2026, 7:38:29 AM
+CBS News
+rss-bot-rejects
+0 admitted
+relevance-rejected 11
+Last run: 7/19/2026, 10:34:43 AM
+Stars and Stripes
+stars-stripes-offhost
+0 admitted
+dup-url 7
+relevance-rejected 3
+Last run: 7/18/2026, 7:28:12 PM
+NPR
+npr-curated
+0 admitted
+dup-url 7
+relevance-rejected 2
+Last run: 7/19/2026, 9:44:37 AM
+CBS News
+rss
+0 admitted
+fetched 30
+aged-out 7
+dup-url 1
+Last run: 7/19/2026, 10:34:14 AM
+NBC News
+rss
+0 admitted
+fetched 13
+aged-out 8
+Last run: 7/19/2026, 10:32:08 AM
+ABC News
+rss
+0 admitted
+fetched 25
+dup-url 6
+Last run: 7/19/2026, 10:34:14 AM
+BBC
+rss
+0 admitted
+fetched 26
+dup-url 6
+Last run: 7/19/2026, 10:34:14 AM
+The Jerusalem Post
+rss
+0 admitted
+fetched 26
+aged-out 6
+Last run: 7/19/2026, 10:32:07 AM
+Bloomberg
+rss-bot-rejects
+0 admitted
+dup-url 1
+relevance-rejected 4
+Last run: 7/19/2026, 10:34:43 AM
+KCNA
+kcna-curated
+0 admitted
+dup-url 1
+relevance-rejected 4
+Last run: 7/19/2026, 9:53:21 AM
+The Guardian
+meltwater-intus
+0 admitted
+relevance-rejected 5
+Last run: 7/19/2026, 8:54:09 AM
+The Hill
+rss
+0 admitted
+fetched 15
+aged-out 5
+Last run: 7/19/2026, 10:32:08 AM
+CNBC
+rss-bot-rejects
+0 admitted
+relevance-rejected 4
+Last run: 7/19/2026, 10:34:43 AM
+CNBC
+rss
+0 admitted
+fetched 27
+aged-out 1
+dup-url 3
+Last run: 7/19/2026, 10:34:14 AM
+ABC News
+rss-bot-rejects
+0 admitted
+relevance-rejected 3
+Last run: 7/19/2026, 10:34:43 AM
+Inside Defense
+rss
+0 admitted
+fetched 10
+dup-url 3
+Last run: 7/19/2026, 10:34:14 AM
+The Straits Times
+rss
+0 admitted
+fetched 26
+dup-url 3
+Last run: 7/19/2026, 10:34:14 AM
+The Washington Post
+drudge-rejects
+0 admitted
+relevance-rejected 3
+Last run: 7/17/2026, 3:09:28 PM
+Al-Monitor
+rss
+0 admitted
+fetched 20
+dup-in-pass 2
+Last run: 7/19/2026, 10:32:08 AM
+China Military
+meltwater-cpc
+0 admitted
+dup-url 2
+Last run: 7/19/2026, 5:23:06 AM
+Cnbc
+drudge-rejects
+0 admitted
+dup-url 1
+relevance-rejected 1
+Last run: 7/17/2026, 2:25:37 PM
+Mediaite
+drudge-rejects
+0 admitted
+relevance-rejected 2
+Last run: 7/17/2026, 2:25:37 PM
+The Guardian
+drudge-rejects
+0 admitted
+relevance-rejected 2
+Last run: 7/17/2026, 2:25:37 PM
+Washington Post
+rss
+0 admitted
+fetched 4
+dup-url 2
+Last run: 7/19/2026, 10:34:14 AM
+Washington Post
+rss-bot-rejects
+0 admitted
+relevance-rejected 2
+Last run: 7/19/2026, 10:34:43 AM
+kcna - korean central news agency
+meltwater-cpc
+0 admitted
+dup-url 2
+Last run: 7/19/2026, 6:23:05 AM
+Associated Press
+drudge-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/17/2026, 3:09:28 PM
+CNN
+meltwater-intus
+0 admitted
+relevance-rejected 1
+Last run: 7/19/2026, 8:54:09 AM
+CNN International
+meltwater-intus
+0 admitted
+relevance-rejected 1
+Last run: 7/19/2026, 8:54:09 AM
+Defense One
+meltwater-intus
+0 admitted
+gate-unscored 1
+Last run: 7/17/2026, 2:54:27 PM
+Elnuevodia
+drudge-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/17/2026, 3:09:28 PM
+Finance
+drudge-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/17/2026, 2:25:37 PM
+Fox News
+rss-bot-rejects
+0 admitted
+dup-url 1
+Last run: 7/19/2026, 10:34:43 AM
+France 24
+rss
+0 admitted
+fetched 24
+dup-in-pass 1
+Last run: 7/19/2026, 10:32:06 AM
+Hollywoodreporter
+drudge-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/17/2026, 3:09:28 PM
+Military Times
+rss-bot-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/18/2026, 11:24:50 AM
+Military.com
+rss-bot-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/19/2026, 3:00:20 AM
+Msn
+drudge-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/17/2026, 2:25:37 PM
+NBC News
+rss-bot-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/19/2026, 10:34:43 AM
+NPR
+rss-bot-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/19/2026, 10:34:43 AM
+New York Post
+meltwater-intus
+0 admitted
+relevance-rejected 1
+Last run: 7/19/2026, 8:54:09 AM
+NewsNation
+rss-bot-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/18/2026, 10:34:39 AM
+Pressreader
+drudge-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/17/2026, 3:09:28 PM
+Rottentomatoes
+drudge-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/17/2026, 3:09:28 PM
+Sportscasting
+drudge-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/17/2026, 3:09:28 PM
+Telegraph
+drudge-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/17/2026, 3:09:28 PM
+The Brookings Institution
+meltwater-intus
+0 admitted
+relevance-rejected 1
+Last run: 7/17/2026, 4:55:30 PM
+The Daily Star
+meltwater-intus
+0 admitted
+relevance-rejected 1
+Last run: 7/19/2026, 6:53:54 AM
+The Hill
+rss-bot-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/17/2026, 7:15:18 AM
+The Jordan Times
+meltwater-intus
+0 admitted
+gate-unscored 1
+Last run: 7/18/2026, 8:53:28 PM
+The New York Times
+drudge-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/17/2026, 2:25:37 PM
+The Wall Street Journal
+drudge-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/17/2026, 3:09:28 PM
+The War Zone
+rss-bot-rejects
+0 admitted
+dup-url 1
+Last run: 7/16/2026, 4:14:58 PM
+Thesmokinggun
+drudge-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/17/2026, 2:25:37 PM
+Thetimes
+drudge-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/17/2026, 3:09:28 PM
+Thewrap
+drudge-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/17/2026, 3:09:28 PM
+Try
+drudge-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/17/2026, 3:09:28 PM
+War on the Rocks
+rss-bot-rejects
+0 admitted
+relevance-rejected 1
+Last run: 7/17/2026, 1:39:38 PM
+Xinhua - English
+meltwater-cpc
+0 admitted
+dup-url 1
+Last run: 7/18/2026, 11:23:11 AM
+Show 38 admitting sources
+Source resolution
+
+3 flagged
+51 resolved
+How recent curated sources (last 72h) resolve against the registry. Flagged rows don't resolve to a registry row, or only resolve via a generic parent domain — add a domain/alias to the matching outlet on the Registry tab to fix.
+
+telegraph.co.uk
+Unresolved
+2
+Source: Telegraph
+https://www.telegraph.co.uk/world-news/2026/07/17/ukraine-turns-sea-of-azov-into-graveyard-for-russian-ships/
+https://www.telegraph.co.uk/business/2026/07/17/stocks-plunge-ai-giants-bloodbath-ftse-100-markets/
+the-express.com
+Unresolved
+1
+Source: The-express
+https://www.the-express.com/news/us-news/212046/sinister-banner-shows-trump-family
+yahoo.com
+Unresolved
+1
+Source: Yahoo
+https://www.yahoo.com/news/world/articles/mexico-city-tourist-area-appears-012057239.html
+Show 51 resolved sources
+Outlet freshness
+
+64 stale
+61 fresh
+Every confirmed outlet (125 total) and its enrichment freshness. A stale outlet hasn't been enriched in over 30 days (or never). Manually overridden fields are excluded — enrichment doesn't manage them.

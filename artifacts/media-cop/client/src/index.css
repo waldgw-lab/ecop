@@ -1,0 +1,781 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* LIGHT MODE */
+:root {
+  --button-outline: rgba(0,0,0, .10);
+  --badge-outline: rgba(0,0,0, .05);
+
+  /* Automatic computation of border around primary / danger buttons */
+  --opaque-button-border-intensity: -8; /* In terms of percentages */
+
+  /* Backgrounds applied on top of other backgrounds when hovered/active */
+  --elevate-1: rgba(0,0,0, .03);
+  --elevate-2: rgba(0,0,0, .08);
+
+  --background: 0 0% 100%;
+
+  --foreground: 210 6% 13%;
+
+  --border: 210 6% 88%;
+
+  --card: 0 0% 98%;
+
+  --card-foreground: 210 6% 13%;
+
+  --card-border: 210 6% 93%;
+
+  --sidebar: 210 4% 96%;
+
+  --sidebar-foreground: 210 6% 13%;
+
+  --sidebar-border: 210 6% 90%;
+
+  --sidebar-primary: 214 84% 28%;
+
+  --sidebar-primary-foreground: 210 20% 98%;
+
+  --sidebar-accent: 210 8% 90%;
+
+  --sidebar-accent-foreground: 210 6% 20%;
+
+  --sidebar-ring: 214 84% 28%;
+
+  --popover: 210 6% 94%;
+
+  --popover-foreground: 210 6% 13%;
+
+  --popover-border: 210 8% 86%;
+
+  --primary: 214 84% 28%;
+
+  --primary-foreground: 210 20% 98%;
+
+  --secondary: 210 8% 88%;
+
+  --secondary-foreground: 210 6% 15%;
+
+  --muted: 210 10% 92%;
+
+  --muted-foreground: 210 6% 38%;
+
+  --accent: 210 12% 91%;
+
+  --accent-foreground: 210 6% 20%;
+
+  --destructive: 0 72% 32%;
+
+  --destructive-foreground: 0 20% 98%;
+
+  --input: 210 10% 72%;
+  --ring: 214 84% 28%;
+  --chart-1: 214 84% 28%;
+  --chart-2: 210 60% 35%;
+  --chart-3: 195 70% 38%;
+  --chart-4: 180 65% 42%;
+  --chart-5: 165 60% 45%;
+
+  --font-sans: "Twemoji Country Flags", Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: "Twemoji Country Flags", "JetBrains Mono", "Courier New", monospace;
+  --radius: .5rem; /* 8px */
+  --shadow-2xs: 0px 1px 2px 0px hsl(210 10% 10% / 0.05);
+  --shadow-xs: 0px 1px 2px 0px hsl(210 10% 10% / 0.06);
+  --shadow-sm: 0px 1px 2px 0px hsl(210 10% 10% / 0.05), 0px 1px 3px 0px hsl(210 10% 10% / 0.08);
+  --shadow: 0px 1px 3px 0px hsl(210 10% 10% / 0.08), 0px 1px 2px -1px hsl(210 10% 10% / 0.08);
+  --shadow-md: 0px 4px 6px -1px hsl(210 10% 10% / 0.08), 0px 2px 4px -2px hsl(210 10% 10% / 0.08);
+  --shadow-lg: 0px 10px 15px -3px hsl(210 10% 10% / 0.08), 0px 4px 6px -4px hsl(210 10% 10% / 0.08);
+  --shadow-xl: 0px 20px 25px -5px hsl(210 10% 10% / 0.08), 0px 8px 10px -6px hsl(210 10% 10% / 0.08);
+  --shadow-2xl: 0px 25px 50px -12px hsl(210 10% 10% / 0.15);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+
+  /* Automatically computed borders - intensity can be controlled by the user by the --opaque-button-border-intensity setting */
+
+  /* Fallback for older browsers */
+  --sidebar-primary-border: hsl(var(--sidebar-primary));
+  --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --sidebar-accent-border: hsl(var(--sidebar-accent));
+  --sidebar-accent-border: hsl(from hsl(var(--sidebar-accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --primary-border: hsl(var(--primary));
+  --primary-border: hsl(from hsl(var(--primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --secondary-border: hsl(var(--secondary));
+  --secondary-border: hsl(from hsl(var(--secondary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --muted-border: hsl(var(--muted));
+  --muted-border: hsl(from hsl(var(--muted)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --accent-border: hsl(var(--accent));
+  --accent-border: hsl(from hsl(var(--accent)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+
+  /* Fallback for older browsers */
+  --destructive-border: hsl(var(--destructive));
+  --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
+}
+
+.dark {
+  --button-outline: rgba(255,255,255, .10);
+  --badge-outline: rgba(255,255,255, .05);
+
+  --opaque-button-border-intensity: 9;  /* In terms of percentages */
+
+  /* Backgrounds applied on top of other backgrounds when hovered/active */
+  --elevate-1: rgba(255,255,255, .04);
+  --elevate-2: rgba(255,255,255, .09);
+
+  --background: 210 6% 8%;
+
+  --foreground: 210 6% 92%;
+
+  --border: 210 6% 16%;
+
+  --card: 210 5% 10%;
+
+  --card-foreground: 210 6% 92%;
+
+  --card-border: 210 6% 14%;
+
+  --sidebar: 210 4% 12%;
+
+  --sidebar-foreground: 210 6% 92%;
+
+  --sidebar-border: 210 6% 16%;
+
+  --sidebar-primary: 214 84% 28%;
+
+  --sidebar-primary-foreground: 210 20% 98%;
+
+  --sidebar-accent: 210 8% 18%;
+
+  --sidebar-accent-foreground: 210 6% 88%;
+
+  --sidebar-ring: 214 84% 28%;
+
+  --popover: 210 6% 14%;
+
+  --popover-foreground: 210 6% 92%;
+
+  --popover-border: 210 8% 18%;
+
+  --primary: 214 84% 28%;
+
+  --primary-foreground: 210 20% 98%;
+
+  --secondary: 210 8% 20%;
+
+  --secondary-foreground: 210 6% 90%;
+
+  --muted: 210 10% 16%;
+
+  --muted-foreground: 210 6% 68%;
+
+  --accent: 210 12% 18%;
+
+  --accent-foreground: 210 6% 88%;
+
+  --destructive: 0 72% 32%;
+
+  --destructive-foreground: 0 20% 98%;
+
+  --input: 210 10% 32%;
+  --ring: 214 84% 28%;
+  --chart-1: 214 84% 56%;
+  --chart-2: 210 60% 62%;
+  --chart-3: 195 70% 65%;
+  --chart-4: 180 65% 68%;
+  --chart-5: 165 60% 70%;
+
+  --shadow-2xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.20);
+  --shadow-xs: 0px 1px 2px 0px hsl(0 0% 0% / 0.25);
+  --shadow-sm: 0px 1px 2px 0px hsl(0 0% 0% / 0.20), 0px 1px 3px 0px hsl(0 0% 0% / 0.30);
+  --shadow: 0px 1px 3px 0px hsl(0 0% 0% / 0.30), 0px 1px 2px -1px hsl(0 0% 0% / 0.30);
+  --shadow-md: 0px 4px 6px -1px hsl(0 0% 0% / 0.30), 0px 2px 4px -2px hsl(0 0% 0% / 0.30);
+  --shadow-lg: 0px 10px 15px -3px hsl(0 0% 0% / 0.30), 0px 4px 6px -4px hsl(0 0% 0% / 0.30);
+  --shadow-xl: 0px 20px 25px -5px hsl(0 0% 0% / 0.30), 0px 8px 10px -6px hsl(0 0% 0% / 0.30);
+  --shadow-2xl: 0px 25px 50px -12px hsl(0 0% 0% / 0.40);
+
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/* ── Curated View theme tokens ─────────────────────────────────────────────
+   The Curated View was originally dark-only (its root forced `.dark`). These
+   tokens let every curated surface follow the app light/dark theme instead.
+   All values are H S% L% (no hsl() wrapper) so they compose cleanly with the
+   `hsl(var(--x) / <alpha-value>)` pattern used in tailwind.config.ts. */
+:root {
+  --curated-bg: 210 20% 94%;
+  --curated-border: 210 12% 80%;
+  --curated-surface-bg: 0 0% 100%;
+  --curated-accent: 196.634 46.119% 57.059%; /* exact brand blue #5FA8C4 */
+  --curated-accent-strong: 200 78% 24%;  /* darker for accent TEXT on light */
+  --curated-action-foreground: 202 58% 12%; /* readable dark text on #5FA8C4 */
+  --curated-action-hover: 196 46% 50%;    /* stronger hover without changing hue */
+  --curated-muted: 202 16% 42%;          /* muted body text (was #A6C0CA) */
+  --curated-contrast: 0 62% 47%;         /* contrast rows (was #e06b6b) */
+  /* LIGHT-mode curated BACKDROP: the teal storm-cloud photo (user-supplied)
+     lifted slightly lighter with a pale wash TINTED to the app's brand-blue
+     scheme (#5FA8C4 family, hue ~196) so the photo's teal reads as the curated
+     accent color. Clouds stay clearly visible/moody. The SAME gradient backs
+     both the header and the page body so the two backgrounds match seamlessly.
+     DARK mode (below) keeps the original dark storm-metal gradient untouched. */
+  /* NOTE: the header element carries its own forced `dark` class, so any var
+     the `.dark` block overrides resolves to the DARK value on the header even
+     in light mode. The light backdrop therefore lives in a dedicated -light
+     var (never overridden by `.dark`) that both the page var and the header
+     rule read, keeping header + body on ONE shared backdrop. */
+  --curated-page-gradient-light: linear-gradient(180deg, rgba(203, 224, 232, 0.50) 0%, rgba(168, 199, 212, 0.54) 100%), url("@assets/istockphoto-1340644354-612x612_1784470196623.jpg");
+  --curated-page-gradient: var(--curated-page-gradient-light);
+}
+
+.dark {
+  --curated-bg: 0 0% 13%;
+  --curated-border: 0 0% 50%;
+  --curated-surface-bg: 0 0% 15%;
+  --curated-accent: 196.634 46.119% 57.059%;
+  --curated-accent-strong: 196 46% 57%;  /* #5FA8C4 reads well on dark */
+  --curated-action-foreground: 202 58% 12%;
+  --curated-action-hover: 196 46% 50%;
+  --curated-muted: 200 22% 72%;          /* #A6C0CA */
+  --curated-contrast: 0 66% 65%;         /* #e06b6b */
+  --curated-page-gradient: radial-gradient(140% 90% at 50% -20%, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0) 55%), linear-gradient(155deg, #2e3237 0%, #212429 45%, #16181b 100%);
+}
+
+/* Full-page curated backdrop. LIGHT mode: the header storm-cloud photo washed
+   considerably lighter (see --curated-page-gradient). DARK mode: the original
+   dark storm-metal gradient. Remaps base background/border tokens; the main
+   content is wrapped in a .curated-sheet that floats on top. */
+.curated-root {
+  --background: var(--curated-bg);
+  --border: var(--curated-border);
+  /* LIGHT mode: with the sheet film gone, muted/secondary labels sit directly
+     on the busy storm backdrop, so lift their contrast (darker foregrounds)
+     to keep section headers, "no posts" placeholders and footer links legible.
+     DARK mode restores the originals below so it stays pixel-identical. */
+  --muted-foreground: 208 32% 16%;
+  --curated-muted: 208 34% 15%;
+  background-color: hsl(var(--curated-bg));
+  background-image: var(--curated-page-gradient);
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center;
+}
+.dark .curated-root {
+  --muted-foreground: 210 6% 68%;
+  --curated-muted: 200 22% 72%;
+  background-color: hsl(0 0% 10%);
+}
+
+/* Curated header storm-cloud backdrop. The header element keeps its own forced
+   `dark` class (white logo + light controls), so theme is read off the <html>
+   ancestor: LIGHT mode uses the SAME washed backdrop as the page body
+   (--curated-page-gradient) so the header and content backgrounds match
+   seamlessly (the white logo/controls stay readable via their drop-shadows);
+   DARK mode keeps the original near-black wash pixel-identical. */
+.curated-header-storm {
+  background-color: hsl(var(--curated-bg));
+  /* -light var, NOT --curated-page-gradient: the header's own forced `dark`
+     class would resolve the latter to the dark-mode value even in light mode
+     (custom props set by `.dark {}` apply to the element itself). Dark mode is
+     overridden below anyway. */
+  background-image: var(--curated-page-gradient-light);
+  background-size: cover;
+  background-position: center;
+}
+.dark .curated-header-storm {
+  background-color: hsl(0 0% 13%);
+  background-image:
+    linear-gradient(180deg, rgba(10, 14, 18, 0.45) 0%, rgba(10, 14, 18, 0.62) 100%),
+    url("@assets/image_1780976745611.png");
+}
+
+/* LIGHT-mode "tile" backing for individual content items (Top Stories rows,
+   MCOP Highlights entries, Aerial View entries, IE Highlights groups): a
+   translucent rounded card the clouds show through, ringed with an inset
+   border (inset box-shadow, not `border`, so it adds ZERO layout size and dark
+   mode stays layout-identical). Pair with the `rounded-md` utility in markup.
+   DARK mode: full no-op — transparent, ring-less, exactly as before. */
+.curated-tile {
+  background-color: hsl(var(--card) / 0.55);
+  box-shadow: inset 0 0 0 1px hsl(var(--curated-border) / 0.7);
+}
+.dark .curated-tile {
+  background-color: transparent;
+  box-shadow: none;
+}
+
+/* Light-only inner padding for tiles whose original markup had none (IE
+   Highlights groups). Dark zeroes it so dark layout is untouched. */
+.curated-tile-pad {
+  padding: 0.5rem;
+}
+.dark .curated-tile-pad {
+  padding: 0;
+}
+
+/* Top Stories ranked list. Replaces Tailwind's `divide-y divide-border` on the
+   scroll container: LIGHT mode separates the row tiles with a gap (no hairline
+   dividers between rounded tiles); DARK mode restores the exact divide-y look —
+   1px hsl(var(--border)) top border on every row after the first, no margins. */
+.curated-story-list > * + * {
+  margin-top: 0.5rem;
+}
+.dark .curated-story-list > * + * {
+  margin-top: 0;
+  border-top: 1px solid hsl(var(--border));
+}
+
+/* Light-theme content "sheet": now just a subtle frame — NO background film,
+   so the main content area shows the storm backdrop at the SAME strength as
+   the header (user: "make the main part background match the header"). The
+   translucent backing lives on the individual item tiles (.curated-tile)
+   instead. In dark theme the sheet is a no-op (transparent, no frame) so the
+   content stays flat on the storm exactly as before. */
+.curated-sheet {
+  margin-block: 0.75rem;
+  background-color: transparent;
+  border: 1px solid hsl(var(--border) / 0.6);
+  border-radius: 0.5rem;
+  box-shadow: none;
+}
+.dark .curated-sheet {
+  margin-block: 0;
+  background-color: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Portaled curated surfaces (dialogs, sheets, popovers) — theme-aware panel
+   background + border, no forced dark. */
+.curated-surface {
+  --background: var(--curated-surface-bg);
+  --border: var(--curated-border);
+}
+
+/* Social / DataMinr feed cards (Truth Social, U.S. X Feed, DataMinr First
+   Alert). By default these are solid `bg-card` blocks; in LIGHT mode that reads
+   as opaque white sitting on the frosted sheet. Make them translucent white so
+   the storm backdrop shows THROUGH the cards and the gaps between them reveal
+   even more of the metal — matching the frosted .curated-sheet. In DARK mode
+   this is a pixel-identical no-op (opaque card, exactly what bg-card renders). */
+.curated-feed-card {
+  background-color: hsl(var(--card) / 0.6);
+}
+.dark .curated-feed-card {
+  background-color: hsl(var(--card));
+}
+
+/* LIGHT mode: every in-page curated card is light-but-translucent so the cloud
+   backdrop reads distinctly through the items themselves (portaled dialogs and
+   popovers live outside .curated-root and stay opaque). DARK mode restores the
+   fully opaque card exactly as before. */
+.curated-root .bg-card {
+  background-color: hsl(var(--card) / 0.55);
+}
+.dark .curated-root .bg-card {
+  background-color: hsl(var(--card));
+}
+
+/**
+ * Using the elevate system.
+ * Automatic contrast adjustment.
+ *
+ * <element className="hover-elevate" />
+ * <element className="active-elevate-2" />
+ *
+ * // Using the tailwind utility when a data attribute is "on"
+ * <element className="toggle-elevate data-[state=on]:toggle-elevated" />
+ * // Or manually controlling the toggle state
+ * <element className="toggle-elevate toggle-elevated" />
+ *
+ * Elevation systems have to handle many states.
+ * - not-hovered, vs. hovered vs. active  (three mutually exclusive states)
+ * - toggled or not
+ * - focused or not (this is not handled with these utilities)
+ *
+ * Even without handling focused or not, this is six possible combinations that
+ * need to be distinguished from eachother visually.
+ */
+@layer utilities {
+
+  /* Hide ugly search cancel button in Chrome until we can style it properly */
+  input[type="search"]::-webkit-search-cancel-button {
+    @apply hidden;
+  }
+
+  /* Animated highlight flash for a methodology section heading when the page is
+     deep-linked to it from a Curated tooltip / info icon (?section=<slug>). Uses
+     box-shadow spread (not padding) for the glow so it never shifts page layout.
+     Color is the curated brand blue (#5FA8C4 ≈ hsl(196 46% 57%)). */
+  @keyframes methodology-highlight {
+    0% {
+      background-color: hsl(196 46% 57% / 0);
+      box-shadow: 0 0 0 0 hsl(196 46% 57% / 0);
+    }
+    20% {
+      background-color: hsl(196 46% 57% / 0.28);
+      box-shadow: 0 0 0 6px hsl(196 46% 57% / 0.28);
+    }
+    100% {
+      background-color: hsl(196 46% 57% / 0.16);
+      box-shadow: 0 0 0 6px hsl(196 46% 57% / 0);
+    }
+  }
+  /* The class keeps a steady subtle background so the heading stays highlighted
+     until the reader scrolls / interacts; the keyframe just adds the entry glow
+     and settles into that same steady background. */
+  .methodology-highlight {
+    background-color: hsl(196 46% 57% / 0.16);
+    border-radius: 0.375rem;
+    animation: methodology-highlight 2.4s ease-out 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .methodology-highlight {
+      animation: none;
+    }
+  }
+
+  /* Placeholder styling for contentEditable div */
+  [contenteditable][data-placeholder]:empty::before {
+    content: attr(data-placeholder);
+    color: hsl(var(--muted-foreground));
+    pointer-events: none;
+  }
+
+  /* Subtle dark scrollbars for the Visual (Stream) wall display */
+  .stream-dark,
+  .stream-dark * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(215 16% 35%) transparent;
+  }
+  .stream-dark ::-webkit-scrollbar,
+  .stream-dark::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .stream-dark ::-webkit-scrollbar-track,
+  .stream-dark::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .stream-dark ::-webkit-scrollbar-thumb,
+  .stream-dark::-webkit-scrollbar-thumb {
+    background-color: hsl(215 16% 35%);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  .stream-dark ::-webkit-scrollbar-thumb:hover,
+  .stream-dark::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(215 16% 48%);
+  }
+  .stream-dark ::-webkit-scrollbar-corner,
+  .stream-dark::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  /* Aesthetic terminal slide bars for the Curated view. LIGHT mode: pale track
+     + mid-gray thumb so the bars read on the light storm backdrop. DARK mode
+     (below) restores the original dark terminal bars pixel-identically. */
+  .curated-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(205 14% 55%) hsl(205 20% 86%);
+  }
+  .curated-scroll::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  .curated-scroll::-webkit-scrollbar-track {
+    background: hsl(205 20% 86%);
+    border-radius: 9999px;
+  }
+  .curated-scroll::-webkit-scrollbar-thumb {
+    background-color: hsl(205 14% 55%);
+    border-radius: 9999px;
+    border: 2px solid hsl(205 20% 86%);
+    background-clip: padding-box;
+  }
+  .curated-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(205 16% 44%);
+  }
+  .curated-scroll::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  .dark .curated-scroll {
+    scrollbar-color: hsl(0 0% 50%) hsl(0 0% 20%);
+  }
+  .dark .curated-scroll::-webkit-scrollbar-track {
+    background: hsl(0 0% 20%);
+  }
+  .dark .curated-scroll::-webkit-scrollbar-thumb {
+    background-color: hsl(0 0% 50%);
+    border: 2px solid hsl(0 0% 20%);
+  }
+  .dark .curated-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(0 0% 62%);
+  }
+
+  /* Subtle dark scrollbars for Classic view (and anything else) in dark mode */
+  .dark,
+  .dark * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(215 16% 35%) transparent;
+  }
+  .dark ::-webkit-scrollbar,
+  .dark::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  .dark ::-webkit-scrollbar-track,
+  .dark::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .dark ::-webkit-scrollbar-thumb,
+  .dark::-webkit-scrollbar-thumb {
+    background-color: hsl(215 16% 35%);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  .dark ::-webkit-scrollbar-thumb:hover,
+  .dark::-webkit-scrollbar-thumb:hover {
+    background-color: hsl(215 16% 48%);
+  }
+  .dark ::-webkit-scrollbar-corner,
+  .dark::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+
+  /* .no-default-hover-elevate/no-default-active-elevate is an escape hatch so consumers of
+   * buttons/badges can remove the automatic brightness adjustment on interactions
+   * and program their own. */
+  .no-default-hover-elevate {}
+
+  .no-default-active-elevate {}
+
+
+  /**
+   * Toggleable backgrounds go behind the content. Hoverable/active goes on top.
+   * This way they can stack/compound. Both will overlap the parent's borders!
+   * So borders will be automatically adjusted both on toggle, and hover/active,
+   * and they will be compounded.
+   */
+  .toggle-elevate::before,
+  .toggle-elevate-2::before {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0px;
+    /*border-radius: inherit;   match rounded corners */
+    border-radius: inherit;
+    z-index: -1;
+    /* sits behind content but above backdrop */
+  }
+
+  .toggle-elevate.toggle-elevated::before {
+    background-color: var(--elevate-2);
+  }
+
+  /* If there's a 1px border, adjust the inset so that it covers that parent's border */
+  .border.toggle-elevate::before {
+    inset: -1px;
+  }
+
+  /* Does not work on elements with overflow:hidden! */
+  .hover-elevate:not(.no-default-hover-elevate),
+  .active-elevate:not(.no-default-active-elevate),
+  .hover-elevate-2:not(.no-default-hover-elevate),
+  .active-elevate-2:not(.no-default-active-elevate) {
+    position: relative;
+    z-index: 0;
+  }
+
+  .hover-elevate:not(.no-default-hover-elevate)::after,
+  .active-elevate:not(.no-default-active-elevate)::after,
+  .hover-elevate-2:not(.no-default-hover-elevate)::after,
+  .active-elevate-2:not(.no-default-active-elevate)::after {
+    content: "";
+    pointer-events: none;
+    position: absolute;
+    inset: 0px;
+    /*border-radius: inherit;   match rounded corners */
+    border-radius: inherit;
+    z-index: 999;
+    /* sits in front of content */
+  }
+
+  .hover-elevate:hover:not(.no-default-hover-elevate)::after,
+  .active-elevate:active:not(.no-default-active-elevate)::after {
+    background-color: var(--elevate-1);
+  }
+
+  .hover-elevate-2:hover:not(.no-default-hover-elevate)::after,
+  .active-elevate-2:active:not(.no-default-active-elevate)::after {
+    background-color: var(--elevate-2);
+  }
+
+  /* If there's a 1px border, adjust the inset so that it covers that parent's border */
+  .border.hover-elevate:not(.no-hover-interaction-elevate)::after,
+  .border.active-elevate:not(.no-active-interaction-elevate)::after,
+  .border.hover-elevate-2:not(.no-hover-interaction-elevate)::after,
+  .border.active-elevate-2:not(.no-active-interaction-elevate)::after,
+  .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
+    inset: -1px;
+  }
+
+  /* Ensure interactive elements like sliders are always above elevation pseudo-elements */
+  [role="slider"],
+  input[type="range"],
+  [data-radix-collection-item] {
+    position: relative;
+    z-index: 1000;
+    pointer-events: auto !important;
+  }
+
+  /* Ensure slider thumbs are above everything and can receive pointer events */
+  [role="slider"] [data-radix-slider-thumb],
+  [data-radix-slider-thumb] {
+    position: relative;
+    z-index: 1001;
+    pointer-events: auto !important;
+    cursor: grab !important;
+  }
+
+  [role="slider"] [data-radix-slider-thumb]:active,
+  [data-radix-slider-thumb]:active {
+    cursor: grabbing !important;
+  }
+
+  /* Disable hover-elevate pseudo-elements on slider containers to prevent blocking pointer events */
+  [role="slider"]::after,
+  [role="slider"] *::after {
+    display: none !important;
+  }
+}
+
+.news-scrub-viewer {
+  color: hsl(var(--foreground));
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+
+.news-scrub-viewer h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 2px solid hsl(var(--primary));
+  color: hsl(var(--foreground));
+}
+
+.news-scrub-viewer h2,
+.news-scrub-viewer .section-header {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  background: hsl(var(--primary) / 0.08);
+  border-left: 4px solid hsl(var(--primary));
+  border-radius: 0 4px 4px 0;
+  color: hsl(var(--foreground));
+}
+
+.news-scrub-viewer h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: hsl(var(--foreground));
+}
+
+.news-scrub-viewer .bluf-section {
+  background: hsl(var(--primary) / 0.05);
+  border: 1px solid hsl(var(--primary) / 0.2);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.news-scrub-viewer .story-card {
+  background: hsl(var(--muted) / 0.3);
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.news-scrub-viewer .source-tag {
+  display: inline-block;
+  background: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  margin-right: 0.25rem;
+}
+
+.news-scrub-viewer .social-media-note {
+  font-style: italic;
+  color: hsl(var(--muted-foreground));
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.news-scrub-viewer p {
+  margin-bottom: 0.75rem;
+}
+
+.news-scrub-viewer ul {
+  margin-left: 1.5rem;
+  margin-bottom: 0.75rem;
+  list-style-type: disc;
+}
+
+.news-scrub-viewer ul ul {
+  list-style-type: circle;
+  margin-bottom: 0.25rem;
+}
+
+.news-scrub-viewer li {
+  margin-bottom: 0.4rem;
+}
+
+.news-scrub-viewer blockquote {
+  border-left: 3px solid hsl(var(--primary) / 0.4);
+  padding-left: 1rem;
+  margin: 0.75rem 0;
+  color: hsl(var(--muted-foreground));
+  font-style: italic;
+}
+
+.news-scrub-viewer strong {
+  font-weight: 600;
+  color: hsl(var(--foreground));
+}
+
+.news-scrub-viewer hr {
+  border: none;
+  border-top: 1px solid hsl(var(--border));
+  margin: 1.5rem 0;
+}

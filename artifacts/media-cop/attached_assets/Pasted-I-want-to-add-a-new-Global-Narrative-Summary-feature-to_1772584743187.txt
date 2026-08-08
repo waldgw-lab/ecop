@@ -1,0 +1,20 @@
+I want to add a new "Global Narrative Summary" feature to the ‘stream’ page. It will sit directly underneath the 4 main rotating news panels.
+Step 1: UI Adjustments Please reduce the height of the photos in the main 4 rotating news panels (using CSS object-fit: cover and a smaller max-height) to make vertical room for a new component below them.
+Step 2: Backend Architecture (Multilingual RSS to LLM) I need to generate AI summaries of how different regions are reporting on the Iran conflict, specifically looking for unified or competing narratives.
+1.	Install the rss-parser npm package.
+2.	Create a background interval/cron job that runs every 30 minutes. It should pull the top 15 items from multiple distinct RSS feeds for each of the following regions:
+o	Iran (e.g., IRNA, Tehran Times, Fars News)
+o	PRC/RUS (e.g., Xinhua, Global Times, RT, Sputnik)
+o	Israel (e.g., Times of Israel, Jerusalem Post, Haaretz)
+o	Europe (e.g., BBC, DW, Le Monde)
+o	USA (e.g., NYT, Fox News, Washington Post)
+3.	Send the raw, unparsed headlines for each region directly to a powerful LLM.
+4.	Use this exact system prompt for the LLM: "Here are recent headlines from multiple publications within [Region] in their native languages. First, identify any headlines related to the conflict involving Iran, Israel, the US, or the Middle East. Based ONLY on those relevant headlines, provide a 2 to 3-sentence summary in English of the narrative being broadcast to this domestic audience. Crucially: If the different publications are reporting in lockstep, summarize the unified narrative. If the publications are pushing competing narratives or contrasting angles, explicitly describe that friction. If no relevant headlines exist, return 'No major narrative regarding the conflict detected currently.'"
+5.	Cache the resulting English summaries on the server. Alongside each summary, cache an array of objects containing the exact source names used and their corresponding main website URLs (e.g., sources: [{name: 'Fox News', url: 'https://www.foxnews.com'}, {name: 'NYT', url: 'https://www.nytimes.com'}]).
+Step 3: Frontend Component Build a rotating display block underneath the 4 main news panels. It should rotate every 30 seconds to show the cached summary for one region at a time. Apply the following CSS styling motifs based on the region currently displayed:
+•	Iran: Red Motif
+•	PRC and RUS: Red Motif
+•	Israel: Green Motif
+•	Europe: Green Motif
+•	USA: Blue Motif
+The UI block must display the English summary text. At the very bottom of the block, in smaller text, it must explicitly list the sources used for that specific summary (e.g., "Sources: Fox News, NYT"). Iterate through the sources array passed from the backend and render each source name as an individual, clickable hyperlink that opens the respective news site in a new tab (target="_blank"). Ensure it is built in TypeScript.

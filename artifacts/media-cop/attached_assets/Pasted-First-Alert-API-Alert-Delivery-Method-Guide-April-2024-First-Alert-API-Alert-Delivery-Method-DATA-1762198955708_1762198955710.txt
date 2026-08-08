@@ -1,0 +1,378 @@
+First Alert API Alert Delivery Method Guide
+April 2024
+First Alert API Alert Delivery Method
+DATAMINR, INC. PROPRIETARY AND CONFIDENTIAL: 18 USC 1905, 5 USC 552(b)(4), 5 CFR 2635.703
+First Alert API Alert Delivery Method
+First Alert API Alert Delivery Method
+Summary
+Dataminr’s First Alert product for the public sector alerts first responders to breaking news events,
+enabling the fastest real-time response.
+This document details First Alert’s RESTful API endpoints that allow for authentication and delivery of First
+Alert’s breaking news Alerts based on the settings you have configured in your First Alert web application.
+All requests are made via secure HTTP (HTTPS) and data flow is unidirectional. Response data is returned
+in JSON format.
+By using the First Alert API Alert Delivery method, you agree to the terms found here:
+https://www.dataminr.com/firstalert-thirdpartytermsapi
+DATAMINR, INC. PROPRIETARY AND CONFIDENTIAL: 18 USC 1905, 5 USC 552(b)(4), 5 CFR 2635.703
+1
+First Alert API Alert Delivery Method
+Table of Contents
+System Requirements 3 Security Measures 4
+Authentication and Credentials 4 Request Properties 4 Request Parameters 4 Example Request 5 Example
+Response 5 Response Body 6 Rate Limiting 6
+Delivering Breaking News Alerts 7 Cursor-Based Implementation 7 Request Properties 7 Request
+Parameters 7 Response 8
+Breaking News Alert Details 9 API Alert Delivery Method Implementation Best Practices 11 Errors 11
+FAQ’s and Troubleshooting 12 Contact Us 12
+DATAMINR, INC. PROPRIETARY AND CONFIDENTIAL: 18 USC 1905, 5 USC 552(b)(4), 5 CFR 2635.703
+2
+First Alert API Alert Delivery Method
+System Requirements
+Interaction with the First Alert API alert delivery method adheres to RESTful standards. All requests are
+made via secure HTTP (HTTPS). Response data is returned in JSON format.
+Please check with Dataminr Support by emailing support@dataminr.com for more information about the
+latest compatibility list and upcoming changes.
+By using the First Alert API alert delivery method, you agree to the terms found
+here: https://www.dataminr.com/firstalert-thirdpartytermsapi
+DATAMINR, INC. PROPRIETARY AND CONFIDENTIAL: 18 USC 1905, 5 USC 552(b)(4), 5 CFR 2635.703
+3
+First Alert API Alert Delivery Method
+Security Measures
+In order to receive breaking news alerts with the First Alert API alert delivery Method, HTTPS
+connections are required when sending requests.
+Authentication and Credentials
+For server-based applications, you are assigned an API User ID and API Password associated with a single
+user account in the First Alert Web Application, which work the same as a Client ID and Client Secret
+respectively in the standard OAuth 2.0 framework.
+To retrieve your API User ID and API Password, you must log into your API delivery method-enabled
+First Alert account using your First Alert account credentials.
+Within First Alert, click Settings in the upper right and select Account. Then select the API Authorization
+tab on the left and click Manage API Authorization. Re-enter your First Alert credentials and follow the
+prompts to accept terms of service and authorize API delivery. Once successfully authorized, you will see
+your API User ID and API Password. Be sure to store in a secure location.
+NOTE: The First Alert API functions as an alert delivery method for the First Alert account and its
+alert setting. At least one (1) valid Alert List must be configured on the account before making API
+calls.
+To request alerts, an Authorization Token must first be obtained from the Dataminr Authorization Service
+and included in subsequent requests for that session. To retrieve your Authorization Token, use the API
+User ID and API Password obtained via the First Alert API authorization workflow described above to call
+the /userAuthorization endpoint, outlined below:
+Request Properties
+Property Value
+Request Method POST
+URL https://firstalert-api.dataminr.com/auth/1/userAuthorization
+Headers Content-Type: application/x-www-form-urlencoded
+DATAMINR, INC. PROPRIETARY AND CONFIDENTIAL: 18 USC 1905, 5 USC 552(b)(4), 5 CFR 2635.703
+4
+First Alert API Alert Delivery Method
+Request Parameters
+Name Required Type Description
+grant_type Yes String Set to “api_key”
+scope Yes String Set to “first_alert_api”
+api_user_id Yes String Set to the API User ID
+api_password Yes String Set to the API
+Password
+Example Request
+POST /auth/1/userAuthorization
+HTTP/1.1
+https://firstalert-api.dataminr.com/auth/1/userAuthorization
+Headers
+Content-Type: application/x-www-form-urlencoded
+Host: firstalert-api.dataminr.com
+Accept: application/json
+Content-Length: <calculated>
+Body
+grant_type=api_key&scope=first_alert_api&api_user_id=YOUR_API_USER_ID&api_password=YOUR_API_
+PASSWORD
+Note: Parameters must be specified in the http body and cannot be provided as query parameters.
+DATAMINR, INC. PROPRIETARY AND CONFIDENTIAL: 18 USC 1905, 5 USC 552(b)(4), 5 CFR 2635.703
+5
+First Alert API Alert Delivery Method
+Example Response
+A sample response is shown below.
+HTTP/1.1 200 OK
+Access-Control-Allow-Headers: authorization
+x-verify-credentials-authorization, x-auth-service-provider,
+x-twitter-client-version
+Access-Control-Allow-Methods: GET,POST
+Access-Control-Allow-Origin: *
+Content-Type: application/json; charset=UTF-8
+Date: Aug, 1 Nov 2020 12:00:00 GMT
+Server: Dataminr
+Content-Length: 180
+Connection: keep-alive
+{
+“TOS”: “By using the API, you confirm that you have read the third party terms linked in
+the thirdPartyTerms field and agree to be and remain bound to such terms and conditions. If
+you are agreeing to these terms and conditions on behalf of an organization or entity, you
+agree that you are authorized to agree to these terms and conditions on that organization’s
+or entity’s behalf and bind them to these terms and conditions together with any other
+terms agreed to by your organization or entity.”,
+“thirdPartyTerms”: “https://www.dataminr.com/firstalert-thirdpartytermsapi”,
+"userAuthorization": "c1b748aa49cb4dfaa602fbdc1912e9f1",
+"expirationTime": 1623628459980
+}
+Response Body
+Name Description
+TOS Terms of service that must be followed in any usage
+of this API alert delivery method or the breaking
+news alerts it delivers.
+thirdPartyTerms Link to terms of service for use of this API alert
+delivery method required by Dataminr and its third
+party partners.
+authorizationToken Authorization token required for subsequent
+alert delivery requests
+expirationTime Epoch timestamp noting the expiration of the userAuthorization token. This is set to 1 hour after
+the
+request time.
+DATAMINR, INC. PROPRIETARY AND CONFIDENTIAL: 18 USC 1905, 5 USC 552(b)(4), 5 CFR 2635.703
+6
+First Alert API Alert Delivery Method
+Note: The Authorization Token will expire after 1 hour, so server-based implementations of this API
+alert delivery method should continue to reauthorize to avoid a disruption of breaking news alert
+delivery.
+Rate Limiting
+In order to protect the Dataminr service, some of the APIs may have an associated rate limit or the
+number of calls that can be made over a period of time by a specific user account. Exceeding the rate
+limit may result in a failed request and an HTTP 429 error returned.
+Request Rate Limit per Session
+/auth/1/userAuthorization No rate limit
+Only the single latest authorizationToken will be active. (Creating a new
+authorizationToken invalidates the previous one)
+/alerts/1/alerts 180 requests within 10 minutes
+Delivering Breaking News Alerts
+The First Alert API alert delivery method delivers the breaking news alerts matching the alert lists that
+have been configured for API alert delivery in the associated First Alert account. If you would like to
+modify the alerts delivered, you must do so in your First Alert account:
+Cursor-Based Implementation
+The First Alert API alert delivery method uses a cursor-based implementation to paginate through alerts.
+The response from the API alert delivery method returns a to cursor pointing to the most recent of the
+returned alerts. To retrieve a stream of alerts without duplicates, you should pass the returned to value
+from the previous request as the following request’s from parameter. Ensure that cursors are URL
+encoded when making requests.
+Request Properties
+Property Value
+Request Method GET
+URL https://firstalert-api.dataminr.com/alerts/1/alerts
+Headers Authorization: DmAuth [YOUR_AUTHORIZATION_TOKEN]
+DATAMINR, INC. PROPRIETARY AND CONFIDENTIAL: 18 USC 1905, 5 USC 552(b)(4), 5 CFR 2635.703
+7
+First Alert API Alert Delivery Method
+Request Parameters
+All parameters are URL encoded, so ensure query characters are encoded successfully.
+Name Required Type Description Example
+alertversion Yes Integer Required
+parameter to
+ensure alerts are
+delivered as
+expected. Will
+increment over
+time.
+19
+from The “from” should
+String
+not be included on
+the first request to
+the API as there will
+not be a “from”
+cursor to reference
+to. However,
+subsequent calls
+should contain this
+parameter to avoid
+duplicates.
+‘from’ provides a
+cursor indicating
+the last breaking
+news alerts
+delivered
+through your
+First Alert API
+alert
+delivery method
+so that you can
+receive the next
+set of alerts
+matching your
+alert
+configuration.
+Note: This value
+must be URL
+encoded.
+from=H4sIAAA
+AAAAAAGNiM
+ShJTE9PTXHM
+SS0qKdYtSCw
+qySzJzM9LTeH
+5MvUWI9e0nb
+cYWRbsucXI1r
+D7NiPHh
+Example Request:
+GET /alerts/1/alerts
+https://firstalert-api.dataminr.com/alerts/1/alerts?alertversion=19&from=“H4sIAAAAAAAAAA
+ELAfT+AgQwdGFnZ2VkQWxlcnRzLXBhcnRpdGlvbmVkYNrfATC65gEa7N8BJILt7AIK4t4BQNrYASrQ5gFWrNkBIO
+jZASKO4wE4yNoBWIrkAUag6UcU6uMBVOrZAV”
+Headers
+Authorization: DmAuth YOUR_AUTHORIZATION_TOKEN
+DATAMINR, INC. PROPRIETARY AND CONFIDENTIAL: 18 USC 1905, 5 USC 552(b)(4), 5 CFR 2635.703
+8
+First Alert API Alert Delivery Method
+Response
+A sample response is shown below.
+{
+“alerts”: [
+"alertId": "16105705780476211705283-1",
+"alertType": {
+"name": "Urgent",
+},
+"eventTime": 1616621253472,
+"headline": "Fire department on scene of structure fire at intersection of Avenue C and
+West 22nd Street in Bayonne, NJ: Emergency Responder via News Outlet.",
+"publicPost": {
+"link": "https://r.dataminr.com/3d0IzqWq",
+},
+"firstAlertURL":
+"https://firstalert.dataminr.com/#alertDetail/6/16105705780476211705283-1",
+"estimatedEventLocation": ["Avenue C & W 22nd St, Bayonne, NJ 07002, USA",
+"40.66447084424909, -74.12124163098895", "0.12", "18T WL 74278 01882"],
+"alertLists": [
+{
+"name": "Emergency Response"
+}
+],
+"alertTopics": [
+{
+"name": "Disasters and Weather - Structure Fires and Collapses",
+"id": "154032"
+}
+],
+"linkedAlerts": [
+{
+"count": 2,
+"parentId": "881485414401001766138888-1712598032000-1"
+}
+],
+"termsOfUse": "https://www.dataminr.com/legal/firstalert-tos"
+}
+],
+“to”: “8hp0e9rh0aeijahe90g+aohweug”
+}
+DATAMINR, INC. PROPRIETARY AND CONFIDENTIAL: 18 USC 1905, 5 USC 552(b)(4), 5 CFR 2635.703
+9
+First Alert API Alert Delivery Method
+Breaking News Alert Details
+The breaking news alerts delivered through your First Alert API alert delivery method contain several
+alerting data fields. All fields should be assumed optional and may not be delivered with all alerts. Your
+use of this API alert delivery method should be tolerant of the absence of some of the fields.
+The below fields represent the current data fields that are available for each breaking news alert. If you
+have additional questions on any of these fields, please reach out to Dataminr Support.
+Name Type Description
+alertId String Unique identifier for a given alert
+alertType Object Criticality level of an alert (Flash, Urgent, Alert)
+Object fields:
+● name (string)
+eventTime Double Epoch timestamp of when the alert was
+created by Dataminr
+headline String Headlines are single-sentence summaries of
+the breaking news alerts, including the name
+of the public data source. Every alert will have
+a headline.
+publicPost Object Additional information from the public
+post where allowed by terms of use of the
+specific public data provider and therefore
+should be treated as optional.
+Object fields:
+● link (string - shortened URL)
+● text (string)
+● translatedText (string)
+● media (array of strings - URL)
+firstAlertURL String URL link that opens the alert in the First
+Alert web application.
+estimatedEventLocation Array An estimate of where the event occurred.
+[“Estimated event location name”,
+“estimated event location latitude”,
+“estimated event location longitude”,
+“estimated confidence radius in miles”,
+“estimated event location grid
+DATAMINR, INC. PROPRIETARY AND CONFIDENTIAL: 18 USC 1905, 5 USC 552(b)(4), 5 CFR 2635.703
+10
+First Alert API Alert Delivery Method
+reference system”]
+Note: The specific locations of social media users are never provided.
+alertLists Array of objects Name of the alert lists that delivered the alert.
+Object fields:
+● name (string)
+alertTopics Array of objects Information about the topics on the
+alert matching the alert list.
+Object fields:
+● name (string)
+● id (string)
+linkedAlerts Array of objects Indicator that multiple alerts may be
+linked together as part of a broader
+event.
+Object fields:
+● parentId (string)
+● count (integer)
+Note: The count is the total number of alerts available in First Alert
+not the number of alerts delivered to you via API as configured
+within your account’s alert settings.
+termsOfUse String Link to terms of service for use of this API
+alert delivery method required by Dataminr
+and its third party partners.
+subHeadline Object Additional information to provide context
+about a breaking news alert.
+Object fields:
+● title (string)
+● subHeadlines (string)
+DATAMINR, INC. PROPRIETARY AND CONFIDENTIAL: 18 USC 1905, 5 USC 552(b)(4), 5 CFR 2635.703
+11
+First Alert API Alert Delivery Method
+API Alert Delivery Method Implementation Best Practices
+The First API alert delivery method is a pull-based API, meaning that you have the ability to have alerts
+delivered at an interval of your choosing. Depending on system limitations and requirements, requests
+can be made as quickly as every few seconds. Generally, due to the importance of real-time breaking
+news alert delivery, we suggest that alerts are pulled every 15 seconds. In situations where system
+performance is a priority, you may pull alerts less frequently. However, make sure that alerts are
+delivered frequently enough relative to your alert settings.
+Errors
+Errors may be returned via standard HTTP error codes as well as specific application codes. All errors
+should be processed to provide ease of troubleshooting and possible logging.
+HTTP Code Dataminr Error Type Meaning
+400 101 - Invalid API call Bad Request The format of the request is incorrect.
+102 - Authentication error
+Unauthorized
+103 - Invalid DM token
+URL Not Found
+105 - Rate limit exceeded Too Many Requests
+401 The access token or credentials provided are incorrect or expired.
+404 The requesting URL is incorrect. 429 The rate limit has been exceeded.
+500 Internal Server Error The Dataminr server experienced an error.
+Dataminr errors may not always supply a code and may instead display the error and a description like in
+the examples below.
+{
+"Error": "unauthorized_client",
+"error_description": "Invalid API User ID/Password"
+}
+{
+"Error": [{
+"Code": "103",
+"message": "Authentication error. Invalid token"
+}]
+}
+DATAMINR, INC. PROPRIETARY AND CONFIDENTIAL: 18 USC 1905, 5 USC 552(b)(4), 5 CFR 2635.703
+12
+First Alert API Alert Delivery Method
+FAQ’s and Troubleshooting
+● How can I configure alerts lists directly via the API alert delivery method?
+○ Answer: You cannot create or configure alerts lists via the API alert delivery method. All
+alert configuration must be done in the First Alert web application. The API alert delivery
+method only allows for the delivery of the breaking news alerts that have been configured
+in your First Alert account.
+● Why am I not seeing any alerts coming through the API alert delivery method? ○ Answer: Each
+alert list can have its delivery method configured to determine whether it is delivered via API.
+Ensure the alert delivery methods are configured to your requirements.
+Contact Us
+If you have questions, concerns, or are in need of assistance when interacting with the First Alert API alert
+delivery method, please contact the Dataminr Support Team by emailing support@dataminr.com.
+DATAMINR, INC. PROPRIETARY AND CONFIDENTIAL: 18 USC 1905, 5 USC 552(b)(4), 5 CFR 2635.703
+13

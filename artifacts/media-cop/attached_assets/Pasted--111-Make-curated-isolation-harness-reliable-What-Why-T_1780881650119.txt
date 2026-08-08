@@ -1,0 +1,27 @@
+#111 - Make curated-isolation harness reliable
+What & Why
+The curated-isolation validation workflow runs scripts/curated-isolation-harness.ts, which proves the wider/lower-trust Curated lane and the outlet-enrichment layer never leak into the trusted feeds (Classic, Visual/Stream, Custom MCOP, Public REST API). The harness's very first step is to log in to the running app at http://localhost:5000. If the app server isn't yet listening on that port, the login fetch throws ECONNREFUSED and the whole run dies with fatal: TypeError: fetch failed before any isolation check executes.
+
+The result is a confusing "FAILED" status that looks like an isolation breach but is really just a startup/connection race — the actual tests never ran. We want a green check to mean "isolation guarantees genuinely hold" and a red check to mean "a real leak was found," not "the server wasn't up yet."
+
+Done looks like
+When the harness is run while the app is not yet reachable, it waits and retries the connection for a bounded window instead of dying instantly on the first refused connection.
+If the app never becomes reachable within the window, the harness exits with a distinct, clearly-worded message (e.g. "app server never became reachable at — start it before running the harness") that is obviously a precondition/environment failure, NOT an isolation violation.
+A genuine isolation violation still fails loudly and is clearly distinguishable from the "couldn't reach the server" case (different message and, ideally, a different exit code from the precondition failure).
+When the app IS up, the harness behaves exactly as before — same checks, same pass/fail semantics, same cleanup of seeded test data.
+Running the validation workflow against a healthy app produces a green/pass result.
+Out of scope
+Changing what the four isolation guarantees actually test, or the curated/enrichment logic itself.
+Auto-starting the app server from inside the harness, or changing the workflow so it boots its own server.
+Changing the Start application workflow or how the app binds to its port.
+Steps
+Add a readiness wait before login — Before the first authenticated request, poll a lightweight endpoint on the base URL (e.g. the existing auth/status or another always-available route) until it responds, with a bounded number of retries and a short delay between attempts. Treat connection-refused/fetch-failed errors during this window as "not ready yet" and keep retrying rather than aborting.
+Distinct precondition failure — If the readiness wait exhausts its retries, exit with a clearly-labeled "server unreachable" message and an exit code that is distinguishable from a real isolation-violation exit. Make the wording unambiguous that this is an environment/precondition problem, not a leak.
+Preserve existing semantics — Keep the existing login flow, session-cookie handling, the four isolation checks, and the seeded-data cleanup unchanged once the server is confirmed reachable. Make the readiness window configurable via an env var with a sensible default so it can be tuned without code changes.
+Verify both paths — Confirm the harness passes against a running app, and that when pointed at a down server it ends with the clear "unreachable" message after retrying (not an instant ECONNREFUSED crash, and not a false "isolation violated").
+Relevant files
+scripts/curated-isolation-harness.ts:54
+scripts/curated-isolation-harness.ts:89-118
+scripts/curated-isolation-harness.ts:120-126
+scripts/curated-isolation-harness.ts:360-379
+.replit

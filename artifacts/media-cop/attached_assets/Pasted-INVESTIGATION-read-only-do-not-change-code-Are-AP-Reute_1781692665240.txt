@@ -1,0 +1,42 @@
+INVESTIGATION (read-only — do not change code): Are AP, Reuters, NPR, and CNN
+actually reaching the Curated lane through a working DIRECT intake, or are they
+silently falling back to the capped RSS "reject path"?
+
+Background:
+- Task #309 (merged) was supposed to give US/Western wires (Reuters, AP, NPR,
+  CNN, NYT, WaPo, Politico, etc.) a direct, recurring intake into the curated
+  store — "not only via the reject path."
+- A review note claims no working public RSS feed exists for AP/Reuters/NPR/CNN
+  from this infrastructure, and that they only survive via the website-scraper
+  reject path. That path is capped per cycle and only carries each outlet's
+  LEAST CJCS-relevant (rejected) stories.
+- Known gotcha: an outlet having curated rows does NOT prove its feed URL works
+  (rows can arrive via the reject path). Verify liveness, not just presence.
+
+Please determine, for each of AP, Reuters, NPR, CNN:
+1. Which curated intake path(s) they're configured for — the curated direct-intake
+   roster (server/curatedFeeds.ts), the RSS reject path (server/rssFeedBot.ts),
+   the dedicated website scrapers (server/apNewsBot.ts, server/reutersBot.ts),
+   and/or Drudge (server/drudgeBot.ts). Note that apNewsBot/reutersBot exist but
+   confirm whether they write into curated intake or only the main feed.
+2. Whether each configured feed URL actually works right now — check the app's own
+   ingest-failure / feed-liveness logs, and a per-URL DNS/curl, rather than
+   assuming. Flag any that are dead or circuit-broken.
+3. By what path each outlet's curated rows are ACTUALLY arriving today — query the
+   curated store (read-only) for recent rows per outlet and correlate with which
+   intake produced them. Quantify: how many recent curated items per outlet came
+   via direct intake vs. the reject path.
+
+Relevant files: server/curatedFeeds.ts, server/curatedIngest.ts,
+server/rssFeedBot.ts, server/rssFeeds.ts, server/apNewsBot.ts,
+server/reutersBot.ts, server/drudgeBot.ts, shared/outletRegistry.ts.
+
+Report back with a clear verdict:
+- If the direct intake is LIVE and pulling these four → the gap from #309 is
+  closed; no follow-up needed.
+- If they're effectively only on the reject path (dead/missing direct feeds) →
+  scope the narrow fix: route the existing apNewsBot/reutersBot website scrapers
+  straight into curated intake (and identify what to do for NPR/CNN, which have
+  no dedicated scraper). Keep the curated-lane isolation guarantee intact.
+
+Do not implement anything in this pass — investigation and a recommendation only.

@@ -1,0 +1,41 @@
+#124 - Enrich Curated items with photos & summaries
+What & Why
+Curated-view items sourced from the wider-aperture curated_items store (the adversary/opinion/contrast outlets that appear as left-column Top Narratives and as corroborating / contrast / primary-origin members inside expanded stories) currently render with no photo and no AI summary bullets. The columns exist (ogImageUrl, summaryBullets) but are set to null at ingest and nothing ever fills them.
+
+The main feed already solves this: a paywall-bypass enrichment pipeline pulls an og:image (persisted to object storage) plus 3 AI summary bullets for the top items, with a periodic backfill cron repairing the rest. This task points that same pipeline at the curated store so curated items arrive (or get repaired) with photos and richer summaries.
+
+Critically, items must not be re-run through the paywall breaker if the same article URL was already enriched elsewhere (main feed / other MCOPs). Those already-scraped photos/bullets should be carried over directly, mirroring the existing team-submission carry-over.
+
+Done looks like
+Curated left-column Top Narratives and in-story members (corroborating / contrast / primary origin) show a photo and AI summary bullets where the article supports it, just like main-feed items.
+A curated item whose URL was already enriched in the main feed (headlines / manual_submissions) reuses that existing image + bullets instead of making a fresh paywall/AI call.
+Only curated items that are actually visible in the Curated view (top narratives + members of shown stories) get enriched on demand, plus a periodic backfill repairs ones that scrolled out of the live window — matching how the main feed behaves today (no enrich-everything-on-ingest).
+No regression to the main feed, Classic/Visual views, custom MCOPs, or the public API. Curated lane isolation is preserved.
+Out of scope
+Enriching every curated item at ingest time (explicitly rejected for cost — only the visible window + backfill).
+Changing the main-feed enrichment pipeline's behavior or scheduling.
+Any new outlet-registry / clustering / synthesis logic.
+Steps
+Add an enrichment-tracking column to the curated store — Give curated_items a media_scraped_at timestamp (matching the main-feed pattern) so the worker can tell which rows still need media and avoid reprocessing. Update the schema definition AND the idempotent table-creation/additive-backfill in the migration so both fresh and existing databases get the column (it is queried, so it must exist everywhere — see Relevant files). Leave it null when only a placeholder/favicon image was found, consistent with existing logic.
+
+Carry over already-scraped media by URL — Before any paywall/AI work, for the curated items in scope, look up their article URL in the already-enriched stores (headlines / manual_submissions) and copy over a real ogImageUrl (and summaryBullets when present). Reuse the existing carry-over approach rather than inventing a new one. This is the user's explicit requirement: do not re-break paywalls for URLs already processed elsewhere.
+
+Extend the enrichment worker to the curated store — Generalize the existing enrich routine (image via direct fetch → paywall bypass fallback, image persisted to object storage, 3 AI summary bullets) so it can read from and write back to curated_items, honoring the same skip rules (manually-edited, favicon-only, already-cached). Only run the paywall breaker for curated items that have no carried-over media. Respect the existing worker mutex so curated and main-feed enrichment don't collide.
+
+Enrich only the visible curated window — Hook enrichment to the set of curated items currently surfaced by the curated top-stories read path (top narratives + members of shown stories), so on-demand enrichment is bounded to what users actually see, mirroring the main feed's top-window prefetch.
+
+Add a curated backfill cron — Register a periodic job (mirroring the existing stale-media backfill) that repairs curated items which were bumped out of the live window or still lack media, bounded by a recency window and item cap to keep cost low.
+
+Verify rendering and isolation — Confirm the curated view actually displays the new photos/bullets (the cluster engine already carries ogImageUrl/bullets through to the UI), and confirm nothing leaks enrichment writes into the main feed, custom MCOPs, or public API.
+
+Relevant files
+server/streamPrefetch.ts:104-330,491-545,547-665
+server/paywallBypass.ts:11-60
+server/curatedIngest.ts:140-160
+server/curatedCluster.ts:240-345,420-440
+server/routes.ts:923-1000
+server/scheduler.ts:530-590
+server/storage.ts:1979-1994
+shared/schema.ts:1295-1335
+server/migrate.ts:1322-1350,1430-1445
+client/src/pages/Curated.tsx:825-865,1820-1840

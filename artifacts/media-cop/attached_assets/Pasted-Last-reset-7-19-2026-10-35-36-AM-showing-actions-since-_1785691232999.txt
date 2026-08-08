@@ -1,0 +1,2196 @@
+Last reset 7/19/2026, 10:35:36 AM — showing actions since.
+AI tuning brief
+Generate brief
+Generate an on-demand advisory brief. Repeatable outlet×category over-scoring is now handled automatically — those patterns become approvable "Scoring cap" rules in the Adjustments queue, so this brief focuses on the residual signals the loop can't express (rubric wording, relevance gaps, clustering).
+Most-relabeled topics
+Other / Emerging
+5
+Military Operations & Armed Conflict
+4
+Economic Statecraft & Sanctions
+2
+Terrorism, Insurgency & Non-State Armed Groups
+1
+Governance, Elections & Domestic Stability
+1
+Cyber, Space & Emerging Technology
+1
+Nuclear, WMD & Strategic Deterrence
+1
+Intelligence, Espionage & Security Services
+1
+Action breakdown
+Priority pin
+137
+Link stories
+129
+Merge stories
+97
+Content-kind mark
+69
+Re-label
+37
+manual-evict
+24
+manual-move
+18
+Hide image
+16
+replace-headline
+11
+Hide story
+7
+Replace image
+1
+Score vs. editor conflicts
+(threshold 50)
+High-score hides (AI over-scored)
+7
+The Guardian
+2
+Jerusalem Post
+1
+AP News
+1
+Stars and Stripes
+1
+ABC News
+1
+Taipei Times
+1
+Low-score boosts (AI under-scored)
+5
+Taipei Times
+2
+The Japan Times
+1
+Al Jazeera
+1
+The Washington Post
+1
+Clustering behavior changes
+(manual grouping — informs clustering tuning)
+Links
+129
+Merges
+97
+Unlinks
+0
+Pattern candidates
+(repeating corrections building toward a rule — observe-only, nothing auto-applied)
+Scoring cap
+Task & Purpose × Iran War Casualties (over-scored)
+3 corrections across 1 story · 1 more to suggest
+all 3 corrections were on the same story — needs corrections on ≥2 distinct stories to suggest
+Scoring cap
+The New York Times × Ukraine Conflict (over-scored)
+3 corrections across 1 story · 1 more to suggest
+all 3 corrections were on the same story — needs corrections on ≥2 distinct stories to suggest
+Scoring cap
+ABC News × Drone Incident (over-scored)
+2 corrections across 1 story · 1 more to suggest
+all 2 corrections were on the same story — needs corrections on ≥2 distinct stories to suggest
+Scoring cap
+Al Jazeera × Russia-Ukraine Conflict (over-scored)
+2 corrections across 1 story · 1 more to suggest
+all 2 corrections were on the same story — needs corrections on ≥2 distinct stories to suggest
+Scoring cap
+BBC News × Israeli Strikes on Gaza (over-scored)
+2 corrections across 1 story · 1 more to suggest
+all 2 corrections were on the same story — needs corrections on ≥2 distinct stories to suggest
+Scoring cap
+Bloomberg × Iran-US Conflict (over-scored)
+2 corrections across 1 story · 1 more to suggest
+all 2 corrections were on the same story — needs corrections on ≥2 distinct stories to suggest
+Scoring cap
+CNN × Civilian Casualties (over-scored)
+2 corrections across 1 story · 1 more to suggest
+all 2 corrections were on the same story — needs corrections on ≥2 distinct stories to suggest
+Scoring cap
+Jerusalem Post × IDF Detention (over-scored)
+2 corrections across 1 story · 1 more to suggest
+all 2 corrections were on the same story — needs corrections on ≥2 distinct stories to suggest
+Scoring cap
+Newsweek × Mobilization (over-scored)
+2 corrections across 1 story · 1 more to suggest
+all 2 corrections were on the same story — needs corrections on ≥2 distinct stories to suggest
+Scoring boost
+Taipei Times × Natural Disaster (under-scored, editors up-pinned)
+2 corrections across 2 stories · 1 more to suggest
+Outlet behavior
+The Guardian (repeatedly hidden/unlinked → attach-only)
+2 corrections across 2 stories · 1 more to suggest
+Scoring cap
+The Hill × US-Iran Military Action (over-scored)
+2 corrections across 1 story · 1 more to suggest
+all 2 corrections were on the same story — needs corrections on ≥2 distinct stories to suggest
+Cited reasons
+(why editors said they made these corrections — 4 annotated)
+AI over-scored (not that important)
+2×
+AI under-scored (more important than rated)
+1×
+Follow-up development of same story
+1×
+Suggested rules
+(deterministic patterns mined from repeated corrections — approve to apply)
+Standing must-link
+medium
+4 corrections
+Standing must-link: "Global Times" <-> "People's Daily" manually linked repeatedly (4x)
+Approving biases future clustering to group Global Times and People's Daily stories together.
+Retrospective impact: 4 currently active manual links between this outlet pair.
+Trump announces US will charge fee for protecting Strait of Hormuz shipping
+Shippers balk at Trump's Strait of Hormuz fees: "Dangerous Pandora's Box"
+US Faces Challenges Reopening Strait of Hormuz Amid Iran Tensions
+Approve
+Reject
+Snooze
+Recent adjustments
+Priority pin
+Taipei Times
+8/2/2026, 1:15:27 PM
+Han Kuang live-fire exercises to test US-style methods
+article
+AI score: 80
+pinned to 77
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Le Monde
+8/2/2026, 12:52:29 PM
+Russia recruits young women from Latin America to assemble drones in Tatarstan
+article
+AI score: 82
+pinned to 78
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Jerusalem Post
+8/2/2026, 12:44:51 PM
+After Trump walks back pledge to give Ukraine Patriot license, Russian attacks kill nine people
+AI score: 82
+pinned to 78
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+France 24
+8/2/2026, 12:43:55 PM
+Ukrainian drone strikes kill at least five in Russia, set another Wildberries warehouse ablaze
+AI score: 85
+pinned to 79
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+BBC News
+8/2/2026, 12:43:46 PM
+At least eight killed in Isreali strikes on Gaza after Hamas agree disarmament deal
+AI score: 88
+pinned to 80
+by chelsea.l.durante.mil@mail.mil
+Link stories
+Washington Examiner
+8/2/2026, 12:00:33 PM
+Brewing conflict within the anti-Houthi coalition risks blowing up the US strategy in Yemen
+AI score: 72
+linked 2 items: Brewing conflict within the anti-Houthi coalition risks blowing up the US strategy in Yemen; AI concurred — [Washington Examiner] Brewing conflict within the anti-Houthi coalition risks blowing up the US strategy in Yemen + https://www.washingtonpost.com/world/2026/08/02/strikes-against-saudi-arabia-by-yemens-houthis-widen-dangers-iran-war
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+CNBC
+8/2/2026, 11:59:41 AM
+Investors scored on Iran war's oil market boom. Staying long the trade will get trickier
+AI score: 66
+marked as analysis
+by chelsea.l.durante.mil@mail.mil
+Link stories
+Bloomberg
+8/2/2026, 11:59:07 AM
+Ukraine Says It Attacked Rosneft’s Refinery in Russia’s Saratov
+article
+AI score: 85
+linked 2 items: Ukraine Says It Attacked Rosneft’s Refinery in Russia’s Saratov; AI concurred — [Bloomberg] Ukraine Says It Attacked Rosneft’s Refinery in Russia’s Saratov + https://www.bbc.co.uk/news/articles/c998gg5pe09o
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Jerusalem Post
+8/2/2026, 11:58:35 AM
+Greatest antisemitic terrorist threat in Europe stems from jihadist terrorism, new report finds
+AI score: 72
+pinned to 64
+by chelsea.l.durante.mil@mail.mil
+AI over-scored (not that important)
+not imminent
+
+Merge stories
+8/2/2026, 11:57:04 AM
+merged 48 items: Lankford says Trump 'has no desire' to bomb Iran; superseded 1 overlapping row(s) → union of 48 URLs — https://thehill.com/homenews/senate/6004234-lankford-trump-iran-deal + [Axios] Trump cancels Iran attack, citing progress in negotiations + https://www.washingtonpost.com/world/2026/08/02/trump-cancels-iran-attack-citing-progress-deal-tehran-israel-alert + [France 24] US, Israel to hold off on Iran strikes + [Fox News] Trump pauses Iran strikes as negotiations continue + https:
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+8/2/2026, 11:56:23 AM
+merged 47 items: Trump cancels Iran attack, citing progress on deal; Tehran and Israel on alert; superseded 1 overlapping row(s) → union of 47 URLs — https://www.washingtonpost.com/world/2026/08/02/trump-cancels-iran-attack-citing-progress-deal-tehran-israel-alert + [Axios] Trump cancels Iran attack, citing progress in negotiations + [France 24] US, Israel to hold off on Iran strikes + [Fox News] Trump pauses Iran strikes as negotiations continue + https://www.aljazeera.com/news/2026/8/2/no-brea
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+CNBC
+8/2/2026, 11:45:21 AM
+Ukrainian drones kill two in Russia, strike Wildberries warehouse, governors say
+AI score: 85
+pinned to 83
+by chelsea.l.durante.mil@mail.mil
+manual-evict
+Fox News
+8/2/2026, 11:44:03 AM
+Marco Rubio says US strikes devastated Iran's defense program
+article
+AI score: 72
+evicted [Fox News] Marco Rubio says US strikes devastated Iran's defense program from Rubio’s bypass plan: Can the world escape the Strait of Hormuz chokepoint?
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+Al Jazeera
+8/2/2026, 11:43:29 AM
+Rubio’s bypass plan: Can the world escape the Strait of Hormuz chokepoint?
+article
+AI score: 66
+marked as analysis
+by chelsea.l.durante.mil@mail.mil
+manual-move
+The Jerusalem Post
+8/2/2026, 11:43:23 AM
+Trump claims Israel supported halting Iran strikes, Jerusalem bus driver attacked
+article
+AI score: 66
+moved [The Jerusalem Post] Trump claims Israel supported halting Iran strikes, Jerusalem bus driver attacked to Trump Halts Iran Strikes, but No Deal Reached on Hormuz
+by chelsea.l.durante.mil@mail.mil
+manual-move
+The Hindu
+8/2/2026, 11:42:59 AM
+Iran media denies Trump claim that Tehran asked U.S. not to strike
+article
+AI score: 66
+moved [The Hindu] Iran media denies Trump claim that Tehran asked U.S. not to strike to Trump Halts Iran Strikes, but No Deal Reached on Hormuz
+by chelsea.l.durante.mil@mail.mil
+Hide story
+Jerusalem Post
+8/2/2026, 11:42:05 AM
+'It never happened': Norman Finkelstein challenges Oct. 7 sexual violence on Hasan Piker’s podcast
+AI score: 55
+hidden
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Jerusalem Post
+8/2/2026, 11:41:46 AM
+US Air Force signs $1.84 billion contract with Northrop Grumman for Rafael Litening targeting pods
+AI score: 55
+pinned to 67
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+Le Monde
+8/2/2026, 11:40:35 AM
+In Fnideq, near Ceuta, young Moroccans face disillusion after brief crossing into Europe
+article
+AI score: 55
+merged 2 items: Europe to hold meeting Tuesday over Ceuta after migration flux; superseded 1 overlapping row(s) → union of 10 URLs — [Le Monde] In Fnideq, near Ceuta, young Moroccans face disillusion after brief crossing into Europe + [France 24] Europe to hold meeting Tuesday over Ceuta after migration flux
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+The National
+8/2/2026, 11:40:28 AM
+Kazakhstan's billion-dollar rare earths push faces familiar obstacles
+AI score: 68
+pinned to 60
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+The Jerusalem Post
+8/2/2026, 11:40:18 AM
+Iran fears audio recordings could reveal Mojtaba Khamenei’s location, Iranian media claims - report
+article
+AI score: 66
+pinned to 60
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+The Jerusalem Post
+8/2/2026, 11:38:23 AM
+US Air Force signs $1.84 billion contract with Northrop Grumman for Rafael Litening targeting pods
+AI score: 82
+pinned to 60
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Axios
+8/2/2026, 11:37:30 AM
+AI's manifesto war
+article
+AI score: 65
+pinned to 62
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Jerusalem Post
+8/2/2026, 11:36:37 AM
+Over 8,000 plaintiffs seek to hold PA liable for October 7 massacre, war damages
+AI score: 65
+pinned to 60
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+Fox News
+8/2/2026, 11:35:53 AM
+Mayor calls upscale restaurant bombing a 'brutal terrorist act' after 3 killed, 21 injured
+AI score: 72
+merged 25 items: Mayor calls upscale restaurant bombing a 'brutal terrorist act' after 3 killed, 21 injured; superseded 1 overlapping row(s) → union of 25 URLs — [Fox News] Mayor calls upscale restaurant bombing a 'brutal terrorist act' after 3 killed, 21 injured + https://www.dw.com/en/homemade-bomb-goes-off-outside-upscale-moscow-restaurant/a-78205022 + [Washington Examiner] Moscow mayor calls a deadly bomb attack on a restaurant a ‘terrorist act’ + https://abcnews.com/international/wirestory/
+by chelsea.l.durante.mil@mail.mil
+Re-label
+Fox News
+8/2/2026, 11:35:37 AM
+Mayor calls upscale restaurant bombing a 'brutal terrorist act' after 3 killed, 21 injured
+AI score: 72
+re-labeled to Terrorism, Insurgency & Non-State Armed Groups · Russia-Ukraine War · North America · Russia
+by chelsea.l.durante.mil@mail.mil
+replace-headline
+Fox News
+8/2/2026, 11:35:23 AM
+Mayor calls upscale restaurant bombing a 'brutal terrorist act' after 3 killed, 21 injured
+AI score: 72
+headline → Moscow Mayor calls upscale restaurant bombing a 'brutal terrorist act' after 3 k
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+Military.com
+8/2/2026, 11:34:38 AM
+FBI Investigates as Michigan Joins Minnesota in Reporting Cyberattacks on its Water Systems
+article
+AI score: 75
+merged 3 items: FBI Investigates as Michigan Joins Minnesota in Reporting Cyberattacks on its Water Systems; AI concurred — [Military.com] FBI Investigates as Michigan Joins Minnesota in Reporting Cyberattacks on its Water Systems + [Newsweek] Map Shows States Hit By Cyberattacks on Water Systems + [The Straits Times] Scope of hacks on US water supply widens as evidence points to Iran
+by chelsea.l.durante.mil@mail.mil
+Link stories
+Associated Press
+8/2/2026, 11:34:02 AM
+Israel says it has serious concerns with Hamas disarmament deal
+AI score: 72
+linked 2 items: Israel says it has serious concerns with Hamas disarmament deal; AI concurred — [Associated Press] Israel says it has serious concerns with Hamas disarmament deal + [The Jerusalem Post] ‘We believe Hamas will not disarm,’ Israeli-backed militia figure in Gaza tells ‘Post’
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+CBS News
+8/2/2026, 11:33:32 AM
+Sen. Mark Kelly: Trump "has to try to figure out a way out of" Iran war
+AI score: 72
+marked as other
+by chelsea.l.durante.mil@mail.mil
+Re-label
+CBS News
+8/2/2026, 11:33:23 AM
+Sen. Mark Kelly: Trump "has to try to figure out a way out of" Iran war
+AI score: 72
+re-labeled to Defense Policy & Military Readiness · United States
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+France 24
+8/2/2026, 11:32:58 AM
+US, Israel to hold off on Iran strikes
+AI score: 82
+merged 46 items: US, Israel to hold off on Iran strikes; superseded 1 overlapping row(s) → union of 46 URLs — [France 24] US, Israel to hold off on Iran strikes + [Axios] Trump cancels Iran attack, citing progress in negotiations + [Fox News] Trump pauses Iran strikes as negotiations continue + https://www.aljazeera.com/news/2026/8/2/no-breakthrough-on-strait-of-hormuz-as-trump-halts-attack-on-iran + [Washington Examiner] Trump says he called off Iran strikes to ‘make a deal’ with Tehran + [Mili
+by chelsea.l.durante.mil@mail.mil
+Hide image
+8/2/2026, 11:32:41 AM
+image hidden
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+BBC News
+8/2/2026, 11:26:24 AM
+At least eight killed in Isreali strikes on Gaza after Hamas agree disarmament deal
+AI score: 88
+pinned to 84
+by chelsea.l.durante.mil@mail.mil
+AI over-scored (not that important)
+shouldnt scored higher than the current more U.S. related items
+
+Link stories
+The Straits Times
+8/2/2026, 11:18:23 AM
+Italian-led EU force boards sanctioned tanker from Russia's 'shadow fleet' in Mediterranean
+article
+AI score: 82
+linked 2 items: Italian-led EU force boards sanctioned tanker from Russia's 'shadow fleet' in Mediterranean — [The Straits Times] Italian-led EU force boards sanctioned tanker from Russia's 'shadow fleet' in Mediterranean + https://www.reuters.com/world/europe/italian-led-eu-force-boards-sanctioned-tanker-russias-shadow-fleet-mediterranean-2026-08-02
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+The Guardian
+8/2/2026, 11:09:48 AM
+Trump climbs down on Iran strikes after Saudi alarm and threats from Tehran
+article
+AI score: 70
+merged 42 items: Trump climbs down on Iran strikes after Saudi alarm and threats from Tehran; AI concurred — [The Guardian] Trump climbs down on Iran strikes after Saudi alarm and threats from Tehran + [Axios] Trump cancels Iran attack, citing progress in negotiations + https://www.aljazeera.com/news/2026/8/2/no-breakthrough-on-strait-of-hormuz-as-trump-halts-attack-on-iran + [Washington Examiner] Trump says he called off Iran strikes to ‘make a deal’ with Tehran + [Military.com] Trump Says He W
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Jerusalem Post
+8/2/2026, 11:07:56 AM
+Iran fears audio recordings could reveal Mojtaba Khamenei’s location, Iranian media claims - report
+AI score: 65
+pinned to 75
+by chelsea.l.durante.mil@mail.mil
+AI under-scored (more important than rated)
+Content-kind mark
+CNBC
+8/2/2026, 11:07:03 AM
+Op-ed: The U.S. lead over China in AI is all but gone
+AI score: 72
+marked as opinion
+by chelsea.l.durante.mil@mail.mil
+Hide story
+AP News
+8/2/2026, 11:06:13 AM
+Los líderes de Irán muestran unidad sobre la guerra, pero discrepan sobre el objetivo
+AI score: 65
+hidden
+by chelsea.l.durante.mil@mail.mil
+Hide image
+8/2/2026, 11:05:38 AM
+image hidden
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+8/2/2026, 11:05:33 AM
+merged 24 items: Moscow mayor calls Saturday's deadly bomb attack on restaurant a 'terrorist act.'; AI concurred; superseded 1 overlapping row(s) → union of 24 URLs — https://abcnews.com/international/wirestory/moscow-mayor-calls-deadly-bomb-attack-restaurant-terrorist-135302676 + [Associated Press] Moscow mayor calls Saturday’s deadly bomb attack on restaurant a ‘terrorist act’ + https://abcnews.com/us/wirestory/moscow-mayor-calls-saturdays-deadly-bomb-attack-restaurant-135302583 + https://www.
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+The National
+8/2/2026, 11:04:48 AM
+Mike Pompeo: 'Gulf states will have to join US to finish the job on Iran'
+article
+AI score: 75
+marked as other
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+8/2/2026, 11:04:29 AM
+merged 9 items: Spanish Ceuta witnesses a deadly ‘game’ for Moroccan migrants; AI concurred — https://www.aljazeera.com/features/2026/8/2/spanish-ceuta-witnesses-a-deadly-game-for-moroccan-migrants + [France 24] Spain's Ceuta navigates aftermath of border surge after most migrants return to Morocco + [The Jerusalem Post] Death toll from migrant rush into Ceuta rises to 72, 1,000 more being treated by health services + https://abcnews.com/international/wirestory/ceuta-grapples-aftermath-border-su
+by chelsea.l.durante.mil@mail.mil
+Link stories
+8/2/2026, 11:03:54 AM
+linked 4 items: Ukrainian drones kill 5 in Russia and set fire to Wildberries warehouse; AI concurred — https://abcnews.com/international/wirestory/ukrainian-drones-kill-5-russia-set-fire-wildberries-135306270 + [CNBC] Ukrainian drones kill two in Russia, strike Wildberries warehouse, governors say + https://www.reuters.com/world/ukrainian-drones-kill-two-russia-strike-wildberries-warehouse-governors-say-2026-08-02 + [The Straits Times] Ukrainian drones kill two in Russia, strike Wildberries war
+by chelsea.l.durante.mil@mail.mil
+Link stories
+Newsweek
+8/2/2026, 11:03:28 AM
+Map Shows How Ukraine’s Drone War Is Closing in on Moscow
+article
+AI score: 85
+linked 2 items: Map Shows How Ukraine’s Drone War Is Closing in on Moscow; AI concurred — [Newsweek] Map Shows How Ukraine’s Drone War Is Closing in on Moscow + [The Guardian] ‘This is where democracy beats totalitarianism’: Ukraine’s drone strike force takes the fight to Russia
+by chelsea.l.durante.mil@mail.mil
+Link stories
+8/2/2026, 11:00:24 AM
+linked 15 items: At least eight killed in Isreali strikes on Gaza after Hamas agree disarmament deal — https://www.bbc.co.uk/news/articles/czjlvvkzj20o + https://www.aljazeera.com/news/2026/8/1/israeli-strikes-kill-four-across-gaza-destroy-medical-supply-warehouse + [The Hindu] Israeli strikes kill nine in Gaza, Israeli Minister says no deal to halt attacks + https://presstv.ir/detail/2026/08/02/773561/israeli-strikes-kill-8-more-palestinians,-including-2-children,-in-gaza-despite-ceasefire + [F
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+8/1/2026, 8:09:04 PM
+merged 12 items: Several people killed in explosion at Moscow restaurant, Russian officials say; superseded 1 overlapping row(s) → union of 12 URLs — https://www.cbsnews.com/news/explosion-moscow-restaurant-fatalities-injuries + https://www.dw.com/en/homemade-bomb-goes-off-outside-upscale-moscow-restaurant/a-78205022 + [The Jerusalem Post] Homemade explosive carried by woman kills three, wounds at least 21 at Moscow restaurant + https://www.dw.com/en/homemade-bomb-goes-off-outside-upscale-moscow
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+The Jerusalem Post
+8/1/2026, 8:08:16 PM
+Homemade explosive carried by woman kills three, wounds at least 21 at Moscow restaurant
+article
+AI score: 49
+merged 11 items: Homemade explosive carried by woman kills three, wounds at least 21 at Moscow restaurant — [The Jerusalem Post] Homemade explosive carried by woman kills three, wounds at least 21 at Moscow restaurant + https://www.dw.com/en/homemade-bomb-goes-off-outside-upscale-moscow-restaurant/a-78205022 + https://www.dw.com/en/homemade-bomb-goes-off-outside-upscale-moscow-restaurant-state-officials-say/a-78205022 + [Politico] 3 people killed, at least 21 wounded in Moscow restaurant bombing
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Deutsche Welle
+8/1/2026, 8:06:58 PM
+Homemade bomb goes off outside upscale Moscow restaurant
+AI score: 85
+pinned to 82
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+The Hindu
+8/1/2026, 12:40:41 PM
+White House signals Trump is weighing new strikes on Iran
+article
+AI score: 85
+merged 31 items: Trump warns US will strike Iran 'very hard' as fresh offensives loom; AI concurred; superseded 1 overlapping row(s) → union of 31 URLs — [The Hindu] White House signals Trump is weighing new strikes on Iran + [Fox News] Trump warns US will hit Iran ‘very hard’ as fresh strikes loom + [Ynetnews] ‘Netanyahu sells an illusion’: Iran threatens ‘Stone Age’ retaliation as US strike plans accelerate + https://presstv.ir/detail/2026/08/01/773502/regional-states-shielding-us-will-burn-in
+by chelsea.l.durante.mil@mail.mil
+Hide image
+8/1/2026, 10:09:53 AM
+image hidden
+by chelsea.l.durante.mil@mail.mil
+Hide image
+8/1/2026, 10:09:45 AM
+image hidden
+by chelsea.l.durante.mil@mail.mil
+Hide image
+8/1/2026, 10:09:25 AM
+image hidden
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+8/1/2026, 10:09:07 AM
+merged 2 items: Trump Orders Iran Attack as Soon as This Weekend, WSJ Says; superseded 1 overlapping row(s) → union of 24 URLs — https://www.thegatewaypundit.com/2026/08/new-us-embassies-urge-us-citizens-depart-amid + [Bloomberg] Trump Orders Iran Attack as Soon as This Weekend, WSJ Says
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+8/1/2026, 10:05:49 AM
+merged 23 items: Iran warns against ‘fire of war’ amid US strike threats on energy sites; AI concurred; superseded 1 overlapping row(s) → union of 23 URLs — https://www.aljazeera.com/news/2026/8/1/iran-warns-against-fire-of-war-amid-us-strike-threats-on-energy-sites + [Bloomberg] Trump Orders Iran Attack as Soon as This Weekend, WSJ Says + https://x.com/firstsquawk/status/2083545911469420676 + https://r.dataminr.com/ia6o5waoxqhc9zqe5njc35 + [Fox News] Trump warns US will hit Iran 'very hard' as
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+8/1/2026, 10:04:57 AM
+marked as analysis
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+CNBC
+8/1/2026, 10:04:45 AM
+Iran's overlapping power centers make ending the war more complicated
+article
+AI score: 75
+marked as analysis
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+The Guardian
+8/1/2026, 10:04:13 AM
+Trump’s favorite cable news channel is pushing back against his war on Iran
+article
+AI score: 35
+marked as other
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+8/1/2026, 10:03:29 AM
+merged 22 items: Trump orders Iran attack as soon as this weekend, report says; superseded 1 overlapping row(s) → union of 22 URLs — https://www.japantimes.co.jp/news/2026/08/01/world/trump-iran-strike-weekend + [Bloomberg] Trump Orders Iran Attack as Soon as This Weekend, WSJ Says + https://x.com/firstsquawk/status/2083545911469420676 + https://r.dataminr.com/ia6o5waoxqhc9zqe5njc35 + [Fox News] Trump warns US will hit Iran 'very hard' as tensions rise + [The Straits Times] US embassies urge cit
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+Washington Examiner
+8/1/2026, 10:02:35 AM
+Board of Peace ‘still not celebrating’ Hamas deal: ‘There is no trust. There is only fear and loathing’
+AI score: 72
+merged 27 items: Board of Peace ‘still not celebrating’ Hamas deal: ‘There is no trust. There is only fear and loathing’; superseded 1 overlapping row(s) → union of 85 URLs — [Washington Examiner] Board of Peace ‘still not celebrating’ Hamas deal: ‘There is no trust. There is only fear and loathing’ + [The Jerusalem Post] Two-week ceasefire intended to allow Hamas disarmament, launch peace deal, sources tell 'Post' + [The New York Times] New Gaza Plan Hailed by Trump Again Pressures Netanyahu +
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+France 24
+8/1/2026, 10:02:09 AM
+African Union mission in Somalia in question after US funding to end
+AI score: 62
+pinned to 58
+by chelsea.l.durante.mil@mail.mil
+Re-label
+France 24
+8/1/2026, 10:01:52 AM
+African Union mission in Somalia in question after US funding to end
+article
+AI score: 70
+re-labeled to Humanitarian, Civilian Harm & Displacement · Africa · Somalia
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+The Straits Times
+8/1/2026, 10:01:20 AM
+US embassies urge citizens to ‘consider departing’ Middle East
+article
+AI score: 78
+merged 21 items: US embassies urge citizens to ‘consider departing’ Middle East; AI concurred; superseded 1 overlapping row(s) → union of 21 URLs — [The Straits Times] US embassies urge citizens to ‘consider departing’ Middle East + [Bloomberg] Trump Orders Iran Attack as Soon as This Weekend, WSJ Says + https://x.com/firstsquawk/status/2083545911469420676 + https://r.dataminr.com/ia6o5waoxqhc9zqe5njc35 + [Fox News] Trump warns US will hit Iran 'very hard' as tensions rise + [Military.com] Trump
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+8/1/2026, 9:58:54 AM
+merged 2 items: Trump Orders Iran Attack as Soon as This Weekend, WSJ Says; superseded 1 overlapping row(s) → union of 20 URLs — https://r.dataminr.com/ia6o5waoxqhc9zqe5njc35 + [Bloomberg] Trump Orders Iran Attack as Soon as This Weekend, WSJ Says
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+8/1/2026, 9:56:16 AM
+merged 2 items: Trump threatens more strikes on Iran, and other developments in the Middle East; superseded 1 overlapping row(s) → union of 19 URLs — https://x.com/firstsquawk/status/2083545911469420676 + [Bloomberg] Trump Orders Iran Attack as Soon as This Weekend, WSJ Says
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+Kyiv Post
+8/1/2026, 9:55:57 AM
+Trump Threatens Iran With Heavy Strikes on Energy Targets
+article
+AI score: 80
+merged 2 items: Trump threatens more strikes on Iran, and other developments in the Middle East; superseded 1 overlapping row(s) → union of 18 URLs — [Kyiv Post] Trump Threatens Iran With Heavy Strikes on Energy Targets + [Bloomberg] Trump Orders Iran Attack as Soon as This Weekend, WSJ Says
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+The Guardian
+8/1/2026, 9:55:14 AM
+EU relations, climate crisis and Gaza: why Ed Miliband is fired up by Foreign Office challenges
+article
+AI score: 67
+marked as other
+by chelsea.l.durante.mil@mail.mil
+Re-label
+The Jerusalem Post
+8/1/2026, 9:54:40 AM
+UNESCO designates Lebanon's Beaufort Castle, West Bank's Sebastia as World Heritage Sites in Danger
+AI score: 45
+re-labeled to Law, Courts & International Norms · Middle East
+by chelsea.l.durante.mil@mail.mil
+replace-headline
+France 24
+8/1/2026, 9:53:54 AM
+The Dartmouth Workshop: The $7,500 investment that gave birth to AI (2/2)
+AI score: 65
+headline → The Dartmouth Workshop: The $7,500 investment that gave birth to AI
+by chelsea.l.durante.mil@mail.mil
+Re-label
+France 24
+8/1/2026, 9:53:43 AM
+The Dartmouth Workshop: The $7,500 investment that gave birth to AI (2/2)
+AI score: 65
+re-labeled to Cyber, Space & Emerging Technology · Global
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+8/1/2026, 9:53:05 AM
+merged 16 items: Thousands of migrants return to Morocco from Ceuta after deadly border surge; superseded 1 overlapping row(s) → union of 39 URLs — https://www.taipeitimes.com/news/front/archives/2026/08/01/2003861746 + [France 24] Ceuta 2026 dwarfs 2021 migration crisis + https://abcnews.com/international/wirestory/death-toll-spain-morocco-border-crisis-ceuta-reaches-135282467 + [The Hindu] Spain-Morocco border crisis: Death toll in Ceuta reaches 67 + [NPR] Death toll in Spain border crisis rea
+by chelsea.l.durante.mil@mail.mil
+Link stories
+8/1/2026, 9:51:48 AM
+linked 10 items: Trump walks back agreement to give Ukraine license to produce Patriot missiles — https://www.jpost.com/international/internationalrussia-ukraine-war/article-904263 + [The New York Times] Trump Backs Away From Deal to Let Ukraine Build Patriot Missiles + https://farsnews.ir/mousavi_82/1785567698378430649/trump-says-us-has-not-agreed-to-ukraine-building-patriot-missiles + https://www.reuters.com/business/aerospace-defense/trump-says-us-has-not-agreed-ukraine-building-patriot-missi
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+Bloomberg
+8/1/2026, 9:49:50 AM
+Kuwait Intercepts Iranian Drones as Trump Weighs Fresh Strikes
+article
+AI score: 88
+merged 6 items: Kuwait Intercepts Iranian Drones as Trump Weighs Fresh Strikes; AI concurred; superseded 1 overlapping row(s) → union of 17 URLs — [Bloomberg] Kuwait Intercepts Iranian Drones as Trump Weighs Fresh Strikes + https://abcnews.com/international/wirestory/trump-threatens-strikes-iran-developments-middle-east-135282568 + [Fox News] Trump warns US will hit Iran 'very hard' as tensions rise + [Military.com] Trump Threatens More Strikes on Iran, and Other Developments in the Middle East
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+Bloomberg
+8/1/2026, 9:49:14 AM
+Spain Slams ‘Selfish’ Reaction From Some EU States to Ceuta
+article
+AI score: 62
+merged 3 items: Spain Slams ‘Selfish’ Reaction From Some EU States to Ceuta — [Bloomberg] Spain Slams ‘Selfish’ Reaction From Some EU States to Ceuta + [The Guardian] Spanish PM calls for urgent EU meeting after ‘selfish’ responses to Ceuta crisis + https://www.bbc.co.uk/news/articles/cx2v91xn1z9o
+by chelsea.l.durante.mil@mail.mil
+Link stories
+CNBC
+8/1/2026, 9:48:30 AM
+Spain installs floating barrier in North African enclave following border rush by tens of thousands
+article
+AI score: 65
+linked 6 items: Spain installs floating barrier in North African enclave following border rush by tens of thousands — [CNBC] Spain installs floating barrier in North African enclave following border rush by tens of thousands + [The Hindu] Italy suspends EU Schengen free-travel pact with Spain over Ceuta crisis + [The Jerusalem Post] Spain installs floating barrier in Ceuta after calm night following border rush + [The Hindu] Spain’s Ceuta migration influx: What we know + https://www.newsnationno
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+Fox News
+8/1/2026, 9:47:56 AM
+Migrant crisis pushes Italy to restore border checks with Spain, testing Europe's open-border system
+AI score: 67
+merged 15 items: Migrant crisis pushes Italy to restore border checks with Spain, testing Europe's open-border system; superseded 1 overlapping row(s) → union of 38 URLs — [Fox News] Migrant crisis pushes Italy to restore border checks with Spain, testing Europe's open-border system + [The Hindu] Spain-Morocco border crisis: Death toll in Ceuta reaches 67 + https://abcnews.com/international/wirestory/death-toll-spain-morocco-border-crisis-ceuta-reaches-135282467 + [NPR] Death toll in Spain borde
+by chelsea.l.durante.mil@mail.mil
+Hide image
+8/1/2026, 9:46:59 AM
+image hidden
+by chelsea.l.durante.mil@mail.mil
+Link stories
+Associated Press
+8/1/2026, 9:44:11 AM
+China holds military drills near disputed shoal in the South China Sea
+AI score: 72
+linked 3 items: China holds military drills near disputed shoal in the South China Sea — [Associated Press] China holds military drills near disputed shoal in the South China Sea + https://abcnews.com/international/wirestory/china-holds-military-drills-disputed-shoal-south-china-135284501 + [The Straits Times] China conducts naval, air patrols around disputed shoal in South China Sea
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+France 24
+8/1/2026, 9:14:24 AM
+West Bank: Settler violence hits "all-time high"
+article
+AI score: 69
+marked as analysis
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+France 24
+8/1/2026, 9:10:32 AM
+West Bank: Settler violence hits "all-time high"
+article
+AI score: 75
+marked as analysis
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Deutsche Welle
+8/1/2026, 8:53:33 AM
+Ukraine: Russia hits Kyiv with deadly missile strikes
+AI score: 90
+pinned to 80
+by chelsea.l.durante.mil@mail.mil
+Link stories
+The Straits Times
+8/1/2026, 8:44:14 AM
+Lithuanian embassy in Kyiv damaged in Russian missile attack
+article
+AI score: 75
+linked 20 items: Lithuanian embassy in Kyiv damaged in Russian missile attack; superseded 1 overlapping row(s) → union of 20 URLs — [The Straits Times] Lithuanian embassy in Kyiv damaged in Russian missile attack + https://www.dw.com/en/ukraine-russia-hits-kyiv-with-deadly-missile-strikes/a-78198568 + [France 24] Kyiv: 9 dead and 22 hurt in missile attack + [CNN] Zelensky warns air defenses are being overwhelmed as Russia pounds Ukraine, killing 9 + [France 24] At least 9 dead, 28 wounded in Kyi
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+The Guardian
+8/1/2026, 8:43:46 AM
+Laura Loomer, Lindsey Graham and the deepening Iran crisis: what’s behind Trump’s reset with Zelenskyy?
+AI score: 72
+marked as explainer
+by chelsea.l.durante.mil@mail.mil
+Link stories
+CNN
+8/1/2026, 8:43:23 AM
+Zelensky warns air defenses are being overwhelmed as Russia pounds Ukraine, killing 9
+article
+AI score: 85
+linked 19 items: Zelensky warns air defenses are being overwhelmed as Russia pounds Ukraine, killing 9 — [CNN] Zelensky warns air defenses are being overwhelmed as Russia pounds Ukraine, killing 9 + https://www.dw.com/en/ukraine-russia-hits-kyiv-with-deadly-missile-strikes/a-78198568 + [France 24] Kyiv: 9 dead and 22 hurt in missile attack + [France 24] At least 9 dead, 28 wounded in Kyiv after Russian strikes + [Bloomberg] Russia Hits Kyiv With ‘Horrific’ Missile Barrage, Killing Nine + https:/
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+Deutsche Welle
+8/1/2026, 8:42:42 AM
+War in Ukraine: Why Crimea has become a strategic target
+article
+AI score: 82
+marked as analysis
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+The Straits Times
+8/1/2026, 8:42:26 AM
+Russia fired record number of missiles at Ukraine in July
+article
+AI score: 85
+pinned to 65
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+Washington Examiner
+8/1/2026, 8:41:20 AM
+We are closer to nuclear war than at any time since 1962
+AI score: 98
+marked as editorial
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+The New York Times
+7/31/2026, 7:03:27 PM
+New Gaza Plan Hailed by Trump Again Pressures Netanyahu
+AI score: 72
+merged 84 items: New Gaza Plan Hailed by Trump Again Pressures Netanyahu; superseded 1 overlapping row(s) → union of 84 URLs — [The New York Times] New Gaza Plan Hailed by Trump Again Pressures Netanyahu + [The Jerusalem Post] Two-week ceasefire intended to allow Hamas disarmament, launch peace deal, sources tell 'Post' + [Le Monde] Hamas agrees to disarmament roadmap under Gaza ceasefire deal + https://www.aljazeera.com/news/2026/7/31/trump-says-us-has-understanding-with-israel-on-hamas-disarma
+by chelsea.l.durante.mil@mail.mil
+Link stories
+Bloomberg
+7/31/2026, 7:02:21 PM
+Trump Orders Iran Attack as Soon as This Weekend, WSJ Says
+AI score: 90
+linked 12 items: Trump orders strikes on Iranian energy targets as soon as this weekend — [Bloomberg] Trump Orders Iran Attack as Soon as This Weekend, WSJ Says + https://www.thegatewaypundit.com/2026/07/developing-trump-orders-fresh-round-strikes-against-iran + [Axios] Trump considering strikes on Iranian energy targets within days + [The Wall Street Journal] Trump Orders Fresh Strikes on Iran to Spur Surrender + https://x.com/osinttechnical/status/2083303875012915410 + [Washington Examiner] US
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+7/31/2026, 6:08:05 PM
+merged 30 items: Tens of thousands cross from Morocco into Spain's Ceuta exclave; AI concurred; superseded 1 overlapping row(s) → union of 31 URLs — https://www.taipeitimes.com/news/front/archives/2026/08/01/2003861746 + [The Daily Wire] France Puts Troops On Border With Spain Due To Moroccan Invasion + [The Hindu] Spain deploys military to Ceuta after thousands of people breach Morocco's border, at least nine die + https://www.thenationalnews.com/news/mena/2026/07/31/spain-sends-troops-to-secur
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+Le Monde
+7/31/2026, 6:06:27 PM
+Hamas agrees to disarmament roadmap under Gaza ceasefire deal
+article
+AI score: 80
+merged 83 items: Hamas agrees to disarmament roadmap under Gaza ceasefire deal; AI concurred; superseded 1 overlapping row(s) → union of 83 URLs — [Le Monde] Hamas agrees to disarmament roadmap under Gaza ceasefire deal + https://www.aljazeera.com/news/2026/7/31/trump-says-us-has-understanding-with-israel-on-hamas-disarmament-deal + [France 24] Hamas agrees to disarm under Trump plan + https://www.rt.com/news/643725-israel-strikes-gaza-trump + https://www.reuters.com/world/middle-east/israel-mus
+by chelsea.l.durante.mil@mail.mil
+Link stories
+Fox News
+7/31/2026, 1:17:11 PM
+Investigators believe Iranian hackers are likely behind cyberattack on Minnesota water systems: report
+AI score: 88
+linked 22 items: Investigators believe Iranian hackers are likely behind cyberattack on Minnesota water systems: report; superseded 1 overlapping row(s) → union of 23 URLs — [Fox News] Investigators believe Iranian hackers are likely behind cyberattack on Minnesota water systems: report + [Washington Examiner] Officials say Iran was likely behind cyberattack targeting Minnesota water systems + https://www.washingtonexaminer.com/news/white-house/4670855/trump-blames-minnesota-not-iran-for-water-s
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+The Jerusalem Post
+7/31/2026, 1:14:12 PM
+Two-week ceasefire intended to allow Hamas disarmament, launch peace deal, sources tell 'Post'
+article
+AI score: 82
+merged 66 items: Hamas agrees to disarmament deal in Gaza; superseded 2 overlapping row(s) → union of 66 URLs — [The Jerusalem Post] Two-week ceasefire intended to allow Hamas disarmament, launch peace deal, sources tell 'Post' + https://x.com/osint613/status/2083229002513174976 + [The Jerusalem Post] Full text: The Board of Peace roadmap for the implementation of Trump's Gaza peace plan + https://www.taipeitimes.com/news/front/archives/2026/08/01/2003861744 + [The Guardian] Hamas agrees to Trum
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Taipei Times
+7/31/2026, 1:12:03 PM
+Coast guard monitoring Chinese vessels east of Taiwan
+article
+AI score: 80
+pinned to 76
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+The Jerusalem Post
+7/31/2026, 1:10:33 PM
+Two-week ceasefire intended to allow Hamas disarmament, launch peace deal, sources tell 'Post'
+article
+AI score: 82
+merged 13 items: Hamas agrees to disarmament deal in Gaza — [The Jerusalem Post] Two-week ceasefire intended to allow Hamas disarmament, launch peace deal, sources tell 'Post' + https://x.com/osint613/status/2083229002513174976 + [The Jerusalem Post] Full text: The Board of Peace roadmap for the implementation of Trump's Gaza peace plan + [Associated Press] Hamas says a deal has been reached in Gaza, and other developments in the Middle East + https://www.thenationalnews.com/news/mena/2026/07/31
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+CNN
+7/31/2026, 12:37:51 PM
+Trump announces a breakthrough in Gaza - but there are major caveats. Here’s what we know
+article
+AI score: 69
+merged 51 items: Trump announces a breakthrough in Gaza - but there are major caveats. Here’s what we know; superseded 1 overlapping row(s) → union of 51 URLs — [CNN] Trump announces a breakthrough in Gaza - but there are major caveats. Here’s what we know + https://thehill.com/policy/international/6001600-hamas-trump-admin-us-deal-disarmament + https://r.dataminr.com/5hjnngeqw66flp7qjiderx + https://abcnews.com/international/wirestory/read-full-text-deal-hamas-disarm-israel-leave-135256751 + ht
+by chelsea.l.durante.mil@mail.mil
+Content-kind mark
+CNN
+7/31/2026, 12:37:38 PM
+Trump announces a breakthrough in Gaza - but there are major caveats. Here’s what we know
+article
+AI score: 75
+marked as explainer
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+7/31/2026, 12:31:44 PM
+merged 6 items: Oil on track for monthly gain after volatile week and uncertainty over US-Iran deal — https://www.thenationalnews.com/business/energy/2026/07/31/oil-on-track-for-monthly-gain-after-volatile-week-and-uncertainty-over-us-iran-deal + [Associated Press] Oil companies are expected to reap big profits because of US-Iran conflict + https://www.washingtontimes.com/news/2026/jul/31/major-oil-companies-reap-large-profits-us-iran-fighting-drives-energy + https://abcnews.com/international/wi
+by chelsea.l.durante.mil@mail.mil
+Link stories
+CNN
+7/31/2026, 12:11:52 PM
+Sweeping cyberattack on water systems in multiple states has US officials on edge
+article
+AI score: 85
+linked 19 items: Sweeping cyberattack on water systems in multiple states has US officials on edge; superseded 1 overlapping row(s) → union of 20 URLs — [CNN] Sweeping cyberattack on water systems in multiple states has US officials on edge + [Associated Press] A high-stakes test for Trump’s Gaza ceasefire board as Hamas disarmament looms + [Washington Examiner] The death of free seas: The fatal collateral damage of Trump’s Iran war + https://www.washingtonpost.com/national-security/2026/07/30/u
+by chelsea.l.durante.mil@mail.mil
+Link stories
+The Guardian
+7/31/2026, 12:07:10 PM
+Iran strikes tankers under US escort in Hormuz strait as Trump gathers cabinet to discuss war
+article
+AI score: 85
+linked 8 items: Trump convenes Cabinet at Camp David amid simmering Iran war; AI concurred; superseded 2 overlapping row(s) → union of 8 URLs — [The Guardian] Iran strikes tankers under US escort in Hormuz strait as Trump gathers cabinet to discuss war + https://www.reuters.com/world/us/trump-convenes-cabinet-camp-david-amid-simmering-iran-war-2026-07-31 + [The Jerusalem Post] Trump convenes cabinet meeting at Camp David on Iran war, as Republicans threatened by gas prices + [France 24] Pakistan
+by chelsea.l.durante.mil@mail.mil
+Manual links & merges
+107 active
+Every manual link or merge an editor made. The AI's opinion is advisory — the editor's decision is what applied.
+
+Link
+Active
+AI: Concurs
+2 items
+Brewing conflict within the anti-Houthi coalition risks blowing up the US strategy in Yemen
+AI: Both articles discuss the Houthi conflict in Yemen and its widening dangers, with a focus on the US strategy and Saudi Arabia's involvement, indicating a shared underlying news event.
+chelsea.l.durante.mil@mail.mil · 8/2/2026, 12:00:24 PM
+Remove link
+Link
+Active
+AI: Concurs
+2 items
+Ukraine Says It Attacked Rosneft’s Refinery in Russia’s Saratov
+AI: Both articles report on Ukrainian attacks targeting Russian oil refineries and airfields within Russia, indicating a shared event and actors within a similar timeframe.
+chelsea.l.durante.mil@mail.mil · 8/2/2026, 11:59:06 AM
+Remove link
+Merge
+Revoked
+AI: No opinion
+47 items
+Trump cancels Iran attack, citing progress on deal; Tehran and Israel on alert
+chelsea.l.durante.mil@mail.mil · 8/2/2026, 11:56:14 AM
+Merge
+Active
+AI: No opinion
+48 items
+Lankford says Trump 'has no desire' to bomb Iran
+chelsea.l.durante.mil@mail.mil · 8/2/2026, 11:56:56 AM
+Remove link
+Merge
+Revoked
+AI: No opinion
+46 items
+US, Israel to hold off on Iran strikes
+chelsea.l.durante.mil@mail.mil · 8/2/2026, 11:32:50 AM
+Merge
+Revoked
+AI: Concurs
+9 items
+Spanish Ceuta witnesses a deadly ‘game’ for Moroccan migrants
+AI: All articles focus on the same event: the recent surge of migrants into Ceuta, its aftermath, and related international responses, involving the same actors and timeframe.
+chelsea.l.durante.mil@mail.mil · 8/2/2026, 11:04:21 AM
+Merge
+Active
+AI: No opinion
+10 items
+Europe to hold meeting Tuesday over Ceuta after migration flux
+chelsea.l.durante.mil@mail.mil · 8/2/2026, 11:40:34 AM
+Remove link
+Merge
+Revoked
+AI: Concurs
+24 items
+Moscow mayor calls Saturday's deadly bomb attack on restaurant a 'terrorist act.'
+AI: All articles report on the same bombing incident at a Moscow restaurant, including casualties and the mayor's reaction, indicating a single, unified news event.
+chelsea.l.durante.mil@mail.mil · 8/2/2026, 11:05:26 AM
+Merge
+Active
+AI: No opinion
+25 items
+Mayor calls upscale restaurant bombing a 'brutal terrorist act' after 3 killed, 21 injured
+chelsea.l.durante.mil@mail.mil · 8/2/2026, 11:35:43 AM
+Remove link
+Merge
+Active
+AI: Concurs
+3 items
+FBI Investigates as Michigan Joins Minnesota in Reporting Cyberattacks on its Water Systems
+AI: All three articles report on the same underlying event: cyberattacks targeting US water systems, with evidence pointing to Iran, and a widening scope of affected states.
+chelsea.l.durante.mil@mail.mil · 8/2/2026, 11:34:30 AM
+Remove link
+Link
+Active
+AI: Concurs
+2 items
+Israel says it has serious concerns with Hamas disarmament deal
+AI: Both articles discuss Israeli concerns and beliefs regarding Hamas's willingness to disarm, indicating they cover the same core issue.
+chelsea.l.durante.mil@mail.mil · 8/2/2026, 11:33:55 AM
+Remove link
+Merge
+Revoked
+AI: Concurs
+42 items
+Trump climbs down on Iran strikes after Saudi alarm and threats from Tehran
+AI: All articles report on President Trump's decision to halt planned strikes against Iran, involving the same key actors (Trump, Iran, Saudi Arabia, Israel) and occurring within the same timeframe.
+chelsea.l.durante.mil@mail.mil · 8/2/2026, 11:09:46 AM
+Link
+Active
+AI: No opinion
+2 items
+Italian-led EU force boards sanctioned tanker from Russia's 'shadow fleet' in Mediterranean
+chelsea.l.durante.mil@mail.mil · 8/2/2026, 11:18:23 AM
+Remove link
+Merge
+Revoked
+AI: No opinion
+12 items
+Several people killed in explosion at Moscow restaurant, Russian officials say
+chelsea.l.durante.mil@mail.mil · 8/1/2026, 8:09:02 PM
+Link
+Active
+AI: Concurs
+4 items
+Ukrainian drones kill 5 in Russia and set fire to Wildberries warehouse
+AI: Both articles report on Ukrainian drone attacks in Russia targeting the Wildberries warehouse, with similar casualty figures and event descriptions, indicating they cover the same incident.
+chelsea.l.durante.mil@mail.mil · 8/2/2026, 11:03:48 AM
+Remove link
+Link
+Active
+AI: Concurs
+2 items
+Map Shows How Ukraine’s Drone War Is Closing in on Moscow
+AI: Both articles focus on Ukraine's use of drones to strike targets within Russia, highlighting the strategic implications and the narrative of democratic resistance against totalitarianism.
+chelsea.l.durante.mil@mail.mil · 8/2/2026, 11:03:20 AM
+Remove link
+Link
+Active
+AI: No opinion
+15 items
+At least eight killed in Isreali strikes on Gaza after Hamas agree disarmament deal
+chelsea.l.durante.mil@mail.mil · 8/2/2026, 11:00:23 AM
+Remove link
+Merge
+Revoked
+AI: No opinion
+11 items
+Homemade explosive carried by woman kills three, wounds at least 21 at Moscow restaurant
+chelsea.l.durante.mil@mail.mil · 8/1/2026, 8:08:15 PM
+Merge
+Revoked
+AI: No opinion
+24 items
+Trump Orders Iran Attack as Soon as This Weekend, WSJ Says
+chelsea.l.durante.mil@mail.mil · 8/1/2026, 10:08:55 AM
+Merge
+Active
+AI: Concurs
+31 items
+Trump warns US will strike Iran 'very hard' as fresh offensives loom
+AI: Both articles report on Donald Trump's threats to strike Iran, with the second article adding context about US embassies urging citizens to leave the Middle East, indicating a shared core event.
+chelsea.l.durante.mil@mail.mil · 8/1/2026, 12:40:40 PM
+Remove link
+Merge
+Revoked
+AI: Concurs
+23 items
+Iran warns against ‘fire of war’ amid US strike threats on energy sites
+AI: Both articles discuss escalating tensions between Iran and the US, with Iran issuing warnings and the US threatening strikes, indicating a shared, ongoing event.
+chelsea.l.durante.mil@mail.mil · 8/1/2026, 10:05:48 AM
+Merge
+Revoked
+AI: No opinion
+22 items
+Trump orders Iran attack as soon as this weekend, report says
+chelsea.l.durante.mil@mail.mil · 8/1/2026, 10:03:16 AM
+Merge
+Revoked
+AI: Concurs
+21 items
+US embassies urge citizens to ‘consider departing’ Middle East
+AI: Both articles report on escalating US-Iran tensions and potential US military action in the Middle East, indicating a shared underlying event and timeframe.
+chelsea.l.durante.mil@mail.mil · 8/1/2026, 10:01:07 AM
+Merge
+Revoked
+AI: No opinion
+84 items
+New Gaza Plan Hailed by Trump Again Pressures Netanyahu
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 7:03:05 PM
+Merge
+Active
+AI: No opinion
+85 items
+Board of Peace ‘still not celebrating’ Hamas deal: ‘There is no trust. There is only fear and loathing’
+chelsea.l.durante.mil@mail.mil · 8/1/2026, 10:02:25 AM
+Remove link
+Merge
+Revoked
+AI: No opinion
+20 items
+Trump Orders Iran Attack as Soon as This Weekend, WSJ Says
+chelsea.l.durante.mil@mail.mil · 8/1/2026, 9:58:42 AM
+Merge
+Revoked
+AI: No opinion
+19 items
+Trump threatens more strikes on Iran, and other developments in the Middle East
+chelsea.l.durante.mil@mail.mil · 8/1/2026, 9:56:15 AM
+Merge
+Revoked
+AI: No opinion
+18 items
+Trump threatens more strikes on Iran, and other developments in the Middle East
+chelsea.l.durante.mil@mail.mil · 8/1/2026, 9:55:56 AM
+Merge
+Revoked
+AI: Concurs
+17 items
+Kuwait Intercepts Iranian Drones as Trump Weighs Fresh Strikes
+AI: All three articles discuss the same core event: the US considering and potentially executing strikes against Iran, with Kuwait's interception of drones as a related development.
+chelsea.l.durante.mil@mail.mil · 8/1/2026, 9:49:36 AM
+Merge
+Revoked
+AI: No opinion
+38 items
+Migrant crisis pushes Italy to restore border checks with Spain, testing Europe's open-border system
+chelsea.l.durante.mil@mail.mil · 8/1/2026, 9:47:44 AM
+Merge
+Active
+AI: No opinion
+39 items
+Thousands of migrants return to Morocco from Ceuta after deadly border surge
+chelsea.l.durante.mil@mail.mil · 8/1/2026, 9:52:52 AM
+Remove link
+Link
+Active
+AI: No opinion
+10 items
+Trump walks back agreement to give Ukraine license to produce Patriot missiles
+chelsea.l.durante.mil@mail.mil · 8/1/2026, 9:51:32 AM
+Remove link
+Link
+Revoked
+AI: No opinion
+12 items
+Trump orders strikes on Iranian energy targets as soon as this weekend
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 7:02:20 PM
+Merge
+Active
+AI: No opinion
+3 items
+Spain Slams ‘Selfish’ Reaction From Some EU States to Ceuta
+chelsea.l.durante.mil@mail.mil · 8/1/2026, 9:49:13 AM
+Remove link
+Link
+Active
+AI: No opinion
+6 items
+Spain installs floating barrier in North African enclave following border rush by tens of thousands
+chelsea.l.durante.mil@mail.mil · 8/1/2026, 9:48:13 AM
+Remove link
+Merge
+Revoked
+AI: Concurs
+31 items
+Tens of thousands cross from Morocco into Spain's Ceuta exclave
+AI: All articles describe the same event: a large influx of migrants into Ceuta from Morocco, the Spanish response, and subsequent returns, all occurring within a very short timeframe.
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 6:07:41 PM
+Link
+Active
+AI: No opinion
+3 items
+China holds military drills near disputed shoal in the South China Sea
+chelsea.l.durante.mil@mail.mil · 8/1/2026, 9:44:11 AM
+Remove link
+Link
+Revoked
+AI: No opinion
+19 items
+Zelensky warns air defenses are being overwhelmed as Russia pounds Ukraine, killing 9
+chelsea.l.durante.mil@mail.mil · 8/1/2026, 8:43:13 AM
+Link
+Active
+AI: No opinion
+20 items
+Lithuanian embassy in Kyiv damaged in Russian missile attack
+chelsea.l.durante.mil@mail.mil · 8/1/2026, 8:44:13 AM
+Remove link
+Merge
+Revoked
+AI: Concurs
+83 items
+Hamas agrees to disarmament roadmap under Gaza ceasefire deal
+AI: Both articles report on Hamas agreeing to a disarmament plan as part of a Gaza ceasefire deal, indicating the same core event and actors.
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 6:06:22 PM
+Merge
+Revoked
+AI: No opinion
+26 items
+Spain to deploy military to restore order in Ceuta after thousands of people breach Morocco’s border
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 10:14:10 AM
+Merge
+Revoked
+AI: No opinion
+66 items
+Hamas agrees to disarmament deal in Gaza
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 1:14:02 PM
+Link
+Revoked
+AI: No opinion
+20 items
+Sweeping cyberattack on water systems in multiple states has US officials on edge
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 12:11:51 PM
+Link
+Active
+AI: No opinion
+23 items
+Investigators believe Iranian hackers are likely behind cyberattack on Minnesota water systems: report
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 1:16:50 PM
+Remove link
+Merge
+Revoked
+AI: No opinion
+51 items
+Trump announces a breakthrough in Gaza - but there are major caveats. Here’s what we know
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 12:37:49 PM
+Merge
+Revoked
+AI: No opinion
+13 items
+Hamas agrees to disarmament deal in Gaza
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 1:10:30 PM
+Merge
+Revoked
+AI: No opinion
+50 items
+Trump announces agreement for disarmament of Hamas
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 10:15:02 AM
+Merge
+Active
+AI: No opinion
+6 items
+Oil on track for monthly gain after volatile week and uncertainty over US-Iran deal
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 12:31:13 PM
+Remove link
+Link
+Revoked
+AI: No opinion
+15 items
+US cyber defense agency warns of rising attacks on water systems
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 10:00:06 AM
+Link
+Revoked
+AI: Concurs
+2 items
+Few signs of talks between US and Iran as Trump hears from different corners on path forward
+AI: Both articles focus on the US approach to Iran under Trump, highlighting a divide between US and Israeli perspectives on the issue.
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 9:57:44 AM
+Link
+Revoked
+AI: No opinion
+3 items
+Iran strikes tankers under US escort in Hormuz strait as Trump gathers cabinet to discuss war
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 12:05:27 PM
+Link
+Active
+AI: Concurs
+8 items
+Trump convenes Cabinet at Camp David amid simmering Iran war
+AI: Both articles discuss President Trump's meetings and discussions regarding Iran policy, involving the same key actors and occurring within the same timeframe.
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 12:06:51 PM
+Remove link
+Merge
+Revoked
+AI: No opinion
+9 items
+IRGC strikes US targets at Kuwait airbase in retaliation for US strikes on Iran
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 9:16:07 AM
+Merge
+Active
+AI: No opinion
+27 items
+Iran strikes Kuwait air base as conflict spreads across Middle East
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 12:04:23 PM
+Remove link
+Merge
+Revoked
+AI: Concurs
+49 items
+Read Gaza Board of Peace's Hamas disarmament plan in full
+AI: All articles report on a Hamas disarmament plan, its agreement, and the release of related texts, indicating a single, unified news event.
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 9:51:46 AM
+Merge
+Revoked
+AI: No opinion
+25 items
+Over 25,000 migrants sent back to Morocco from Ceuta, Spain says
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 10:12:40 AM
+Merge
+Revoked
+AI: No opinion
+19 items
+Spain, Morocco halt deadly rush on Spanish enclave after 49,000 cross in a day
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 9:59:12 AM
+Merge
+Revoked
+AI: Concurs
+11 items
+EU races to contain new migrant crisis as thousands cross into Spanish territory of Ceuta
+AI: All three articles describe the same large-scale migrant crossing event into Ceuta, involving the same key actors (migrants, Spain, Morocco) within a very recent timeframe.
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 9:57:13 AM
+Merge
+Revoked
+AI: Concurs
+9 items
+Sanchez Says Spain Under ‘Attack’ After Mass Migration Influx
+AI: All three articles report on the same mass migration event into Spain's Ceuta enclave, involving the same actors and occurring within a very recent timeframe.
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 9:52:31 AM
+Merge
+Revoked
+AI: No opinion
+40 items
+Gaza Board of Peace announces Hamas disarmament agreement: What we know
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 9:20:04 AM
+Link
+Active
+AI: No opinion
+2 items
+Saudi Forms New Military Coalition to Deter Attacks...
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 9:27:55 AM
+Remove link
+Link
+Active
+AI: No opinion
+7 items
+'IRGC agent' arrested in Cyprus for alleged surveillance of UK base
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 9:20:19 AM
+Remove link
+Link
+Revoked
+AI: No opinion
+29 items
+Hamas agrees to disarm under Trump plan, but Israel yet to approve
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 9:06:42 AM
+Link
+Active
+AI: Concurs
+3 items
+Military strikes escalate between Houthis and Saudi Arabia in Yemen
+AI: Both articles discuss escalating military actions between Saudi Arabia and the Houthis in Yemen, with the second article elaborating on potential Saudi assault plans mentioned in the first.
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 9:17:16 AM
+Remove link
+Merge
+Revoked
+AI: Concurs
+7 items
+Iran claims Kuwait air base strike as conflict spreads to Egypt, Saudi Arabia
+AI: All three articles report on Iran's drone and missile strikes targeting U.S. assets and allies in the Middle East, indicating a single, escalating conflict involving the same key actors and a shared timeframe.
+chelsea.l.durante.mil@mail.mil · 7/31/2026, 9:10:01 AM
+Link
+Active
+AI: Concurs
+2 items
+Iran war has consumed nearly 67% of US Patriot interceptor stockpile, report says
+AI: Both articles discuss the depletion of US weapons stockpiles, with one specifically mentioning Patriot interceptors and the Iran conflict, directly supporting the Pentagon's strategy concerns in the other.
+chelsea.l.durante.mil@mail.mil · 7/30/2026, 8:42:20 AM
+Remove link
+Link
+Revoked
+AI: No opinion
+46 items
+U.S. strikes Iran in retaliation for attack on American troops
+chelsea.l.durante.mil@mail.mil · 7/30/2026, 6:41:47 AM
+Link
+Active
+AI: No opinion
+54 items
+US Strikes Iran Following Surprise Attack on American Forces
+chelsea.l.durante.mil@mail.mil · 7/30/2026, 8:19:56 AM
+Remove link
+Link
+Revoked
+AI: No opinion
+2 items
+Three children among eight dead in Russian strikes on Ukraine, officials say
+chelsea.l.durante.mil@mail.mil · 7/30/2026, 6:42:18 AM
+Merge
+Active
+AI: No opinion
+6 items
+Three children among eight dead in Russian strikes on Ukraine, officials say
+chelsea.l.durante.mil@mail.mil · 7/30/2026, 6:43:11 AM
+Remove link
+Link
+Revoked
+AI: No opinion
+5 items
+U.S. unleashes ‘heavy wave’ of strikes; Iran vows to ‘punish the aggressor today’
+chelsea.l.durante.mil@mail.mil · 7/30/2026, 6:40:32 AM
+Link
+Active
+AI: No opinion
+9 items
+Trump vows forceful retaliation against Iran after renewed attacks on US bases
+chelsea.l.durante.mil@mail.mil · 7/29/2026, 2:00:32 PM
+Remove link
+Link
+Active
+AI: No opinion
+38 items
+US and Saudi Arabia Strike Iran-Backed Militias in Iraq
+chelsea.l.durante.mil@mail.mil · 7/29/2026, 12:58:47 PM
+Remove link
+Merge
+Active
+AI: No opinion
+4 items
+OpenAI says rogue AI agent attacked multiple companies
+chelsea.l.durante.mil@mail.mil · 7/29/2026, 12:20:45 PM
+Remove link
+Link
+Active
+AI: No opinion
+4 items
+US military may require some troops in Mideast to surrender cell phones, sources say
+chelsea.l.durante.mil@mail.mil · 7/29/2026, 12:18:55 PM
+Remove link
+Link
+Revoked
+AI: Concurs
+52 items
+Iran launches missiles at US forces in Jordan after five-day pause
+AI: Both articles describe Iran launching missiles at US forces in the Middle East, indicating the same core event with the same primary actors and a likely overlapping timeframe.
+chelsea.l.durante.mil@mail.mil · 7/29/2026, 7:47:09 AM
+Link
+Active
+AI: Concurs
+56 items
+US strikes northwestern Iran after days without strikes on Islamic regime assets
+AI: Both articles describe a US strike on Iran and Iran's missile attack on US forces, indicating a direct exchange of fire between the two actors within a similar timeframe.
+chelsea.l.durante.mil@mail.mil · 7/29/2026, 11:41:19 AM
+Remove link
+Link
+Active
+AI: No opinion
+3 items
+Ukraine claims major Russian oil refinery hit, hours after Zelenskyy, Trump meeting
+chelsea.l.durante.mil@mail.mil · 7/29/2026, 8:06:23 AM
+Remove link
+Link
+Revoked
+AI: No opinion
+14 items
+Trump to meet with Netanyahu on Iran, Saudi Arabia, Middle East, with Zelensky on Russia
+chelsea.l.durante.mil@mail.mil · 7/28/2026, 11:48:49 AM
+Merge
+Revoked
+AI: No opinion
+8 items
+Oman steps up Hormuz diplomacy as Iran issues new shipping threat
+chelsea.l.durante.mil@mail.mil · 7/28/2026, 11:54:41 AM
+Link
+Revoked
+AI: No opinion
+8 items
+Oman proposes voluntary fee system for Strait of Hormuz management
+chelsea.l.durante.mil@mail.mil · 7/28/2026, 2:48:58 PM
+Merge
+Active
+AI: No opinion
+16 items
+Oman presents regional mechanism for Strait of Hormuz to Iran
+chelsea.l.durante.mil@mail.mil · 7/28/2026, 2:53:55 PM
+Remove link
+Merge
+Revoked
+AI: No opinion
+30 items
+Zelenskyy Meets Trump at White House, Attends Graham Funeral
+chelsea.l.durante.mil@mail.mil · 7/28/2026, 1:37:49 PM
+Merge
+Active
+AI: No opinion
+37 items
+Trump meets Zelenskyy at White House, discusses military support
+chelsea.l.durante.mil@mail.mil · 7/28/2026, 2:49:26 PM
+Remove link
+Merge
+Revoked
+AI: No opinion
+28 items
+Zelenskyy Meets Trump at White House, Attends Graham Funeral
+chelsea.l.durante.mil@mail.mil · 7/28/2026, 1:17:53 PM
+Link
+Revoked
+AI: Concurs
+12 items
+Burnham welcomes Zelenskyy in first visit as British PM
+AI: Both articles report on Ukrainian President Zelenskyy's first foreign visit, meeting with UK Prime Minister Burnham, indicating the same core event and actors within a similar timeframe.
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 4:05:17 PM
+Merge
+Revoked
+AI: No opinion
+12 items
+Zelenskyy Meets Trump in Washington Seeking Air Defense Aid
+chelsea.l.durante.mil@mail.mil · 7/28/2026, 11:54:05 AM
+Link
+Active
+AI: No opinion
+2 items
+US walks out of UN after France criticizes human rights votes
+chelsea.l.durante.mil@mail.mil · 7/28/2026, 12:29:32 PM
+Remove link
+Link
+Revoked
+AI: No opinion
+117 items
+Trump threatens to strike Pickaxe Mountain, says he does not need Israeli intelligence
+chelsea.l.durante.mil@mail.mil · 7/28/2026, 11:51:49 AM
+Link
+Revoked
+AI: No opinion
+4 items
+Trump cites good talks on Iran, reiterates threat to hit targets
+chelsea.l.durante.mil@mail.mil · 7/28/2026, 11:53:14 AM
+Link
+Active
+AI: Concurs
+121 items
+Trump cites 'good' talks on Iran, reiterates threat to hit targets
+AI: Both articles report on President Trump's statements regarding Iran, specifically his threats against Iranian targets and the status of negotiations, indicating they cover the same underlying event.
+chelsea.l.durante.mil@mail.mil · 7/28/2026, 11:56:21 AM
+Remove link
+Merge
+Revoked
+AI: No opinion
+10 items
+Zelenskyy to Meet Trump at White House, Attend Graham Funeral
+chelsea.l.durante.mil@mail.mil · 7/28/2026, 11:50:38 AM
+Link
+Revoked
+AI: No opinion
+111 items
+Trump warns of return to ‘strong military action’ if Iran diplomacy fails
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 1:29:11 PM
+Link
+Active
+AI: No opinion
+2 items
+Senate advances nomination of Jay Clayton to lead intel community
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 9:33:56 PM
+Remove link
+Merge
+Revoked
+AI: No opinion
+8 items
+Pentagon moves recent KIA numbers from Iran war into ‘Overseas Operations’ category
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 1:09:40 PM
+Merge
+Active
+AI: No opinion
+9 items
+Pentagon updates Iran war casualty numbers with new list separate from Operation Epic Fury tally
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 9:32:58 PM
+Remove link
+Merge
+Active
+AI: No opinion
+3 items
+US diplomats walk out as France addresses UN Security Council
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 9:31:40 PM
+Remove link
+Link
+Active
+AI: No opinion
+2 items
+15-year-old arrested after Seattle Center mass shooting leaves 3 dead, 4 wounded
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 9:31:13 PM
+Remove link
+Merge
+Revoked
+AI: No opinion
+5 items
+Second US Consulate Shooting in Toronto This Year Sparks Manhunt
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 4:03:28 PM
+Link
+Revoked
+AI: No opinion
+6 items
+Zelenskyy Arrives in UK for Burnham Talks Before Visit to Trump
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 9:09:37 AM
+Merge
+Revoked
+AI: No opinion
+3 items
+Netanyahu says Iran is top agenda in meeting with Trump
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 10:43:28 AM
+Link
+Revoked
+AI: No opinion
+2 items
+Netanyahu and Zelenskyy to arrive in Washington for Graham funeral – with hopes of winning Trump’s ear
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 1:10:45 PM
+Merge
+Active
+AI: Concurs
+7 items
+Netanyahu to meet Trump in Washington on Tuesday
+AI: Both articles report on Netanyahu traveling to Washington for meetings with Trump and attending a funeral, indicating they cover the same core event and timeframe.
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 1:31:23 PM
+Remove link
+Link
+Revoked
+AI: No opinion
+4 items
+Iran, Oman make 'some progress' in talks over Strait of Hormuz navigation, sources tell 'Post'
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 2:58:05 PM
+Link
+Revoked
+AI: No opinion
+84 items
+US and Iran Pause Military Strikes for Third Consecutive Night
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 8:11:08 AM
+Merge
+Revoked
+AI: Concurs
+4 items
+Pentagon reports more than 600 Iran war casualties in quiet database update
+AI: All articles report on the Pentagon's updated casualty figures for US troops in Iran, with a similar timeframe and focus on the same event.
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 9:10:40 AM
+Link
+Active
+AI: Concurs
+4 items
+Saudi Arabia says it intercepted drones from Iraq as Houthis target oil sites
+AI: Both articles report on Saudi Arabia intercepting drones, with one mentioning Jordan and the other specifically naming the Houthis and Iraq as sources, indicating a single, albeit multi-faceted, regional event.
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 11:04:13 AM
+Remove link
+Merge
+Revoked
+AI: No opinion
+30 items
+Vehicle attack at Berlin Pride kills one, injures over a dozen
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 3:03:27 PM
+Merge
+Active
+AI: No opinion
+31 items
+Anger, shock and grief - questions remain in the wake of the Berlin Pride attack
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 10:48:09 AM
+Remove link
+Link
+Active
+AI: No opinion
+4 items
+Iran says it controls Strait of Hormuz after weekend pause in strikes
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 10:41:29 AM
+Remove link
+Link
+Active
+AI: No opinion
+4 items
+Ukrainian Attacks in Crimea Deprive Towns of Power and Water
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 10:39:56 AM
+Remove link
+Link
+Active
+AI: Concurs
+7 items
+Bab Al Mandeb ship traffic slumps 56% since Houthis' Saudi embargo
+AI: Both articles discuss the impact of Houthi actions on shipping traffic in the Bab al-Mandeb strait and Red Sea, indicating a shared underlying event and timeframe.
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 9:58:40 AM
+Remove link
+Merge
+Revoked
+AI: No opinion
+24 items
+Iran says Ukraine attack on Iranian vessel cannot go unanswered
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 2:52:09 PM
+Merge
+Active
+AI: Concurs
+25 items
+Iran threatens "unforeseen" consequences after Ukrainian attack on vessel
+AI: Both articles report on Iran's reaction to a Ukrainian attack on an Iranian vessel, indicating the same event and actors within a similar timeframe.
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 9:57:30 AM
+Remove link
+Link
+Active
+AI: No opinion
+2 items
+Nvidia, SpaceX, Microsoft launch AI safety initiative as OpenAI cyber attack fallout continues
+chelsea.l.durante.mil@mail.mil · 7/27/2026, 9:09:16 AM
+Remove link
+Link
+Revoked
+AI: No opinion
+58 items
+'Finger on trigger': Trump has not decided on large-scale attacks against Iran, sources tell 'Post'
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 2:12:30 PM
+Link
+Revoked
+AI: Concurs
+5 items
+Netanyahu says ICC prosecutor used Israeli PM’s arrest warrant as ‘political shield’
+AI: All three articles focus on Israeli Prime Minister Netanyahu's reaction and statements regarding the ICC's arrest warrant, indicating they cover the same core event and actors within a similar timeframe.
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 3:04:31 PM
+Merge
+Active
+AI: Concurs
+7 items
+Netanyahu says Mamdani ‘celebrated’ Oct. 7, ‘fomenting hate’ with Israel criticism
+AI: All three articles focus on the same core event: Israeli Prime Minister Netanyahu's response to criticism from UN official Rima Khalaf (Mamdani) and his intention to attend the UNGA despite opposition.
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 3:04:58 PM
+Remove link
+Link
+Revoked
+AI: No opinion
+2 items
+Netanyahu Vows to Attend UN as Mamdani Says He’s ‘Not Welcome’
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 2:07:37 PM
+Merge
+Revoked
+AI: No opinion
+28 items
+Berlin police kill suspect after Pride event car ramming attack
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 3:02:59 PM
+Merge
+Revoked
+AI: No opinion
+23 items
+Berlin Pride attack investigated as Islamist terrorist attack, suspect at large
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 1:49:45 PM
+Link
+Revoked
+AI: No opinion
+5 items
+Berlin police shoot dead suspect in car ramming attack on Pride event
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 3:01:07 PM
+Merge
+Active
+AI: Concurs
+4 items
+Republican Senator Says He’s Not Comfortable With Trump Saudi Deal
+AI: All articles discuss the US-Saudi nuclear deal, focusing on concerns from US Senators and Israeli officials regarding its implications, particularly concerning nuclear enrichment and Israeli relations.
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 3:02:36 PM
+Remove link
+Link
+Revoked
+AI: No opinion
+2 items
+CENTCOM chief urged halt to Hormuz strikes as targets ran out
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 2:16:17 PM
+Link
+Revoked
+AI: No opinion
+2 items
+2 dead in Ukraine from Russian attacks, 4 more in Russian-held area hit by Ukrainian drones
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 3:01:20 PM
+Link
+Active
+AI: No opinion
+4 items
+CENTCOM chief urged halt to Hormuz strikes as targets ran out
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 3:01:26 PM
+Remove link
+Link
+Revoked
+AI: No opinion
+4 items
+Berlin police shoot dead suspect in car ramming attack on Pride event
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 3:00:35 PM
+Link
+Revoked
+AI: No opinion
+3 items
+Suspect in Berlin Pride attack shot dead by police in Berlin suburb, broadcaster says
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 2:52:45 PM
+Merge
+Revoked
+AI: No opinion
+4 items
+Eighteen people missing in South China Sea after Vietnamese ship sank
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 11:13:52 AM
+Merge
+Active
+AI: No opinion
+5 items
+17 missing after Vietnamese ship sinks in South China Sea: Hanoi
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 2:58:34 PM
+Remove link
+Link
+Revoked
+AI: No opinion
+3 items
+US, Iran extend pause in strikes as Oman holds new Hormuz talks
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 2:55:25 PM
+Merge
+Revoked
+AI: No opinion
+19 items
+Ukraine claims Caspian Sea attack on ships carrying Iranian military hardware to Russia
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 2:12:04 PM
+Link
+Active
+AI: Concurs
+3 items
+Israel launches military incursion into Syria amid UN condemnation
+AI: Both articles describe a military incursion by Israel into Syria and Syria's subsequent reaction, indicating they cover the same core event and actors within a similar timeframe.
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 2:18:47 PM
+Remove link
+Link
+Revoked
+AI: No opinion
+57 items
+After Trump calls off bombing, Iran signals it will halt strikes as long as US does
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 2:05:36 PM
+Merge
+Revoked
+AI: Concurs
+18 items
+Iran says Ukrainian attack on vessel in Caspian Sea killed sailor
+AI: All articles report on a Ukrainian attack on a ship in the Caspian Sea, involving Iran and its military hardware, within a similar timeframe.
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 10:44:07 AM
+Link
+Revoked
+AI: Concurs
+55 items
+U.S. and Iran pause attacks for second consecutive day
+AI: Both articles report on the same event: a pause in US and Iran attacks occurring over two consecutive days, with diplomatic efforts mentioned in the second.
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 2:04:15 PM
+Link
+Revoked
+AI: No opinion
+33 items
+US pauses attacks on Iran for a second straight day and Tehran pauses, too
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 10:41:14 AM
+Merge
+Revoked
+AI: No opinion
+16 items
+Germany: Berlin Pride attack believed to be an act of Islamic extremist terror
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 11:15:35 AM
+Merge
+Revoked
+AI: No opinion
+15 items
+Germany calls Berlin Pride ramming Islamist terror attack, manhunt underway
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 11:13:10 AM
+Link
+Active
+AI: No opinion
+4 items
+U.S. forgoes strikes on Iran, but conflict escalates in the Red Sea
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 11:15:07 AM
+Remove link
+Merge
+Revoked
+AI: No opinion
+10 items
+Manhunt underway after Berlin Pride van-ramming kills one and injures 16
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 10:16:10 AM
+Link
+Revoked
+AI: Concurs
+31 items
+Trump giving Iran talks 'a little bit of room,' US ambassador says
+AI: Both articles discuss the US pausing strikes on Iran and continuing peace talks, indicating they cover the same ongoing diplomatic event.
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 10:13:53 AM
+Link
+Active
+AI: No opinion
+2 items
+Oil tanker explodes after hitting naval mine in Strait of Hormuz, IRGC-linked media claims - report
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 10:40:12 AM
+Remove link
+Link
+Revoked
+AI: Concurs
+20 items
+Iran warns war will expand if U.S. attacks restart
+AI: Both articles discuss the ongoing tensions and potential for conflict between the US and Iran, with one focusing on Iran's warning and the other on the US pausing strikes amidst peace talks. They share the same actors, timeframe, and underlying event.
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 10:09:33 AM
+Link
+Active
+AI: Concurs
+3 items
+Ukraine sees highest civilian casualties since 2022
+AI: Both articles report on recent civilian casualties and attacks in Ukraine, involving Russian and Ukrainian actions within a similar timeframe.
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 10:10:36 AM
+Remove link
+Link
+Revoked
+AI: Concurs
+8 items
+Iran to halt attacks as long as US maintains latest pause, Iranian source says
+AI: Both articles report on the US pausing strikes against Iran, with one article adding an Iranian source's condition for continued cessation, indicating a shared, ongoing event.
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 10:07:16 AM
+Link
+Active
+AI: Concurs
+3 items
+Israeli airstrike kills senior Hamas security official in Gaza
+AI: Both articles report on the same event: the killing of a senior Hamas security official in Gaza by an Israeli airstrike, with the second article specifying the role of the individual.
+chelsea.l.durante.mil@mail.mil · 7/26/2026, 9:49:59 AM
+Remove link
+Link
+Active
+AI: Concurs
+7 items
+Iran blames US for Hormuz dispute as both sides confirm ongoing talks
+AI: Both articles discuss ongoing US-Iran negotiations regarding the Hormuz Strait dispute, with one highlighting Iran's blame and the other Trump's warnings.
+chelsea.l.durante.mil@mail.mil · 7/25/2026, 10:51:38 AM
+Remove link
+Link
+Active
+AI: Concurs
+2 items
+US pummels Iranian sites as Tehran targets regional bases stationing US forces
+AI: Both articles report on the US striking Iranian sites and Iran retaliating against US forces, indicating a shared, escalating conflict in the same timeframe.
+chelsea.l.durante.mil@mail.mil · 7/24/2026, 5:06:43 PM
+Remove link
+Link
+Active
+AI: Concurs
+2 items
+Oil shipments are under attack on multiple fronts as fighting escalates in Red Sea, Hormuz and Black Sea
+AI: Both articles discuss disruptions to oil shipments in key maritime chokepoints, specifically mentioning the Red Sea and the Strait of Hormuz, indicating a shared underlying event.
+chelsea.l.durante.mil@mail.mil · 7/24/2026, 3:36:26 PM
+Remove link
+Link
+Revoked
+AI: No opinion
+5 items
+Netanyahu to meet with Trump, attend Graham funeral as Iran conflict widens
+chelsea.l.durante.mil@mail.mil · 7/24/2026, 3:03:46 PM
+Link
+Active
+AI: No opinion
+6 items
+Netanyahu to meet Trump at White House next week amid Iran war escalation
+chelsea.l.durante.mil@mail.mil · 7/24/2026, 3:32:16 PM
+Remove link
+Link
+Active
+AI: No opinion
+4 items
+Trump’s Saudi Nuclear Deal Fiasco May Finally Push Ally to China and Russia
+chelsea.l.durante.mil@mail.mil · 7/24/2026, 2:58:41 PM
+Remove link
+Merge
+Active
+AI: No opinion
+3 items
+Trump reimposes new tariffs on 60 countries based on forced labor laws
+chelsea.l.durante.mil@mail.mil · 7/23/2026, 5:25:29 PM
+Remove link
+Merge
+Active
+AI: No opinion
+7 items
+OpenAI's Hugging Face hack triggers 'AI Kill Switch' bill in Congress
+chelsea.l.durante.mil@mail.mil · 7/23/2026, 5:16:54 PM
+Remove link
+Link
+Active
+AI: Concurs
+2 items
+US moves to disrupt Muslim Brotherhood and Hamas financial networks
+AI: Both articles focus on US efforts to disrupt financial networks linked to Hamas, indicating they cover the same core news event.
+chelsea.l.durante.mil@mail.mil · 7/23/2026, 5:14:30 PM
+Remove link
+Link
+Active
+AI: Concurs
+5 items
+EA-37Bs Arrive At RAF Fairford As Iran Threatens To Attack The UK Air Base
+AI: Both articles discuss the arrival of EA-37Bs at RAF Fairford and the subsequent Iranian threat to attack the base, indicating they cover the same core event and actors.
+chelsea.l.durante.mil@mail.mil · 7/23/2026, 5:11:46 PM
+Remove link
+Merge
+Active
+AI: No opinion
+32 items
+US House votes to limit Iran war for first time since ceasefire breakdown
+chelsea.l.durante.mil@mail.mil · 7/23/2026, 2:28:49 PM
+Remove link
+Link
+Active
+AI: Concurs
+14 items
+PENTAGON SURGES FORCES
+AI: Both articles describe US military actions against Iran, indicating they cover the same ongoing event with the same primary actors and timeframe.
+chelsea.l.durante.mil@mail.mil · 7/23/2026, 12:48:30 PM
+Remove link
+Merge
+Active
+AI: Concurs
+8 items
+US House approves $122b budget plan with Iran war funding
+AI: All articles report on the US House approving a budget plan that includes funding for the Iran war, involving the same primary actors and occurring within the same timeframe.
+chelsea.l.durante.mil@mail.mil · 7/22/2026, 8:02:56 PM
+Remove link
+Merge
+Active
+AI: Concurs
+13 items
+Trump approves Saudi nuclear deal, plans to submit it to Congress within days - report
+AI: All three articles report on the same core event: the US approval of a nuclear deal with Saudi Arabia, involving the same key actors and a similar timeframe.
+chelsea.l.durante.mil@mail.mil · 7/22/2026, 8:01:23 PM
+Remove link
+Link
+Active
+AI: No opinion
+2 items
+US hits Iran as Houthis claim strikes on Saudi tankers
+chelsea.l.durante.mil@mail.mil · 7/22/2026, 7:59:36 PM
+Remove link
+Link
+Active
+AI: No opinion
+12 items
+Iran war will cost US taxpayers at least $37.5bn, Pentagon chief says
+chelsea.l.durante.mil@mail.mil · 7/21/2026, 8:16:33 PM
+Remove link
+Merge
+Revoked
+AI: No opinion
+18 items
+Hegseth pushes for more funding for Iran war as US military hits Iran for 11th consecutive night. DW has the latest.
+chelsea.l.durante.mil@mail.mil · 7/21/2026, 8:15:42 PM
+Link
+Revoked
+AI: No opinion
+2 items
+Microsoft strikes 'multibillion-dollar' deal with French AI firm Mistral
+chelsea.l.durante.mil@mail.mil · 7/21/2026, 11:27:37 AM
+Merge
+Active
+AI: No opinion
+4 items
+Zelensky ousts Ukraine’s military commander as major shake-up continues
+chelsea.l.durante.mil@mail.mil · 7/21/2026, 6:44:05 PM
+Remove link
+Merge
+Revoked
+AI: No opinion
+7 items
+Hegseth and Caine to Testify Before Senate on Iran War Funding
+chelsea.l.durante.mil@mail.mil · 7/21/2026, 2:29:52 PM
+Merge
+Revoked
+AI: No opinion
+3 items
+Hegseth set for Senate grilling as Iran war sours
+chelsea.l.durante.mil@mail.mil · 7/21/2026, 2:32:46 PM
+Link
+Revoked
+AI: No opinion
+7 items
+Hegseth and Caine to Testify Before Senate on Iran War Funding
+chelsea.l.durante.mil@mail.mil · 7/21/2026, 2:39:02 PM
+Link
+Active
+AI: No opinion
+2 items
+Trump says U.S. will 'take care of' Houthis if they impose Red Sea blockade
+chelsea.l.durante.mil@mail.mil · 7/21/2026, 2:36:25 PM
+Remove link
+Link
+Active
+AI: No opinion
+2 items
+Canada Joins UK, Italy, Japan’s GCAP Next-Generation Fighter Jet Program
+chelsea.l.durante.mil@mail.mil · 7/21/2026, 2:29:17 PM
+Remove link
+Link
+Active
+AI: Concurs
+3 items
+China narrows AI gap, challenges US influence
+AI: Both articles discuss the growing AI capabilities of China and the resulting challenges and security concerns for the US, indicating a shared underlying narrative.
+chelsea.l.durante.mil@mail.mil · 7/21/2026, 1:44:01 PM
+Remove link
+Merge
+Active
+AI: No opinion
+6 items
+Lebanon's Aoun meets Trump at White House as deal with Israel comes into focus
+chelsea.l.durante.mil@mail.mil · 7/21/2026, 1:24:40 PM
+Remove link
+Link
+Active
+AI: Concurs
+2 items
+China’s AI Cage Fight With America Is Coming to a Head
+AI: Both articles discuss the escalating AI competition between the US and China, focusing on concerns raised by American AI executives regarding Chinese AI models.
+chelsea.l.durante.mil@mail.mil · 7/21/2026, 1:23:40 PM
+Remove link
+Merge
+Active
+AI: Concurs
+3 items
+Trump vows U.S. will soon bomb Iran's Pickaxe Mountain
+AI: All three articles report on Donald Trump's statement about a potential US strike on Iran's 'Pickaxe Mountain,' indicating a shared core event and actors.
+chelsea.l.durante.mil@mail.mil · 7/21/2026, 1:21:13 PM
+Remove link
+Merge
+Active
+AI: No opinion
+3 items
+Hanwha Philly Shipyard awarded $2 billion to build 2 missile-tracking vessels
+chelsea.l.durante.mil@mail.mil · 7/21/2026, 11:42:52 AM
+Remove link
+Link
+Active
+AI: No opinion
+2 items
+Google Releases Three New Gemini A.I. Models
+chelsea.l.durante.mil@mail.mil · 7/21/2026, 11:27:54 AM
+Remove link
+Link
+Active
+AI: No opinion
+62 items
+Pentagon identifies soldier killed in Iraq during controlled detonation
+chelsea.l.durante.mil@mail.mil · 7/21/2026, 11:16:01 AM
+Remove link
+Link
+Active
+AI: No opinion
+62 items
+U.S. soldier killed in Iraq identified as 30-year-old from North Carolina
+chelsea.l.durante.mil@mail.mil · 7/21/2026, 11:14:19 AM
+Remove link
+Link
+Active
+AI: No opinion
+4 items
+Israeli air strike in Gaza City kills family of six, medics say
+chelsea.l.durante.mil@mail.mil · 7/21/2026, 11:13:42 AM
+Remove link
+Link
+Active
+AI: No opinion
+32 items
+Pentagon Confirms 100 Troops Wounded in US-Iran Fighting
+chelsea.l.durante.mil@mail.mil · 7/21/2026, 9:15:58 AM
+Remove link
+Link
+Active
+AI: No opinion
+2 items
+Trump to impose 50% tariffs on many Canadian goods
+chelsea.l.durante.mil@mail.mil · 7/20/2026, 10:42:28 PM
+Remove link
+Merge
+Active
+AI: No opinion
+12 items
+Trump imposes 50% US tariffs on some Canadian goods, citing discrimination
+chelsea.l.durante.mil@mail.mil · 7/20/2026, 10:42:04 PM
+Remove link
+Link
+Active
+AI: No opinion
+60 items
+Rising US death count in Iran war drives Trump toward escalation
+chelsea.l.durante.mil@mail.mil · 7/20/2026, 5:51:20 PM
+Remove link
+Merge
+Active
+AI: No opinion
+3 items
+Trump signs executive order aimed at tightening defense supply chains
+chelsea.l.durante.mil@mail.mil · 7/20/2026, 5:15:18 PM
+Remove link
+Link
+Active
+AI: No opinion
+30 items
+Trump to attend dignified transfer of US soldiers killed in Iran strikes
+chelsea.l.durante.mil@mail.mil · 7/20/2026, 5:14:33 PM
+Remove link
+Link
+Active
+AI: Concurs
+31 items
+Trump to attend dignified transfer of troops killed by Iran
+AI: Both articles cover the aftermath of the Jordan air base attack, focusing on the identification of victims and President Trump's response regarding Iran's involvement.
+chelsea.l.durante.mil@mail.mil · 7/20/2026, 5:14:10 PM
+Remove link
+Merge
+Active
+AI: No opinion
+3 items
+Iranian security personnel harassed, detained French embassy staff in Tehran, FM Barrot says
+chelsea.l.durante.mil@mail.mil · 7/20/2026, 2:17:55 PM
+Remove link
+Link
+Active
+AI: No opinion
+8 items
+Philippine Navy Personnel Injured After China Coast Guard Row
+chelsea.l.durante.mil@mail.mil · 7/20/2026, 2:17:21 PM
+Remove link
+Link
+Active
+AI: No opinion
+2 items
+Russia says bus strike kills 5 in border region with Ukraine
+chelsea.l.durante.mil@mail.mil · 7/20/2026, 2:03:45 PM
+Remove link
+Link
+Active
+AI: No opinion
+3 items
+Mediators propose 10-day ceasefire in US-Iran conflict
+AI: AI review unavailable.
+chelsea.l.durante.mil@mail.mil · 7/20/2026, 1:14:15 PM
+Remove link
+Link
+Active
+AI: No opinion
+35 items
+US continues attacks on Iran ‘in honor’ of dead service members
+chelsea.l.durante.mil@mail.mil · 7/20/2026, 12:22:07 PM
+Remove link
+Link
+Active
+AI: No opinion
+8 items
+FBI alleges suspect 'deployed an incendiary device outside' federal building
+chelsea.l.durante.mil@mail.mil · 7/20/2026, 12:16:02 PM
+Remove link
+Merge
+Active
+AI: No opinion
+12 items
+Explosion Sparks Fire Outside NYC Federal Building, Suspect Arrested
+AI: AI review reply could not be parsed.
+chelsea.l.durante.mil@mail.mil · 7/20/2026, 12:14:50 PM
+Remove link
+Link
+Active
+AI: No opinion
+34 items
+Iran: 2 oil tankers in Strait of Hormuz have exploded
+chelsea.l.durante.mil@mail.mil · 7/20/2026, 12:12:30 PM
+Remove link
+Link
+Active
+AI: No opinion
+12 items
+Two US service members killed in Iranian attack in Jordan
+chelsea.l.durante.mil@mail.mil · 7/20/2026, 12:11:38 PM
+Remove link
+Link
+Active
+AI: No opinion
+11 items
+Pentagon identifies American soliders killed in Iranian attack in Jordan
+chelsea.l.durante.mil@mail.mil · 7/20/2026, 11:54:48 AM
+Remove link
+Link
+Active
+AI: Concurs
+11 items
+Dozens of US soldiers wounded by Iran in Jordan, helicopters struck unmentioned by CENTCOM - report
+AI: Both articles report on the same Iranian attack on a US base in Jordan, detailing casualties and the actors involved within the same timeframe.
+chelsea.l.durante.mil@mail.mil · 7/20/2026, 11:54:20 AM
+Remove link
+Link
+Active
+AI: No opinion
+5 items
+Yemen's Houthis declare naval blockade against Saudi Arabia
+chelsea.l.durante.mil@mail.mil · 7/20/2026, 10:59:32 AM
+Remove link
+Link
+Active
+AI: No opinion
+23 items
+U.S. and Iran Exchange Strikes After Three Service Members Killed
+chelsea.l.durante.mil@mail.mil · 7/20/2026, 10:59:04 AM
+Remove link

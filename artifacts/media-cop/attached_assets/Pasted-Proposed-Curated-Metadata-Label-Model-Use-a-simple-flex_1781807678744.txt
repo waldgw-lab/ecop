@@ -1,0 +1,71 @@
+Proposed Curated Metadata Label Model
+
+Use a simple, flexible label structure:
+
+Primary Topic · Focus Label
+
+The Primary Topic describes what kind of story it is.
+
+The Focus Label describes the country, region, theater, relationship, or global scope the story is about.
+
+This keeps the metadata line short, readable, and more intuitive for users scanning the Curated view.
+
+Focus Label Options
+
+The Focus Label can be one of four types:
+
+Focus type	Use when	Example
+Single country	One country is clearly the main focus of the story.	Humanitarian Impact · Gaza
+Region / theater	The story affects a broader operating area, chokepoint, or theater.	Maritime Security · Persian Gulf
+Two-country pair	The story is mainly about a relationship, conflict, negotiation, strike, dispute, or policy action between two countries.	Diplomacy · U.S.–Iran
+Global	The story has no single country or region focus, or the impact is worldwide.	Cyber / Space / Tech · Global
+Examples
+Military Ops · Russia–Ukraine
+Diplomacy · U.S.–Iran
+Diplomacy · U.S.–Israel
+Maritime Security · Persian Gulf
+Humanitarian Impact · Gaza
+Force Posture · Europe
+Cyber / Space / Tech · Global
+Why this model works
+
+This model avoids forcing every story into a single-country label when the story is actually about a relationship, conflict axis, theater, or global issue.
+
+For example:
+
+Ukraine attacks Moscow
+
+is easier to understand as:
+
+Military Ops · Russia–Ukraine
+
+rather than only:
+
+Military Ops · Russia
+
+A diplomatic story between the United States and Iran is clearer as:
+
+Diplomacy · U.S.–Iran
+
+rather than only:
+
+Diplomacy · Iran
+
+A regional maritime story involving the Strait of Hormuz is clearer as:
+
+Maritime Security · Persian Gulf
+
+rather than forcing it into one country.
+
+Plain-language rule
+
+The metadata line should answer two questions:
+
+What kind of story is this?
+Where, or between whom, is it focused?
+
+So the Curated card reads as:
+
+Topic · Focus
+
+This gives users a short, scannable label while making the story easier to understand at a glance. The Curated concept already treats UI labels as the visible expression of the story’s categorization, so this is a cleaner display model for the same purpose.

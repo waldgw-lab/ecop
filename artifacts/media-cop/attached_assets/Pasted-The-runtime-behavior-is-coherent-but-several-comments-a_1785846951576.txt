@@ -1,0 +1,27 @@
+The runtime behavior is coherent, but several comments and metadata fields are stale or misleading:
+The social account catalog labels many U.S. official accounts with an attachPolicy of corroborating, but the trust engine does not use that field for clustering behavior. Those accounts actually derive as attach-only.
+Some registry comments say Social–U.S. Official is corroborating or a primary origin, while the actual behavior function makes ordinary social attach-only. –--------- this should be a little different – the idea is to treat them somewhat like releases but not classified as releases
+Some representative-selection comments still say “official Social/Release,” even though only primary releases currently reach the primary representative pool.
+The UI’s Contributing Sources section includes primary-origin anchors that do not contribute formation weight or facts.
+
+BLUF:
+For the source types you currently use:
+Ordinary official social: Additional Coverage only.
+Unofficial social/OSINT/journalists/DataMinr: Additional Coverage only.
+Future international social: same attach-only behavior.
+Future CPC social: Contrast, not Additional Coverage.
+Combatant-command accounts classified as official releases: may anchor an already-corroborated story, but cannot form it or establish facts.
+Only trusted news corroboration forms and factually defines a normal story.
+
+The ideal behavior for source types: Social–U.S. Official
+Join an existing formed story	Yes
+--------(can attach to 3 other contributing sources minimum – therefore if removed – the story doesn’t disappear)
+Appear in Additional Coverage	Yes
+Supply an attributed statement	Yes — e.g. “President Trump said…”
+Count toward the two-publisher formation gate	No
+Keep a cluster alive after news corroboration disappears	No
+Turn their statements into corroborated facts	No
+-------For this – it should be yes – but can contribute/corroborate (not alter existing or guide) – if this is an existing behavior type for anchor then use it- if not we can reconsider
+Become the story representative/headline source	No
+Supply the story’s image or video	No
+Form a story with another official social account	No

@@ -1,0 +1,340 @@
+I’ll treat the coding-agent transcript as the working assumption, cross-check it against your MCOP pipeline logic, then give you corrected implementation guidance and a handoff task.
+
+Thought for 4m 4s
+
+Your pushback to the coding agent is right. The agent’s answer is directionally useful, but it is still thinking too much in terms of renaming the visible Curated badge. Your actual need is broader:
+
+Build a durable categorization layer that can be inherited by Curated View, Main-derived Curated items, manual submissions, filters, and possibly bots — without changing what qualifies for Main or Visual.
+
+That means the fix should not simply be “replace narrow Curated labels with broad topics.” It should be:
+
+Keep Main admission tags intact.
+Add a separate, durable classification layer.
+Use that classification layer for Curated labels, filtering, manual picker, and story organization.
+
+The key reason: Main-feed admission is controlled by strategic tags, not by the is_relevant boolean. A tagged and credible item enters Main; a tag-less or low-credibility item is rerouted to Curated. So changing the Main tag system directly can change the Main/Visual feed behavior, even if the visible UI badge is only shown in Curated.
+
+The most important correction to make with the coding agent
+
+The coding agent said:
+
+“The fix lives in that curated pass. Swap ‘narrow phrase’ for ‘one broad topic from an approved list,’ leave geography alone.”
+
+I would refine that to:
+
+The fix should live in a shared classification/enrichment layer, not in the Main admission gate. It may currently be implemented inside the Curated classifier or Curated AI pass, but conceptually it should be separate from relevance, scoring, and admission.
+
+Why? Because the current system already has two different worlds: Main uses strategic tags, while Curated has a separate Category · Country/Region overlay that is keyed by URL and can cover both Main-feed rows and Curated rows that appear in the Curated lane.
+
+That URL-keyed overlay is closer to the right place than the Main CJCS gate.
+
+The logic should become this
+Raw item enters MCOP
+        ↓
+Layer-1 keyword gate
+        ↓
+Layer-2 Main relevance / strategic tag / priority gate
+        ↓
+Lane decision:
+  tagged + credible → Main
+  tagless / low-cred → Curated-only
+        ↓
+Shared classification enrichment:
+  primary topic
+  scope
+  region
+  country roles
+  entity tags
+  optional conflict track
+  source type
+  source origin / ownership / control
+        ↓
+Destinations inherit the classification:
+  Curated cards
+  Curated filters
+  manual picker
+  Main filter metadata if desired
+  bots if desired as metadata only
+
+The classification layer should not decide whether content enters Main. It should describe content after the item has been admitted or routed.
+
+Your “topic = what, geography = who” idea needs one more layer
+
+You are right that the topic should be the what. But I would not make geography equal the who. That creates future confusion.
+
+A cleaner model is:
+
+Primary Topic = what kind of issue this is
+Region = operating environment
+Topic Country = what country the story is mainly about
+Actor Country = who is taking action
+Affected Country = who is being acted on or affected
+Event Country = where the event physically happened
+Entities = named actors, institutions, commands, groups
+Conflict Track = named ongoing conflict/crisis, when applicable
+Source Origin = where the reporting source comes from
+Ownership / Control = who controls or influences the source
+Narrative Target = who the framing appears aimed at
+
+That is exactly the direction your Curated View concept points toward: categorize the story by the event, the source by who produced or controls it, and the narrative environment by who the framing may be designed to influence.
+
+So the visible card can still be simple:
+
+Military Operations & Armed Conflict · Ukraine
+
+But the underlying object should be richer:
+
+{
+  "primary_topic": "Military Operations & Armed Conflict",
+  "scope": "Global / International",
+  "region": "Europe",
+  "topic_country": "Ukraine",
+  "actor_country": ["Russia"],
+  "affected_country": ["Ukraine"],
+  "event_country": "Ukraine",
+  "conflict_track": "Russia-Ukraine War",
+  "entities": ["Russian Ministry of Defense", "Ukrainian Armed Forces", "NATO"]
+}
+
+That lets the UI stay readable while the system stays analytically accurate.
+
+The active-conflict issue should not be solved with broad topics
+
+You mentioned examples like:
+
+Russia-Ukraine War
+U.S.-Iran Conflict
+Israel-Lebanon
+
+Those should not be primary topics. They are not durable subject categories; they are conflict tracks or event tracks.
+
+If you make them topics, your topic taxonomy will constantly drift. You will end up with topic labels like:
+
+Russia-Ukraine War
+Israel-Hamas War
+Israel-Lebanon Conflict
+Red Sea Crisis
+Taiwan Strait Tensions
+U.S.-Iran Conflict
+
+Those are useful filters, but they are not the same kind of thing as:
+
+Military Operations & Armed Conflict
+Foreign Policy & Diplomacy
+Economic Statecraft & Sanctions
+Information Environment & Influence
+Cyber & Information Operations
+
+The better structure is:
+
+Primary Topic: Military Operations & Armed Conflict
+Conflict Track: Russia-Ukraine War
+Region: Europe
+Topic Country: Ukraine
+Actor Country: Russia
+Affected Country: Ukraine
+
+Or:
+
+Primary Topic: Economic Statecraft & Sanctions
+Conflict Track: U.S.-Iran Conflict
+Region: Middle East
+Actor Country: United States
+Affected Country: Iran
+Topic Country: Iran
+
+That gives users the intuitive conflict grouping they need without turning the topic list into a moving target.
+
+The coding agent’s proposed topics are too U.S.-skewed
+
+You were right to object to labels like:
+
+Executive / POTUS Actions
+Congressional Affairs
+
+Those are not globally reusable topics. They are U.S.-specific entities or domestic governance subtopics.
+
+Use neutral, reusable categories instead:
+
+Governance, Elections & Domestic Stability
+Defense Policy & Military Readiness
+Foreign Policy & Diplomacy
+
+Then use scope and entities to show whether it is U.S.-specific:
+
+{
+  "primary_topic": "Governance, Elections & Domestic Stability",
+  "scope": "U.S. Domestic",
+  "topic_country": "United States",
+  "entities": ["White House", "Congress", "Supreme Court"]
+}
+
+That is much more durable than having “POTUS” or “Congress” as top-level topics.
+
+How I would define the durable topic list
+
+I would keep the primary topic list relatively short — roughly 15–20 items. These should be broad enough to apply globally but specific enough to be useful.
+
+Recommended primary topics
+Military Operations & Armed Conflict
+Force Posture & Deployments
+Defense Policy & Military Readiness
+Weapons, Procurement & Defense Industry
+Nuclear, WMD & Strategic Deterrence
+Cyber, Space & Emerging Technology
+Foreign Policy & Diplomacy
+Alliances & Multilateral Institutions
+Economic Statecraft & Sanctions
+Intelligence, Espionage & Security Services
+Information Environment & Influence
+Terrorism, Insurgency & Non-State Armed Groups
+Border, Homeland & Internal Security
+Maritime Security & Chokepoints
+Critical Infrastructure, Energy & Supply Chains
+Humanitarian, Civilian Harm & Displacement
+Governance, Elections & Domestic Stability
+Law, Courts & International Norms
+Public Health, Disaster & Environmental Security
+Global Markets & Strategic Economics
+
+This list fixes several issues at once:
+
+It avoids U.S.-only terms.
+
+It separates military activity from force posture from defense policy.
+
+It gives you a home for active combat, sanctions, diplomacy, state media narratives, terrorism, maritime chokepoints, domestic instability, humanitarian impact, and strategic economics.
+
+It makes “Threats & Security” unnecessary as a vague bucket.
+
+How to resolve the overlap between “Threats & Security” and “Operations & Force Posture”
+
+Your instinct is right: those headers overlap.
+
+I would not use “Threats & Security” as a major header. It is too broad and will swallow everything.
+
+Use these distinctions instead:
+
+Military Operations & Armed Conflict
+Actual fighting, strikes, battlefield movement, ceasefires, raids, attacks.
+
+Force Posture & Deployments
+Where forces are placed, moved, rotated, surged, withdrawn, or positioned.
+
+Defense Policy & Military Readiness
+Budgets, recruitment, readiness, doctrine, organization, command issues.
+
+Border, Homeland & Internal Security
+Domestic security, border operations, national guard, internal unrest, homeland threats.
+
+Terrorism, Insurgency & Non-State Armed Groups
+ISIS, al-Qaeda, militias, cartels as armed/security actors, proxy groups.
+
+Information Environment & Influence
+State media, propaganda, influence activity, adversary framing, narrative operations.
+
+That is cleaner than trying to keep “Operations & Force Posture” and “Threats & Security” from colliding.
+
+How the visible label should work
+
+For the user-facing Curated badge, I would use this hierarchy:
+
+Primary Topic · Topic Country
+
+If no single country dominates:
+
+Primary Topic · Region
+
+If it is global or truly cross-regional:
+
+Primary Topic · Global
+
+If it belongs to a named active conflict, optionally show the conflict track as a secondary chip:
+
+Military Operations & Armed Conflict · Ukraine
+Russia-Ukraine War
+
+Or:
+
+Maritime Security & Chokepoints · Red Sea
+Red Sea Crisis
+
+Do not force every visible label to carry everything. The card label should be simple. The expanded details should carry the deeper fields.
+
+What should happen to Main and Visual
+
+This is the most important implementation boundary:
+
+Do not replace Main strategic tags with the new broad topics.
+Do not use broad topics as the Main admission gate.
+Do not let broad topics alter priority scoring.
+
+The Main feed currently relies on strategic tags for admission and topic surfaces. The AI returns is_relevant, tags[], and priority_score, but the code admits to Main based on tag count, not the boolean.
+
+So if the coding agent changes the strategic tag list too aggressively, they may accidentally change what appears in Main/Visual.
+
+The safe version is:
+
+Main strategic tags = admission / relevance / CJCS sorting
+Broad topics = display / filtering / Curated organization / manual picker
+
+Main and Visual can inherit broad topics as metadata, but they should not use them to decide admission.
+
+What should happen to Curated
+
+Curated should read both:
+
+Main-qualified content
++
+Curated-only content
+
+Then the classification layer should normalize both into the same structure.
+
+The documents say Curated’s classification overlay is URL-keyed and covers both Main-feed rows and Curated rows appearing in the lane. That is exactly the pattern you want to strengthen.
+
+The correction is not:
+
+Curated-only gets better labels.
+
+It is:
+
+Any item that can appear in Curated gets the same classification object.
+
+That includes:
+
+headlines
+curated_items
+manual_submissions
+first_alerts
+truth_social_posts
+x_posts
+osint_posts
+journalist_posts
+
+For articles, URL-keyed classification is fine. For social posts, alerts, and manual submissions, they may need a non-URL key like:
+
+main:<id>
+curated:<id>
+manual:<id>
+alert:<id>
+social:<id>
+What should happen to manual submissions
+
+Manual submissions should use the same vocabulary, but I would not make the human do all the work.
+
+Use this pattern:
+
+Manual submission created
+        ↓
+AI suggests:
+  primary topic
+  geography
+  country roles
+  conflict track
+  entities
+        ↓
+Human can override from approved list
+        ↓
+Saved classification follows the item into Curated / Main / review views
+
+That keeps humans and AI aligned without making manual submission slow.

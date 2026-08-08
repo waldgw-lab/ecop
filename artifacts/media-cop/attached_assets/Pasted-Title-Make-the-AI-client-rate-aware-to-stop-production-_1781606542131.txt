@@ -1,0 +1,30 @@
+Title: Make the AI client rate-aware to stop production OpenRouter 429s from breaking curated clustering
+Problem (observed in production): The curated clustering pass (clusterCuratedLane, every 5 min,
+gpt-4o) intermittently fails with "RateLimitError: 429 Provider returned error" from OpenRouter.
+Measured over ~19 consecutive passes: ~10% failed outright ("Error identifying clusters"), each
+recovering the next cycle, plus occasional non-fatal coherence-guard 429s. Failures land on the
+minutes where curated classify (gpt-4o-mini) runs concurrently with clustering, on top of hourly
+news-bot bursts — i.e. provider saturation from many concurrent AI calls. All ~50 AI call sites
+route through server/aiClient.ts, which today has ONLY a circuit breaker (5 fails -> 60s cooldown):
+no retry, no Retry-After handling, no throttle/concurrency limit. So a transient 429 wastes the
+whole clustering pass.
+Goal: Eliminate (or sharply reduce) the 429-driven clustering failures WITHOUT degrading quality —
+no change to models, prompts, cadence, or the clustering/coherence logic.
+Do:
+1. In server/aiClient.ts (single choke point all AI calls flow through):
+   - Add 429-aware bounded retry with exponential backoff + jitter, honoring the Retry-After header
+     (cap ~3 attempts). Integrate with the existing circuit breaker: don't retry when the breaker is
+     open; count exhausted retries as a provider failure; keep each caller's existing fallback.
+   - Add a light global concurrency limiter + minimum spacing between requests (use the already-
+     installed p-limit) so concurrent bursts (classify, ingest, news bots) don't saturate the
+     provider. Make spacing adaptive: widen on 429, relax when healthy.
+2. Optional, cheap: in server/scheduler.ts, shift the curated-classify cron off the clustering
+   minutes (classify currently shares :04/:14/:24/:34/:44/:54 with clustering). Keep all cadences
+   and models unchanged.
+Do NOT: add a priority queue/lane (clustering recovers next cycle — no starvation evidence);
+reduce clustering cadence; downgrade gpt-4o -> mini; trim the clustering prompt/node set; remove
+the coherence guard.
+Verify: add lightweight logging of retry/429/circuit-breaker counts; run the curated-isolation
+harness; watch deployment logs for "[CuratedCluster] ... 429" to drop and story-formation counts
+to hold steady. Confirm during implementation that the 429 is a rate limit (not a hard credit cap).
+Note: Start from the current main app. Do not carry over the abandoned #249 holistic-rescore code.

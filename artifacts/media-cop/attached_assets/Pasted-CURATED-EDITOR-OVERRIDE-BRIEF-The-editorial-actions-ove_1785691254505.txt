@@ -1,0 +1,31 @@
+CURATED EDITOR-OVERRIDE BRIEF
+
+The editorial actions over the past 30 days indicate a need for adjustments in scoring and clustering behavior, particularly concerning Middle Eastern and European military operations, as well as the categorization of emerging technology and security topics. There is a notable pattern of over-scoring articles from certain outlets and under-scoring others, with clustering issues primarily around military and diplomatic events.
+
+1. Adjust Scoring for Middle Eastern Military Operations  [high]
+   Location: server/scoreAdjustments.ts
+   Change: Adjust scoring for Middle Eastern military operations to prevent over-scoring.
+   Why: Several articles related to military operations in the Middle East, particularly involving Israeli and Palestinian conflicts, have been consistently pinned down, indicating they may be over-scored. This suggests a need to adjust the scoring rubric to better reflect the editorial judgment.
+   Based on:
+     - At least eight killed in Israeli strikes on Gaza after Hamas agree disarmament deal  (BBC News · score 88 · Military Operations & Armed Conflict · Israeli Strikes on Gaza)
+     - Over 8,000 plaintiffs seek to hold PA liable for October 7 massacre, war damages  (Jerusalem Post · score 65 · Foreign Policy & Diplomacy · Legal Liability)
+
+2. Refine Clustering for European Military Events  [medium]
+   Location: server/curatedCluster.ts
+   Change: Enhance clustering logic for European military events to improve coherence and grouping.
+   Why: There is a pattern of manual linking for articles related to military operations in Europe, particularly involving Ukraine and Russia. This indicates a need to refine clustering logic to better group related events.
+   Based on:
+     - Ukraine: Russia hits Kyiv with deadly missile strikes  (Deutsche Welle · score 90 · Military Operations & Armed Conflict · Russian Missile Strikes)
+     - Lithuanian embassy in Kyiv damaged in Russian missile attack  (The Straits Times · score 75 · Military Operations & Armed Conflict · Embassy Attack)
+
+3. Reclassify Emerging Technology and Security Topics  [medium]
+   Location: curated_classifications
+   Change: Refine classification criteria for emerging technology and security topics to improve initial categorization.
+   Why: Articles originally labeled under 'Other / Emerging' and 'Cyber, Space & Emerging Technology' have been relabeled to more specific categories, indicating a need for clearer initial classification.
+   Based on:
+     - The Dartmouth Workshop: The $7,500 investment that gave birth to AI (2/2)  (France 24 · Other / Emerging · AI Development)
+     - Moonshot’s Kimi Built on 20,000 Nvidia Chip Cluster From Alibaba  (Bloomberg · Cyber, Space & Emerging Technology · AI Development)
+
+Cautions:
+- Do not recommend changes to outlet registry roles, as this is out of scope.
+- Ensure that any scoring adjustments do not inadvertently affect unrelated categories or regions.

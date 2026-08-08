@@ -1,0 +1,437 @@
+// FROZEN curated showcase story for the Curated View feature tour.
+//
+// The tour walks the reader through a real curated cluster's detail pane. Live
+// clusters churn every clustering pass, so the auto-picked "richest live" story
+// was inconsistent (sometimes thin, sometimes an over-merged megacluster with no
+// synthesized lede/facts). This is a hand-picked snapshot of a complete, multi-
+// source, multi-angle story (U.S.-Iran Gulf escalation) captured from the live
+// feed so the walkthrough ALWAYS opens a polished example: neutral lede,
+// corroborated facts, attributed claims, contributing sources, and state-media
+// contrast. The tour is a short-lived reveal (~1-2 weeks), so this snapshot is
+// intentionally static and does not refresh. The hero image is a persisted
+// /objects/ path in the shared object-storage bucket, so it resolves in prod.
+import type { CuratedStory } from "@/pages/Curated";
+
+export const CURATED_SHOWCASE_STORY: CuratedStory = {
+    "id": "0681fc37-50ec-4504-b810-a61d853b1d74",
+    "type": "curated",
+    "title": "Airstrikes intensify between U.S. and Iran",
+    "displayTitle": "Airstrikes intensify between U.S. and Iran",
+    "summary": "U.S. and Iranian forces have escalated military strikes against each other, raising tensions in a strategically critical region.",
+    "summaryBullets": [
+      "U.S. and Iran exchanged intensive airstrikes Monday, escalating conflict over Strait of Hormuz control and regional dominance.",
+      "Renewed bombing campaign follows collapse of tentative truce between the two nations after days of heightened tensions.",
+      "Iran's Islamic Revolution Guards Corps targeted U.S. military bases in Kuwait, Jordan, and Bahrain with missiles and drones."
+    ],
+    "ogImageUrl": "/objects/stream-images/1783940713088-auto-1783940713088.jpg",
+    "memberImages": [
+      "/objects/stream-images/1783940713088-auto-1783940713088.jpg",
+      "/objects/stream-images/1783946226119-auto-1783946226119.png",
+      "/objects/stream-images/1783946235530-auto-1783946235530.jpg",
+      "/objects/stream-images/1783941444133-auto-1783941444133.jpg",
+      "/objects/stream-images/1783946240076-auto-1783946240076.jpg"
+    ],
+    "hiddenImages": [],
+    "videoUrl": null,
+    "category": "U.S.-Iran Military Escalation",
+    "region": "Middle East",
+    "country": null,
+    "primaryTopic": "Military Operations & Armed Conflict",
+    "scope": "Regional",
+    "conflictTrack": "U.S.-Iran Conflict",
+    "countryPair": [
+      "United States",
+      "Iran"
+    ],
+    "sourceKind": "Wire / Reported",
+    "outletOriginCountry": "United States",
+    "outletOriginRegion": "North America",
+    "outletOwnership": [],
+    "source": "The Washington Post",
+    "url": "https://www.washingtonpost.com/world/2026/07/13/airstrikes-intensify-between-us-iran",
+    "contentKind": null,
+    "clusterId": "6945852d9136e5bb69c05bb92f3729db6d639603f870714a91a22da2a63fb6d0",
+    "priorityScore": 92,
+    "priorityOverride": null,
+    "scrapedAt": "2026-07-13T11:04:52.580Z",
+    "articlePublishedAt": "2026-07-13T11:15:39.019Z",
+    "sourceCount": 17,
+    "members": [
+      {
+        "id": "e7bfb2bf-bc46-46fd-92b8-597f1a05e79b",
+        "itemType": "main",
+        "title": "U.S. and Iran trade strikes and conflicting claims about the Strait of Hormuz",
+        "displayTitle": "U.S. and Iran trade strikes and conflicting claims about the Strait of Hormuz",
+        "source": "NBC News",
+        "url": "https://www.nbcnews.com/nightly-news/video/u-s-and-iran-trade-strikes-and-conflicting-claims-about-the-strait-of-hormuz-266568261661",
+        "linkDead": false,
+        "role": "contributing",
+        "behaviorClass": "corroborating",
+        "behaviorLabel": null,
+        "contentKind": "article",
+        "publishedAt": "2026-07-13T11:15:39.019Z",
+        "summary": "I cannot provide a summary as the article text provided does not contain the actual news story about U.S. and Iran strikes and the Strait of Hormuz. The text only lists unrelated headlines about Ukraine, Italy, Bangkok, and U.S. political figures, with no substantive content about the stated topic.",
+        "ogImageUrl": "/objects/stream-images/1783941444133-auto-1783941444133.jpg",
+        "summaryBullets": null,
+        "spin": "Highlights conflicting claims about the Strait of Hormuz status between the two nations",
+        "alignment": null
+      },
+      {
+        "id": "15bea074-087f-4ce0-9ba5-45bf1a749925",
+        "itemType": "curated",
+        "title": "New US-Iran strikes rattle peace deal hopes",
+        "displayTitle": "New US-Iran strikes rattle peace deal hopes",
+        "source": "NewsNation",
+        "url": "https://www.newsnationnow.com/world/new-us-iran-strikes-rattle-peace-deal-hopes/",
+        "linkDead": false,
+        "role": "contributing",
+        "behaviorClass": "corroborating",
+        "behaviorLabel": null,
+        "contentKind": null,
+        "publishedAt": "2026-07-13T11:03:15.000Z",
+        "summary": "Direct U.S.-Iran military escalation affecting nuclear diplomacy and regional stability",
+        "ogImageUrl": null,
+        "summaryBullets": null,
+        "spin": "Emphasizes the impact on peace deal hopes and nuclear diplomacy efforts",
+        "alignment": null
+      },
+      {
+        "id": "c0825219-0fbc-4b31-b100-16a2faa17030",
+        "itemType": "curated",
+        "title": "Renewed US-Iran war is hitting Gulf countries hard",
+        "displayTitle": "Renewed US-Iran war is hitting Gulf countries hard",
+        "source": "Deutsche Welle",
+        "url": "https://www.dw.com/en/renewed-us-iran-war-is-hitting-gulf-countries-hard/a-77876781?maca=en-rss-en-all-1573-rdf",
+        "linkDead": false,
+        "role": "contributing",
+        "behaviorClass": "corroborating",
+        "behaviorLabel": null,
+        "contentKind": null,
+        "publishedAt": "2026-07-13T10:57:01.039Z",
+        "summary": "Active U.S.-Iran military escalation with regional economic/strategic consequences for Gulf allies",
+        "ogImageUrl": null,
+        "summaryBullets": null,
+        "spin": "Emphasizes the economic and strategic consequences for Gulf countries caught in the conflict",
+        "alignment": null
+      },
+      {
+        "id": "d0310806-26a1-40cc-90e8-7a23da76b793",
+        "itemType": "curated",
+        "title": "US, Iran exchange strikes as tensions escalate over Strait of Hormuz",
+        "displayTitle": "US, Iran exchange strikes as tensions escalate over Strait of Hormuz",
+        "source": "CGTN",
+        "url": "https://news.cgtn.com/news/2026-07-13/US-Iran-exchange-strikes-as-tensions-escalate-over-Strait-of-Hormuz-1OKjyJRzRra/p.html",
+        "linkDead": false,
+        "role": "anchor-only",
+        "behaviorClass": "anchor-only",
+        "behaviorLabel": "contrast",
+        "contentKind": null,
+        "publishedAt": "2026-07-13T10:56:27.301Z",
+        "summary": "Active military escalation between U.S. and Iran over critical maritime chokepoint; direct kinetic conflict with global energy security implications",
+        "ogImageUrl": null,
+        "summaryBullets": null,
+        "spin": "Frames the escalation around tensions over the Strait of Hormuz with emphasis on global energy security implications",
+        "alignment": {
+          "pct": 75,
+          "align": [
+            "confirms U.S. and Iran exchanged strikes",
+            "notes the Strait of Hormuz as a critical chokepoint"
+          ],
+          "diverge": []
+        }
+      },
+      {
+        "id": "0681fc37-50ec-4504-b810-a61d853b1d74",
+        "itemType": "curated",
+        "title": "Airstrikes intensify between U.S. and Iran",
+        "displayTitle": "Airstrikes intensify between U.S. and Iran",
+        "source": "The Washington Post",
+        "url": "https://www.washingtonpost.com/world/2026/07/13/airstrikes-intensify-between-us-iran",
+        "linkDead": false,
+        "role": "contributing",
+        "behaviorClass": "corroborating",
+        "behaviorLabel": null,
+        "contentKind": null,
+        "publishedAt": "2026-07-13T10:48:46.000Z",
+        "summary": "U.S. and Iranian forces have escalated military strikes against each other, raising tensions in a strategically critical region.",
+        "ogImageUrl": "/objects/stream-images/1783940713088-auto-1783940713088.jpg",
+        "summaryBullets": [
+          "U.S. and Iran exchanged intensive airstrikes Monday, escalating conflict over Strait of Hormuz control and regional dominance.",
+          "Renewed bombing campaign follows collapse of tentative truce between the two nations after days of heightened tensions.",
+          "Iran's Islamic Revolution Guards Corps targeted U.S. military bases in Kuwait, Jordan, and Bahrain with missiles and drones."
+        ],
+        "spin": "Focuses on the intensification of airstrikes and rising tensions in the region",
+        "alignment": null
+      },
+      {
+        "id": "e1e08c19-3041-428c-87f5-139ce1ed85bd",
+        "itemType": "curated",
+        "title": "Trump orders new strikes \"to hold Iranian forces accountable,\" CENTCOM says",
+        "displayTitle": "Trump orders new strikes \"to hold Iranian forces accountable,\" CENTCOM says",
+        "source": "CBS News",
+        "url": "https://www.cbsnews.com/live-updates/us-iran-war-trump-ceasefire-talks-strait-of-hormuz/",
+        "linkDead": false,
+        "role": "contributing",
+        "behaviorClass": "corroborating",
+        "behaviorLabel": null,
+        "contentKind": null,
+        "publishedAt": "2026-07-13T09:27:56.000Z",
+        "summary": "Active U.S. military operations against Iran; direct armed conflict with strategic implications",
+        "ogImageUrl": null,
+        "summaryBullets": null,
+        "spin": "Emphasizes Trump's order to hold Iranian forces accountable and frames strikes as U.S.-directed action",
+        "alignment": null
+      },
+      {
+        "id": "f67b0584-15a2-4082-9552-f16e55533eb3",
+        "itemType": "curated",
+        "title": "New Iran strikes on Gulf as US attacks escalate: What we know",
+        "displayTitle": "New Iran strikes on Gulf as US attacks escalate: What we know",
+        "source": "Al Jazeera",
+        "url": "https://www.aljazeera.com/news/2026/7/13/new-iran-strikes-on-gulf-as-us-attacks-escalate-what-we-know?traffic_source=rss",
+        "linkDead": false,
+        "role": "contributing",
+        "behaviorClass": "corroborating",
+        "behaviorLabel": null,
+        "contentKind": null,
+        "publishedAt": "2026-07-13T09:16:08.000Z",
+        "summary": "Escalating US-Iran military exchange in the Persian Gulf; direct threat to regional stability and maritime security",
+        "ogImageUrl": null,
+        "summaryBullets": null,
+        "spin": "Emphasizes Iranian strikes on the Gulf and presents the escalation as U.S.-driven",
+        "alignment": null
+      },
+      {
+        "id": "005c9162-3371-4cb5-8587-9a7112521266",
+        "itemType": "curated",
+        "title": "US and Iran trade strikes as ceasefire comes under growing strain",
+        "displayTitle": "US and Iran trade strikes as ceasefire comes under growing strain",
+        "source": "Al Jazeera",
+        "url": "https://www.aljazeera.com/news/2026/7/13/us-and-iran-trade-strikes-as-ceasefire-comes-under-growing-strain?traffic_source=rss",
+        "linkDead": false,
+        "role": "contributing",
+        "behaviorClass": "corroborating",
+        "behaviorLabel": null,
+        "contentKind": null,
+        "publishedAt": "2026-07-13T09:01:48.000Z",
+        "summary": "Active US-Iran military exchange with ceasefire breakdown; direct strategic escalation",
+        "ogImageUrl": null,
+        "summaryBullets": null,
+        "spin": "Emphasizes the strain on ceasefire arrangements alongside the military exchanges",
+        "alignment": null
+      },
+      {
+        "id": "6d761648-6a1c-41e9-83eb-4b32e00b12a1",
+        "itemType": "curated",
+        "title": "U.S. and Iran exchange strikes as Strait of Hormuz standoff escalates",
+        "displayTitle": "U.S. and Iran exchange strikes as Strait of Hormuz standoff escalates",
+        "source": "CNBC",
+        "url": "https://www.cnbc.com/2026/07/13/us-iran-war-hormuz-oil-trump.html",
+        "linkDead": false,
+        "role": "contributing",
+        "behaviorClass": "corroborating",
+        "behaviorLabel": null,
+        "contentKind": null,
+        "publishedAt": "2026-07-13T09:00:32.000Z",
+        "summary": "Active kinetic escalation between the U.S. and Iran in a critical maritime chokepoint; direct military engagement with implications for global energy security and regional stability",
+        "ogImageUrl": null,
+        "summaryBullets": null,
+        "spin": "Focuses on the Strait of Hormuz standoff and implications for global energy security",
+        "alignment": null
+      },
+      {
+        "id": "4231fd22-35c3-433b-815d-84997666abdd",
+        "itemType": "curated",
+        "title": "US and Iran Swap Strikes for Second Straight Night",
+        "displayTitle": "US and Iran Swap Strikes for Second Straight Night",
+        "source": "Sputnik",
+        "url": "https://sputnikglobe.com/20260713/us-and-iran-swap-strikes-for-second-straight-night-1124438648.html",
+        "linkDead": false,
+        "role": "anchor-only",
+        "behaviorClass": "anchor-only",
+        "behaviorLabel": "contrast",
+        "contentKind": null,
+        "publishedAt": "2026-07-13T08:08:47.000Z",
+        "summary": "Escalating kinetic exchange between US and Iran; direct military action signaling rapid escalation cycle",
+        "ogImageUrl": null,
+        "summaryBullets": null,
+        "spin": "Emphasizes the rapid escalation cycle with strikes occurring for a second straight night",
+        "alignment": {
+          "pct": 65,
+          "align": [
+            "confirms strikes occurred for consecutive nights"
+          ],
+          "diverge": [
+            "emphasizes rapid escalation cycle without broader context"
+          ]
+        }
+      },
+      {
+        "id": "080d055d-c433-4572-b8ca-1de9e3fea0ee",
+        "itemType": "curated",
+        "title": "Fresh US-Iran Strikes Threaten Ceasefire; TMSC Sales Surge | Daybreak Europe 7/13/2026",
+        "displayTitle": "Fresh US-Iran Strikes Threaten Ceasefire; TMSC Sales Surge | Daybreak Europe 7/13/2026",
+        "source": "Bloomberg",
+        "url": "https://www.bloomberg.com/news/videos/2026-07-13/daybreak-europe-7-13-2026-video",
+        "linkDead": false,
+        "role": "contributing",
+        "behaviorClass": "corroborating",
+        "behaviorLabel": null,
+        "contentKind": null,
+        "publishedAt": "2026-07-13T06:53:57.000Z",
+        "summary": "Active U.S.-Iran military escalation; ceasefire threat and strategic implications",
+        "ogImageUrl": "/objects/stream-images/1783946240076-auto-1783946240076.jpg",
+        "summaryBullets": null,
+        "spin": "Highlights the threat to ceasefire arrangements from the fresh strikes",
+        "alignment": null
+      },
+      {
+        "id": "3a5ebef8-4980-4ef3-bd91-c93b79185fdb",
+        "itemType": "curated",
+        "title": "US and Iran Trade Fresh Strikes",
+        "displayTitle": "US and Iran Trade Fresh Strikes",
+        "source": "Bloomberg",
+        "url": "https://www.bloomberg.com/news/videos/2026-07-13/us-and-iran-trade-fresh-strikes-video",
+        "linkDead": false,
+        "role": "contributing",
+        "behaviorClass": "corroborating",
+        "behaviorLabel": null,
+        "contentKind": null,
+        "publishedAt": "2026-07-13T06:39:35.000Z",
+        "summary": "Active U.S.-Iran military escalation; direct kinetic conflict",
+        "ogImageUrl": "/objects/stream-images/1783946235530-auto-1783946235530.jpg",
+        "summaryBullets": null,
+        "spin": "Provides straightforward reporting on the mutual exchange of strikes",
+        "alignment": null
+      },
+      {
+        "id": "3a98a8a9-f188-46da-b4ac-c4e178631604",
+        "itemType": "curated",
+        "title": "Gulf states attacked as US strikes Iran for fifth time in six days",
+        "displayTitle": "Gulf states attacked as US strikes Iran for fifth time in six days",
+        "source": "The National",
+        "url": "https://www.thenationalnews.com/news/gulf/2026/07/13/gulf-states-face-attacks-as-us-strikes-iran-for-fifth-time-in-six-days/",
+        "linkDead": false,
+        "role": "anchor-only",
+        "behaviorClass": "anchor-only",
+        "behaviorLabel": "contrast",
+        "contentKind": null,
+        "publishedAt": "2026-07-13T05:51:30.000Z",
+        "summary": "Active U.S.-Iran military escalation; regional allies under attack; force posture and combat operations directly affecting Middle East stability",
+        "ogImageUrl": null,
+        "summaryBullets": null,
+        "spin": "Highlights Gulf states being attacked and frames the U.S. as conducting its fifth strike in six days",
+        "alignment": {
+          "pct": 70,
+          "align": [
+            "confirms U.S. strikes on Iran occurred multiple times",
+            "notes regional impact on Gulf states"
+          ],
+          "diverge": [
+            "frames Gulf states as attacked without clarifying Iranian targeting rationale"
+          ]
+        }
+      },
+      {
+        "id": "199e93a4-6e92-4d27-a01d-6ca9fc514c76",
+        "itemType": "curated",
+        "title": "US and Iran Trade Fresh Strikes, Dispute Whether Hormuz Is Open",
+        "displayTitle": "US and Iran Trade Fresh Strikes, Dispute Whether Hormuz Is Open",
+        "source": "Bloomberg",
+        "url": "https://www.bloomberg.com/news/articles/2026-07-13/us-and-iran-trade-fresh-strikes-dispute-whether-hormuz-is-open",
+        "linkDead": false,
+        "role": "contributing",
+        "behaviorClass": "corroborating",
+        "behaviorLabel": null,
+        "contentKind": null,
+        "publishedAt": "2026-07-13T05:31:00.000Z",
+        "summary": "Active U.S.-Iran military escalation with maritime chokepoint implications; ceasefire threat and strategic waterway access",
+        "ogImageUrl": "/objects/stream-images/1783946226119-auto-1783946226119.png",
+        "summaryBullets": null,
+        "spin": "Highlights the dispute over whether the Strait of Hormuz remains open alongside the military exchanges",
+        "alignment": null
+      },
+      {
+        "id": "38105c96-6400-4a24-8980-42f984e74363",
+        "itemType": "curated",
+        "title": "Iran launches retaliatory attacks after fresh US strikes – as it happened",
+        "displayTitle": "Iran launches retaliatory attacks after fresh US strikes – as it happened",
+        "source": "The Guardian",
+        "url": "https://www.theguardian.com/world/live/2026/jul/13/middle-east-crisis-live-us-launches-new-wave-of-strikes-on-iran-tehran-says-attacks-render-diplomacy-futile",
+        "linkDead": false,
+        "role": "contributing",
+        "behaviorClass": "corroborating",
+        "behaviorLabel": null,
+        "contentKind": null,
+        "publishedAt": "2026-07-13T04:39:50.000Z",
+        "summary": "Active kinetic escalation between US and Iran; direct military exchange with immediate strategic implications",
+        "ogImageUrl": null,
+        "summaryBullets": null,
+        "spin": "Frames the story as Iranian retaliatory attacks following U.S. strikes",
+        "alignment": null
+      },
+      {
+        "id": "67bc318e-42c1-4367-9e72-b60646b5e893",
+        "itemType": "curated",
+        "title": "Iran war latest: Iran attacks neighbours again following US strikes",
+        "displayTitle": "Iran war latest: Iran attacks neighbours again following US strikes",
+        "source": "The National",
+        "url": "https://www.thenationalnews.com/news/mena/2026/07/13/live-bahrain-kuwait-attacked-iran-us-war/",
+        "linkDead": false,
+        "role": "anchor-only",
+        "behaviorClass": "anchor-only",
+        "behaviorLabel": "contrast",
+        "contentKind": null,
+        "publishedAt": "2026-07-13T02:54:19.000Z",
+        "summary": "Ongoing U.S.-Iran military escalation and regional conflict; Iran's retaliatory strikes on neighbors; direct impact on Middle East stability and allied security",
+        "ogImageUrl": null,
+        "summaryBullets": null,
+        "spin": "Emphasizes Iranian attacks on neighbors as retaliatory and frames Iran as the active aggressor against regional allies",
+        "alignment": {
+          "pct": 50,
+          "align": [
+            "confirms Iranian strikes following U.S. actions"
+          ],
+          "diverge": [
+            "frames Iran as primary aggressor attacking neighbors",
+            "emphasizes Iranian attacks on allies without U.S. strike context"
+          ]
+        }
+      },
+      {
+        "id": "06f98a40-e526-4765-9edd-ac48b56a6b42",
+        "itemType": "curated",
+        "title": "U.S. launches another round of strikes on Iran",
+        "displayTitle": "U.S. launches another round of strikes on Iran",
+        "source": "CBS News",
+        "url": "https://www.cbsnews.com/video/us-launches-another-round-of-strikes-on-iran/",
+        "linkDead": false,
+        "role": "contributing",
+        "behaviorClass": "corroborating",
+        "behaviorLabel": null,
+        "contentKind": null,
+        "publishedAt": "2026-07-13T00:55:00.000Z",
+        "summary": "Active U.S. military operations against Iran; direct armed conflict with strategic implications",
+        "ogImageUrl": null,
+        "summaryBullets": null,
+        "spin": "Focuses on U.S. launching another round of strikes as the primary development",
+        "alignment": null
+      }
+    ],
+    "role": "contributing",
+    "headline": "US and Iran exchange military strikes in escalating conflict",
+    "lede": "The United States and Iran have conducted multiple rounds of military strikes against each other in recent days, marking a significant escalation in direct armed conflict between the two nations.",
+    "facts": [
+      "The United States and Iran have exchanged military strikes against each other over multiple consecutive days",
+      "The escalation involves disputes over the Strait of Hormuz, a critical maritime chokepoint for global energy security",
+      "The military exchanges threaten existing ceasefire arrangements and regional stability in the Gulf"
+    ],
+    "headlineOverride": null,
+    "attributedClaims": [
+      "CENTCOM said the strikes were ordered to hold Iranian forces accountable",
+      "The National reported that Gulf states were attacked as the U.S. struck Iran for the fifth time in six days"
+    ],
+    "hidden": false,
+    "hiddenRecordKeys": [],
+    "rankingScore": 142
+  } as CuratedStory;

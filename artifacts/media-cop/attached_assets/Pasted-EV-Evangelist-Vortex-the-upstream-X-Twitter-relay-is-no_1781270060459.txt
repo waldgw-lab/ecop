@@ -1,0 +1,45 @@
+EV (Evangelist Vortex), the upstream X/Twitter relay, is now live in production and
+scraping ~43 handles every few minutes. It pushes new tweets to you via webhook.
+Right now the relay is pointed at this app's DEV url, which is asleep, so deliveries
+404. I need you to make the inbound relay endpoint production-ready and self-test it.
+EXACT WIRE CONTRACT EV SENDS (this is fixed on EV's side — match it):
+- Method/path:  POST /api/webhooks/x-relay
+- Headers:
+    content-type: application/json
+    x-api-key: <shared secret>      # raw key, NO "Bearer " prefix; compare byte-for-byte
+    user-agent: EvangelistVortex/1.0
+    (EV is NOT sending an HMAC signature right now — only x-api-key.)
+- Body (one request per ingest batch, up to ~20 posts):
+    {
+      "posts": [
+        {
+          "sourceAccount": "PeteHegseth",          // X handle, case may vary -> match case-INSENSITIVELY
+          "postId": "1799999999999999999",         // STABLE dedupe key
+          "content": "tweet text",
+          "postedAt": "2026-06-12T00:00:00.000Z",  // ISO 8601 UTC
+          "xUrl": "https://x.com/PeteHegseth/status/1799999999999999999",
+          "imageUrl": "https://...jpg" | null,      // first photo, if any
+          "media": [ { "type": "photo|video|animated_gif", "url": "https://..." } ],
+          "isRetweet": false,                       // placeholder for now
+          "retweetedFrom": null                     // placeholder for now
+        }
+      ]
+    }
+PLEASE VERIFY AND REPORT BACK:
+1. The app is DEPLOYED at a stable https://<something>.replit.app url (not the dev host).
+2. POST /api/webhooks/x-relay returns JSON (e.g. {status, received, new, duplicate,
+   unknownHandle}). CRITICAL: it must NOT be swallowed by the SPA/HTML catch-all —
+   a 200 with content-type text/html means the handler isn't actually registered for
+   that path, which silently drops data. Confirm content-type is application/json.
+3. Missing/wrong x-api-key returns 401 JSON (not 200, not HTML).
+4. A known handle is persisted; an UNKNOWN handle is safely skipped/counted, never
+   misrouted.
+5. Re-sending the same postId is de-duplicated (EV re-dispatches on re-ingest).
+6. GET /api/team/x-relay-status shows relay-primary/WATCHDOG while receiving.
+Self-test curl (run against your own deployed url):
+  curl -sS -w '\nHTTP:%{http_code} CT:%{content_type}\n' -X POST \
+    "https://<MCOP_STABLE_URL>/api/webhooks/x-relay" \
+    -H "content-type: application/json" -H "x-api-key: <SHARED_KEY>" \
+    -d '{"posts":[{"sourceAccount":"<a-handle-you-track>","postId":"diag-1","content":"probe from EV","postedAt":"2026-06-12T00:00:00.000Z","xUrl":"https://x.com/x/status/diag-1","imageUrl":null,"media":[],"isRetweet":false,"retweetedFrom":null}]}'
+Reply with: (a) the stable .replit.app url, and (b) confirm the x-api-key value
+(or rotate it and give me the new one).

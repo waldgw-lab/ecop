@@ -1,0 +1,33 @@
+Watch-topic results clarity and fairer tagging
+What & Why
+On the IE Priorities / BOLO panel, several topics look dead ("no results") and several show "Prompt not recorded", which reads like a bug. Production investigation shows the panel row count and the detail-dialog "Matches (30d)" measure two different pipelines (tagged team submissions vs curated steering matches), each submission can be linked to only ONE topic so overlapping topics cannibalize each other (e.g. "FY2027 Defense Budget" shows 0 while near-duplicate "Defense Spending Bill" absorbed 60), and the match-rate math divides by a fixed 30 days even though telemetry only began Jul 19. Make the numbers honest and legible, and make the tagger fairer when several topics fit — without changing steering/boost behavior.
+
+Done looks like
+A topic that is matching in the curated lane never looks dead: wherever watch topics are managed (the Source Oversight tab once Task #1094 lands), each topic shows both meters with plain labels — linked submissions AND curated feed matches — so "0 identified" rows still show their curated activity.
+The detail dialog's match stats are labeled for what they count, and the per-day rate is computed from the days telemetry actually covers, not a fixed 30.
+When a headline fits several topics, the tagger prefers the most specific eligible topic instead of defaulting to the broader/older one, so niche topics like "FY2027 Defense Budget" start accumulating their own results.
+Editors can see when two topics overlap heavily (a hint like "overlaps: Defense Spending Bill") so they can consolidate duplicates themselves.
+Topics created before prompt capture show a self-explanatory note (e.g. "Not recorded — created before prompt tracking") instead of the ambiguous "Prompt not recorded", and an empty prompt can be backfilled once by an editor while recorded prompts stay read-only.
+The section count badge no longer double-counts topics that are both Priority and BOLO (20 distinct topics no longer display as "38").
+Out of scope
+Multi-topic tagging (schema change to allow one submission in several topics).
+Any change to curated steering, boost strengths, floors/caps, or the rescue budget.
+Moving the management UI into Source Oversight (that is Task #1094; this task builds on wherever that UI lives after it merges).
+Archiving or merging the user's duplicate topics (editorial decision, no code).
+Steps
+Two-meter display — Surface both counts (linked submissions and curated steering matches) on each topic row and in the detail dialog with clear labels, extending the existing stats endpoint so the panel can show curated activity when submissions are zero.
+Honest rate math — Compute the per-day match rate over the days the telemetry window actually covers (capped at 30) and label the stat with the real window, so young telemetry doesn't understate activity.
+Specificity-aware tagging — Adjust the submission tagger's AI-confirm step so that among a submission's keyword-eligible topics it picks the most specific match (and only falls back to broad topics when no specific one fits), keeping the existing pre-gate and post-verify guards unchanged.
+Overlap hint — Detect heavily-overlapping compiled keyword gates between active topics and show a small advisory hint in the detail dialog naming the overlapping topic(s).
+Prompt provenance polish — Replace the empty-state text with a dated explanation, and let the detail endpoint accept a source prompt only when the stored one is empty (fill-once; existing prompts remain immutable).
+Distinct count badge — Change the section header badge to count distinct topics (or show a Priority/BOLO split) instead of summing the two lists.
+Relevant files
+client/src/pages/Team.tsx:337-400,560-700,3840-3860
+server/routes.ts:11271-11320,11440-11520
+server/joePriorityMatcher.ts
+server/storage.ts:5441-5470
+server/watchTopicMatchCore.ts
+Dependencies
+
+[P2] Move Priority/BOLO management into Source Oversight with influence visibility
+Open task

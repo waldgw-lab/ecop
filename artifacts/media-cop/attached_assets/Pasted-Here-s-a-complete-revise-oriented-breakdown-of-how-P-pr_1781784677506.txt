@@ -1,0 +1,239 @@
+Here's a complete, revise-oriented breakdown of how "P" (priority) scoring works across the system. I've organized it by stage in the pipeline, and for each knob I give you the exact file, the value, and what happens if you change it.
+A key thing up front: there are two completely separate scoring systems that never touch each other — the Main feed (Classic + Visual/Stream) and the Curated "Top Stories" lane — plus a third, smaller per-MCOP scorer. If you want to change "the P score," you almost always need to decide which of these you mean.
+Stage 1 — Where the number is born (the AI rubric)
+A headline gets its first P score from an AI model reading the title. This is the single most important, and easiest, thing to revise because it's written in plain English.
+Main feed rubric
+•	File: server/relevanceDefinition.ts → ANALYZER_SYSTEM_PROMPT (lines ~28–176)
+•	Engine: server/aiAnalyzer.ts — model gpt-4o-mini, temperature: 0.3, JSON output (lines 91–242, 360–415). (Routed through OpenRouter.)
+•	The bands it tells the AI to use (lines 109–151):
+o	90–100 Critical — active ops, troop deployments, nuclear/WMD, major attacks on US forces/allies
+o	70–89 High — peer-adversary moves, NDAA/force-structure shifts, war funding, tech breakthroughs, alliance shifts
+o	50–69 Moderate — regional conflict w/o US forces, indirect-defense domestic politics, sanctions/supply chains
+o	30–49 Low — routine budget/admin, domestic politics w/o defense impact, general economy
+o	1–29 Minimal — entertainment, sports, consumer tech, local crime, weather
+•	The prompt also contains worked examples (e.g. "$60B Ukraine supplemental → 80", "Pentagon name change → 35"). Editing these examples is the most reliable way to shift behavior — the model anchors hard on them.
+⚠️ There's a comment in that file warning that this prompt must stay "byte-identical" because it drives Classic/Visual output. That's a caution, not a law — but it means any edit here will measurably move the main feed, so it's exactly the lever you'd pull intentionally.
+Curated rubric (a deliberately wider net)
+•	File: server/relevanceDefinition.ts → CURATED_ANALYZER_SYSTEM_PROMPT (lines ~250+)
+•	Engine: server/aiAnalyzer.ts → analyzeCuratedBatch (lines 296–345)
+•	Philosophically different: it tells the AI to rank items relative to each other and spread scores across the full range, reserve 90+ for "wakes a commander at night," and push soft-politics/appointments/PR into 30–49. Same band numbers, looser admission.
+Fallback values (when the AI fails)
+•	In aiAnalyzer.ts: missing score defaults to 50; a hard error returns 1 (treated as noise). Worth knowing because a flaky AI call silently produces 50s.
+Stage 2 — Deterministic post-processing (no AI, curated lane only)
+After the AI returns a number, three pure-code adjusters run only in the curated lane (server/curatedIngest.ts + server/aiAnalyzer.ts):
+1.	De-clump ties — aiAnalyzer.ts → declumpCuratedScores (lines 273–294). The model loves piling items at 90/80/50. This spreads tied items downward by small deterministic steps (window = min(groupSize-1, 12)). Revise the 12 to control how wide ties get spread.
+2.	Reuse baseline — curatedIngest.ts → deriveReuseBaselinePriority (lines 90–120). For items admitted without an AI score (official social posts, Truth Social, DataMinr, team submissions). Formula:
+•	Role base: contributing 52, attach-only 44, anchor-only 40, unknown 36
+•	Recency bonus: ≤2h +12, ≤6h +8, ≤12h +4, ≤24h +1
+•	Per-URL jitter 0–7, then clamped to 1–89
+•	These numbers are all directly tunable.
+3.	Soft-politics safety cap — curatedIngest.ts → capSoftPoliticsPriority (lines 207–225), CURATED_SOFT_CAP = 49 (line 131). A cap-only backstop: tourism/PR/appointments/consumer-brand fluff that the AI over-scored gets pulled back to ≤49 — unless a CURATED_STRATEGIC_GUARD regex (line 151) matches (war, missile, sanctions, CENTCOM, etc.), in which case it's left alone. To revise: change the cap number, add/remove trigger patterns (CURATED_SOFT_PATTERNS, CURATED_APPOINTMENT_PATTERNS, CURATED_CORPORATE_PATTERNS), or widen/narrow the guard.
+The main feed has none of these adjusters — its score is whatever the AI returned (or a human override).
+Stage 3 — Time decay (both feeds)
+•	File: server/storage.ts → calculateDepreciatedPriority (lines 23–57)
+•	Rule: first 2 hours = no decay; after that, −10 points per whole hour; floor of 20. A manual override is exempt (never decays).
+•	The decay clock is anchored to the article's published date when available, otherwise first-seen time.
+•	Main-feed rows are stored already-decayed-on-read; curated rows are stored raw and decayed at render time (in server/routes.ts). This is why a comment in routes warns against "double-decaying."
+•	To revise: the 2 (grace window), the 10 (decay rate), and the 20 (floor) are the three knobs.
+Stage 4 — Manual overrides (human pins)
+•	Main feed: priorityOverride / priorityOverrideAt columns on headlines and manual_submissions (shared/schema.ts lines 31–32, 312–313). When set, it wins via COALESCE(priorityOverride, priorityScore) and is decay-exempt.
+•	Curated lane: separate curated_priority_overrides table (shared/schema.ts lines 1549–1556). Keyed by main:<id>, curated:<id>, or cluster:<clusterId> so you can pin a single item or a whole cluster. Also decay-exempt. This is allowlist-gated and read only at render — it never leaks into the main feed.
+Stage 5 — How the score actually orders what you see
+Main feed ordering
+•	SQL sort (server/storage.ts ~lines 446/455): COALESCE(priorityOverride, priorityScore) DESC, then scrapedAt DESC.
+•	Cluster corroboration boost (server/routes.ts lines 1656–1662): a story gets +7 points per extra source, capped at +50. This is deliberately sized to "beat" the −10/hr decay so a well-corroborated older story still out-ranks a fresh single-source item. These two constants (CORROBORATION_PER_SOURCE, CORROBORATION_MAX_BOOST) are the main feed's most powerful ranking levers after the rubric itself.
+Curated lane — P decides what even gets clustered
+Before clustering, P selects which items enter the AI payload (server/curatedCluster.ts lines 28–142):
+•	MAX_NODES = 140 — top items by priority
+•	PRIMARY_ADVERSARY_CAP = 56 (40% of 140) — caps how many adversary/state-media/social items can occupy the primary cut, protecting trusted contributors
+•	Rescue budgets (so good items below the cutoff still get pulled in): RESCUE_BUDGET 60, EVENT_BUCKET_BUDGET 80, SOCIAL_RESCUE_BUDGET 40, CONTRAST_RESCUE_BUDGET 40
+Bonus — the third scorer (per-user MCOPs)
+•	File: server/customMcopScorer.ts — its own gpt-4o-mini prompt that scores 1–100 relative to that user's stated priorities (default 50 on failure). Fully independent of the two systems above; decayed with the same calculateDepreciatedPriority at render.
+________________________________________
+Cheat sheet — "I want to change X, edit here"
+You want to…	Edit	Current value
+Reshape what counts as critical/high/etc (main feed)	relevanceDefinition.ts → ANALYZER_SYSTEM_PROMPT bands + examples	5 bands, worked examples
+Reshape curated scoring philosophy	relevanceDefinition.ts → CURATED_ANALYZER_SYSTEM_PROMPT	relative/spread
+Make scores decay faster/slower	storage.ts → calculateDepreciatedPriority	2h grace, −10/hr, floor 20
+Make corroborated stories rank higher	routes.ts → CORROBORATION_PER_SOURCE / _MAX_BOOST	+7/src, cap +50
+Tune the soft-politics safety net	curatedIngest.ts → CURATED_SOFT_CAP + pattern lists	cap 49
+Change default scores for social/flash	curatedIngest.ts → deriveReuseBaselinePriority	36–52 + recency
+Change which items reach clustering	curatedCluster.ts → MAX_NODES, PRIMARY_ADVERSARY_CAP	140, 56
+Switch the model/temperature	aiAnalyzer.ts / customMcopScorer.ts	gpt-4o-mini, 0.3
+ 
+"CJCS-relevant" is shorthand for one question your system asks of every incoming headline:
+Would the Chairman of the Joint Chiefs of Staff (the top U.S. military officer) need to know about this?
+That single question is the first gate content has to pass before it can enter the main feed. Here's exactly what the criteria are and how the process runs.
+The criteria — what counts as "relevant"
+A headline qualifies if it touches at least one of these five areas (this is the rubric the AI is given):
+1.	Geopolitical strategy & conflict — peer/near-peer adversaries (China, Russia, Iran, North Korea), active conflict zones, alliance shifts.
+2.	Force readiness & defense policy — recruitment, morale, training, budgets, major weapons systems, DoD policy/structure changes.
+3.	Domestic strategy & political environment — major legislation, big court rulings, crises that could require national mobilization. (Trump / Congress / elections are kept here for situational awareness, even if not directly military.)
+4.	Global context & macro trends — major economic shifts, large-scale disasters, big international political movements.
+5.	Technology & cyber warfare — military tech (AI, space, hypersonics) and significant cyber incidents.
+And it's automatically rejected if it's pure: entertainment, sports, consumer tech/gadgets, pop culture, isolated local crime, routine weather, ordinary finance, or lifestyle/health. (With a deliberate exception: a finance or weather story that also carries a security angle — e.g. sanctions, a hurricane hitting a naval base — is rescued instead of dropped.)
+The process — how a headline actually gets in
+It's a multi-stage funnel, not a single check:
+Stage 1 — Deterministic keyword gate (cheap, runs first).
+Before any AI is involved, each scraped headline is checked against keyword lists:
+•	Hard-exclusion words (celebrity, NFL, Netflix, recipe, etc.) → dropped immediately, no appeal.
+•	Finance/weather words → dropped unless the headline also contains a security-context term, in which case it's rescued and passed forward.
+•	Blocked outlets → filtered out by domain here too (saves the cost of running AI on sources you don't trust).
+Here's everything, exactly as it lives in the code.
+1. The deterministic keyword gate (the exact lists)
+This runs in server/scraper.ts before any AI is involved. There are three lists.
+A. Hard-exclusion keywords — always dropped, no appeal
+Grouped by category (case-insensitive substring match on the headline title):
+Medical/Health (non-crisis): cancer, tumor cells, medical breakthrough, health study, heart attack, disease outbreak, treatment option, sleep study, diet plan, fitness, nutrition, recipe, wellness, vitamin, supplement
+Entertainment/Celebrity: celebrity, actor, actress, movie premiere, film festival, concert, album, hollywood, oscar, grammy, emmy, golden globe, box office, tv show, television series, streaming service, netflix, disney+, hbo, south park, family guy, sitcom, reality show, talent show, pop star, rapper, singer, musician, band tour, music video, kardashian, influencer, viral video, tiktok, instagram model
+Sports: sports, football, basketball, baseball, playoff, player trade, team roster, super bowl, world series, nba finals, nfl draft, soccer, golf tournament, olympics, athlete, championship game, mvp award
+Consumer Tech / Social Media: cyberbullying, social media trend, app update, new iphone, gadget review, video game, gaming console, esports, twitch streamer
+B. Finance/weather keywords — dropped unless rescued
+Finance/Markets: tax shield, real estate market, stock market, cryptocurrency, bitcoin, mortgage rate, housing market, stock price, earnings report, wall street
+Weather: weather forecast, tropical storm, hurricane forecast, winter storm warning
+A headline matching one of these is dropped only if it does not also contain a security-context term (list C). If it does, it's "rescued" and flows on to the AI layer.
+C. Security-context rescue terms (lives in shared/securityContext.ts)
+These override a finance/weather drop:
+Conflict & force: war, warfare, conflict, invasion, invade, military, troops, soldiers, armed forces, deployment, deployed, combat, airstrike, missile, drone strike, warship, naval, fleet, fighter jet, war game, mobiliz, ceasefire
+Named adversaries & actors: china, chinese, prc, beijing, russia, russian, kremlin, moscow, iran, iranian, tehran, north korea, pyongyang, hezbollah, hamas, houthi, wagner
+Flashpoints & geography: taiwan, strait of hormuz, ukraine, gaza, south china sea, red sea, korean peninsula, black sea, west bank, lebanon
+Alliances & partners: nato, allies, allied, coalition, partner nation
+Security & statecraft: sanctions, embargo, blockade, national security, homeland security, pentagon, defense, deterrence, cyberattack, espionage
+Installations: naval base, air base, military base, naval station, norfolk
+Crisis & humanitarian: humanitarian aid, evacuation, refugees
+(There's also a separate blocked-outlets domain filter that runs in the same pass — it filters by source rather than keyword, so it isn't part of these word lists.)
+
+Stage 2 — AI relevance judgment (the real brain of it).
+Survivors go to an AI analyst prompted to act as "a senior intelligence analyst compiling the daily strategic brief for the CJCS." For every headline it returns three things: a relevance verdict, strategic tags (e.g. PRC/Indo-Pacific, Troop Deployments, Cyber Security), and a 1–100 priority score.
+2. The exact prompt the AI uses
+This is ANALYZER_SYSTEM_PROMPT from server/relevanceDefinition.ts — verbatim, the prompt that powers the main-feed gate:
+You are a senior intelligence analyst compiling the daily strategic brief for the Chairman of the Joint Chiefs of Staff (CJCS). Your task is to analyze news article titles and determine if they are relevant to U.S. national security strategy, the readiness of the Joint Force, or the critical domestic and global environments.
+REVISED RELEVANCE CRITERIA (Must meet at least one):
+Geopolitical Strategy & Conflict: Articles concerning major peer or near-peer adversaries, active conflict zones, or developments impacting international alliances.
+Force Readiness & Defense Policy: Topics related to U.S. military recruitment, morale, training, budget, major weapons systems, or shifts in DoD policy/structure.
+Domestic Strategy & Political Environment: High-level domestic news, major legislative actions, significant court rulings, or crises that could require national mobilization.
+Global Context & Macro Trends: Major global economic shifts, widespread environmental catastrophes, or significant international political movements that alter the global strategic landscape.
+Technology & Cyber Warfare: Developments in critical military technology (AI, space, hypersonic weapons) and significant national or global cybersecurity incidents.
+SUGGESTED STRATEGIC TAGS (Select one or more for relevant articles):
+GEOPOLITICAL HOTSPOTS:
+- PRC/Indo-Pacific
+- RUS/UKR
+- Israel/Gaza
+- Iran/M. East Stability
+- North Korea
+- NATO/Allies
+DEFENSE CAPABILITIES:
+- Force Readiness
+- Recruitment/Retention
+- Budget/NDAA
+- Nuclear Posture
+- Sustainment/Logistics
+MILITARY OPERATIONS (HIGH PRIORITY):
+- Troop Deployments
+- Cartel Operations
+- Border Security Ops
+- Counterterrorism
+MODERNIZATION & DOMAINS:
+- AI/Emerging Tech
+- Cyber Security
+- Space Domain
+- JADC2/Integration
+- Hypersonic
+DOMESTIC & INTERAGENCY:
+- Nat Guard Domestic
+- Critical Infrastructure
+- Legislative Policy
+- Global Economy
+- Climate/Disaster
+- Public Health/Pandemic
+DOMESTIC POLITICS (LOWER PRIORITY - Include for situational awareness):
+- Trump Administration
+- Congressional Actions
+- Domestic Politics
+- Elections/Campaigns
+- Supreme Court
+IRRELEVANCE CRITERIA (Automatically REJECT - these are NOT military-relevant):
+- Entertainment: Hollywood, movies, TV shows, celebrities, actors, streaming services, music, concerts, awards shows
+- Sports: Professional sports, athletes, games, tournaments, team trades, championships
+- Consumer Technology: New phones, gadgets, apps, video games, social media trends
+- Pop Culture: South Park, Family Guy, reality TV, influencers, viral videos, TikTok
+- Local Crime: Isolated incidents, individual cases (unless terrorism/national security)
+- Weather: General forecasts (catastrophic events with strategic impact ARE relevant)
+- Finance: Stock prices, crypto, housing markets (strategic sanctions/embargos ARE relevant)
+- Health: Diet, fitness, wellness (pandemics/bioweapons ARE relevant)
+IMPORTANT: Stories about TRUMP, CONGRESS, ELECTIONS, or MAJOR POLITICAL EVENTS should NOT be rejected - these should receive DOMESTIC POLITICS tags even if not directly military-related. Include them for situational awareness.
+REMEMBER: This brief is for the Chairman of the Joint Chiefs of Staff - if it doesn't impact military operations, national security strategy, or force readiness, it should be marked as is_relevant: false.
+PRIORITY GUIDANCE:
+- Stories about TROOP DEPLOYMENTS or MILITARY FORCE MOVEMENTS should receive the "Troop Deployments" tag
+- Stories about CARTELS, DRUG TRAFFICKING OPERATIONS, or ORGANIZED CRIME with military/law enforcement action should receive the "Cartel Operations" tag
+- These operational stories are HIGH PRIORITY and should always be tagged appropriately
+- Stories about TRUMP, CONGRESS, or DOMESTIC POLITICS should receive appropriate DOMESTIC POLITICS tags for situational awareness
+- Domestic politics stories should use tags like "Trump Administration", "Congressional Actions", "Domestic Politics", "Elections/Campaigns"
+- These are LOWER PRIORITY than military/strategic stories but still relevant for context
+PRIORITY SCORING (1-100 scale):
+Assign a priority score to EVERY headline based on its importance to senior military leadership:
+90-100 (CRITICAL - Immediate Action Required):
+- Active military operations or troop deployments
+- Nuclear weapons/WMD developments
+- Major attacks on U.S. forces or allies
+- Critical national security threats requiring immediate awareness
+70-89 (HIGH PRIORITY - Daily Brief):
+ONLY score 70+ if the story has IMMEDIATE operational or strategic impact:
+- Significant geopolitical developments with peer adversaries (China, Russia, Iran, North Korea)
+- Transformative defense outcomes: NDAA passage, force-structure shifts, alliance commitments
+- Supplemental war funding enabling new deployments or operations
+- Emerging military technology breakthroughs (AI, hypersonics, space, nuclear posture)
+- Important alliance developments (NATO expansion, Indo-Pacific partnerships, treaty changes)
+EXAMPLE: "Congress approves $60B Ukraine supplemental enabling new troop deployments" → 80
+NOTE: Routine budget cuts, program cancellations, or administrative costs belong in 30-49, NOT here.
+50-69 (MODERATE PRIORITY - Situational Awareness):
+- Regional conflicts not directly involving U.S. forces
+- Domestic political developments with indirect defense implications
+- Economic/trade issues with strategic implications (sanctions, embargoes, supply chains)
+- Recruitment/retention trends, force readiness concerns
+30-49 (LOW PRIORITY - Background Context):
+Administrative and routine fiscal news WITHOUT immediate operational impact:
+- Agency budget reallocations, program cancellations, infrastructure/maintenance funding
+- Domestic politics without direct defense impact
+- General economic news
+- International news without military implications
+EXAMPLES:
+- "NOAA cancels funding for tsunami warning systems" → 35
+- "Pentagon name change could cost $2 billion" → 35
+- "Department cuts administrative staff by 10%" → 40
+RULE: Unless a budget item directly alters force readiness or enables military operations, it stays in this tier.
+1-29 (MINIMAL PRIORITY - Noise):
+- Entertainment, sports, celebrity news
+- Consumer technology
+- Local crime
+- Weather (unless catastrophic)
+OUTPUT TASK:
+Analyze ALL provided headlines and assign appropriate strategic tags AND priority scores to each one.
+For each headline:
+1. Determine if it's military/strategic relevant (is_relevant: true/false)
+2. Assign a priority score (1-100) based on importance to military leadership
+3. If relevant, assign appropriate strategic tags from the list above
+4. Provide a brief reason for your assessment
+5. If not relevant, mark is_relevant: false with empty tags and low priority score
+Return a JSON object with a "results" array containing one object for each headline analyzed. Each object must have: title, is_relevant, reason, tags, priority_score.
+[... followed by a JSON example block and "Return ONLY valid JSON with no additional text or markdown formatting."]
+(There's a second, simpler prompt — BOT_CJCS_SYSTEM_PROMPT — used by the Drudge/BBC/Fox/etc. bots when they decide what to post to Team chat. Say the word and I'll paste that one too.)
+Stage 3 — The actual admission rule.
+Here's the subtle part: the thing that truly gates the main feed isn't the yes/no flag — it's whether the AI assigned at least one strategic tag. No tag → it doesn't enter the main feed. Anything with a tag gets in and is ranked by its priority score. Headlines that get zero tags aren't deleted; they're rerouted to the wider "Curated" lane, along with low-credibility-source items.
+Two important "cousins" of this same filter
+•	The Team-chat bot screen — when the news bots (DrudgeBot, BBCBot, etc.) decide what to post into Team chat, they use a simpler version of the same CJCS question (a plain relevant / not-relevant call plus a one-line summary), rather than the full tag+score rubric.
+•	The Curated lane gate — this one is intentionally looser. It keeps anything bearing on national security/geopolitics even indirectly, including adversary state-media framing and opinion/analysis. It exists precisely to catch the substantive stories that the tight main-feed gate sets aside.
+So in short: "CJCS-relevant" = passes a keyword sanity check, then an AI judges it important enough to a four-star military leader to earn a strategic tag. Tag earned → it's in. No tag → it falls through to the wider curated net or is dropped entirely.
+3. Why the tag count, not the yes/no flag, is the real gate
+The AI returns three fields per headline: is_relevant (boolean), tags (array), and priority_score. You'd expect is_relevant: false to be the thing that drops a story. It isn't — here's the actual mechanic in server/scraper.ts:
+After the AI responds, the code loops over every result and the first hard check is the tag count:
+if (analysis.tags.length === 0) {
+    // routed to the wider Curated lane, then…
+    continue;   // …skipped from the main feed
+}
+So admission to the main feed is decided by "did this headline earn at least one strategic tag?" — not by the boolean. A few consequences fall out of that:
+•	The boolean is effectively advisory. If the AI returned is_relevant: true but assigned zero tags, the story still doesn't make the main feed. Conversely, the code doesn't separately check is_relevant === false to drop things — a story with tags gets in and is ranked by its priority score. In practice the prompt tells the model to pair "not relevant" with "empty tags," so the two usually agree — but it's the tag array the code acts on.
+•	"No tag" doesn't mean deleted. Tag-less headlines are pushed into a curatedRejects list (capped at 50 per scrape) and rerouted to the wider Curated lane, which has a much more generous relevance bar. So the main feed stays tight while borderline items get a second life in Curated.
+•	There are still gates after the tag check. Even a tagged headline can be held back: NOAA stories get their priority capped at 40, and headlines from non-credible sources (blogs, social-media users, etc.) are quarantined and rerouted to Curated as attach-only.
+Net effect: a story reaches the main feed only if it (1) survives the keyword gate, (2) gets the AI to attach a concrete strategic tag, and (3) clears the source-credibility check. The yes/no relevance flag is computed and logged, but the tag array is the lever the code pulls.
+

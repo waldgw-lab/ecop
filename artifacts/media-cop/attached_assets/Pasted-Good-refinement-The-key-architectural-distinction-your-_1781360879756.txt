@@ -1,0 +1,26 @@
+Good refinement. The key architectural distinction: your RSS bot is a generic poller — adding a feed URL reuses existing infrastructure (no new scraper). A "new scraper" only means sites with no RSS that need custom Playwright code. So:
+•	Priority 1 = already flowing into the pipeline today, just needs a registry/classification change (zero ingestion work).
+•	Priority 2 = not yet ingested but has a reliable RSS feed I can drop into the existing RSS bot (no new scraper).
+Priority 1 — Already flowing in, no ingestion work at all
+Only a classification change in the oversight registry; zero new feeds, zero scrapers.
+MSNBC — MSNBC should stay with the mixed factuality
+Priority 2 — Reliable RSS, drops straight into your existing RSS bot
+No new scraper code — just a feed URL + a registry entry. All of these I verified return live, valid feeds right now. Ordered by how big a gap they fill for a defense picture:
+Outlet	Fills gap	Feed check
+Yonhap (S. Korea)	Korea / North Korea — none today	✅ 102 items
+Taipei Times (Taiwan)	Taiwan Strait — none today	✅ 50 (top item was literally a US Taiwan defense bill)
+The Hindu (India)	India / QUAD / Indo Pacific — none today	✅ 60
+Kyiv Post (Ukraine)	Active war — none today	✅ 100 (Kyiv Independent's feed is dead; Kyiv Post is the reliable one)
+Japan Times	Japan / Indo Pacific	✅ 30
+ABC News Australia	AUKUS / Pacific	✅ 25
+Channel News Asia	Southeast Asia hub	✅ 20
+MercoPress	Latin America / SOUTHCOM's AOR — none today	✅ 10
+AFP	3rd global wire (you have AP + Reuters)	✅ 10
+Financial Times / The Economist / Foreign Affairs	Leadership grade global analysis	✅ (headlines via RSS; full text is paywalled but your existing paywall bypass handles the body)
+Dropped because their feeds were unreliable or already covered: Kyiv Independent (dead feed), Focus Taiwan (covered by Taipei Times), Korea Herald (covered by Yonhap), The Print and Ukrainska Pravda (blocked/non XML).
+My recommendation
+Incorporate:
+Yonhap, Taipei Times, The Hindu, Kyiv Post (this is Average Factuality Rating: Mixed, so it will be treated like CPC where it can’t alter facts etc. or generate clusters without x2 reliable sources but that’s okay), Japan Times, and ABC Australia.
+Want me to wire that batch up (add the feeds + register each as they are based on our criteria from media bias entities, ensuring Kyiv Post registers mixed) 
+
+Provide for me our current list of adversary media (CPC/SWL/EPC) and what some solids additions could be

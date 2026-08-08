@@ -1,0 +1,424 @@
+Listening Exports
+Data exports for onetime and recurring jobs.
+
+
+
+POST
+/v3/exports/one-time
+Creates a new one-time export
+
+
+
+GET
+/v3/exports/one-time
+Get a list of all your one-time exports
+
+
+
+GET
+/v3/exports/one-time/{id}
+Get details of a one-time export
+
+
+
+DELETE
+/v3/exports/one-time/{id}
+Removes an existing one-time export
+
+
+
+POST
+/v3/exports/recurring
+Creates a new recurring export
+
+
+
+GET
+/v3/exports/recurring
+Get a list of all your recurring exports
+
+
+
+GET
+/v3/exports/recurring/{id}
+Get details of a recurring export
+
+
+
+DELETE
+/v3/exports/recurring/{id}
+Removes an existing recurring export
+
+
+Listening Search
+Search Meltwater data using saved searches to integrate with your own API connectors and internal systems.
+
+
+
+POST
+/v3/search/{id}
+Search for Meltwater earned data using a saved search and optional filters.
+
+
+Listening Search Management
+Manage Saved Searches
+
+
+
+GET
+/v3/searches
+Get a list of all your searches
+
+
+
+POST
+/v3/searches
+Create a search
+
+
+
+GET
+/v3/searches/{id}
+Get an individual search
+
+
+
+PUT
+/v3/searches/{id}
+Update an individual search
+
+
+
+DELETE
+/v3/searches/{id}
+Delete an individual search
+
+
+
+GET
+/v3/searches/{id}/count
+Get an approximate count of results for the search over a particular period
+
+
+
+GET
+/v3/tags
+Get a list of all your tags
+
+
+
+POST
+/v3/tags
+Create a new tag
+
+
+
+DELETE
+/v3/tags/{tag_id}
+Delete an existing tag.
+
+
+
+POST
+/v3/documents/add_tags
+Add tags to documents
+
+
+
+POST
+/v3/documents/remove_tags
+Remove tags from documents
+
+
+
+GET
+/v3/filter_sets
+Get a list of all search filter sets
+
+
+
+GET
+/v3/custom_categories
+Get a list of all search custom categories
+
+
+Account Management
+Account Management API and Usage APIs
+
+
+
+GET
+/v3/accounts/me/companies
+Get a list of all your companies
+
+
+
+GET
+/v3/accounts/me/workspaces
+Get a list of all your workspaces
+
+
+
+GET
+/v3/accounts/me/tokens
+Get a list of all your API tokens
+
+
+
+GET
+/v3/usage/me/metrics/{metric}
+Get usage information on specific metric
+
+
+
+GET
+/v3/usage/me/requests
+Get usage statistics for your API calls
+
+
+Owned Analytics
+Retrieve owned social metrics and analytics.
+
+
+
+GET
+/v3/owned/accounts
+Returns a list of social account connections for a given company/user account
+
+
+
+GET
+/v3/owned/accounts/metrics/breakdown
+Returns a single-level breakdown by a category or concept
+
+
+
+GET
+/v3/owned/accounts/metrics/heatmap
+Returns a break-down over date and time
+
+
+
+GET
+/v3/owned/accounts/metrics/nested_breakdown
+Returns a double-level breakdown by two categories or concepts
+
+
+
+GET
+/v3/owned/accounts/metrics/numeric
+Returns simple metrics for a social account
+
+
+
+GET
+/v3/owned/accounts/posts/top_posts
+Allows to fetch the top posts for owned social accounts
+
+
+
+GET
+/v3/owned/supported_metrics
+Returns a list of supported metrics
+
+
+Explore+ Assets
+Manage your Explore+ assets including searches and custom fields.
+
+
+
+GET
+/v3/explore_plus/assets/custom_fields
+List all custom fields.
+
+
+
+POST
+/v3/explore_plus/assets/custom_fields
+Create a new custom field.
+
+
+
+GET
+/v3/explore_plus/assets/custom_fields/{custom_field_id}
+Fetch a given custom field.
+
+
+
+PUT
+/v3/explore_plus/assets/custom_fields/{custom_field_id}
+Update a given custom field.
+
+
+
+DELETE
+/v3/explore_plus/assets/custom_fields/{custom_field_id}
+Delete a given custom field.
+
+
+
+POST
+/v3/explore_plus/assets/custom_fields/{custom_field_id}/values
+Create a new custom field value.
+
+
+
+GET
+/v3/explore_plus/assets/custom_fields/{custom_field_id}/values/{value_id}
+Fetch a given custom field value.
+
+
+
+PUT
+/v3/explore_plus/assets/custom_fields/{custom_field_id}/values/{value_id}
+Update a given custom field value.
+
+
+
+DELETE
+/v3/explore_plus/assets/custom_fields/{custom_field_id}/values/{value_id}
+Delete a given custom field value.
+
+
+
+POST
+/v3/explore_plus/assets/custom_fields/{custom_field_id}/values/{value_id}/rules
+Create a new assignment rule.
+
+
+
+GET
+/v3/explore_plus/assets/custom_fields/{custom_field_id}/values/{value_id}/rules/{rule_id}
+Fetch a given assignment rule.
+
+
+
+PUT
+/v3/explore_plus/assets/custom_fields/{custom_field_id}/values/{value_id}/rules/{rule_id}
+Update a given assignment rule.
+
+
+
+DELETE
+/v3/explore_plus/assets/custom_fields/{custom_field_id}/values/{value_id}/rules/{rule_id}
+Delete a given assignment rule.
+
+
+
+GET
+/v3/explore_plus/assets/custom_fields/folders
+List all custom field folders.
+
+
+
+GET
+/v3/explore_plus/assets/searches
+List all searches.
+
+
+
+POST
+/v3/explore_plus/assets/searches
+Create a new search.
+
+
+
+GET
+/v3/explore_plus/assets/searches/{search_id}
+Fetch a given search.
+
+
+
+PUT
+/v3/explore_plus/assets/searches/{search_id}
+Update a given search.
+
+
+
+DELETE
+/v3/explore_plus/assets/searches/{search_id}
+Delete a given search.
+
+
+
+GET
+/v3/explore_plus/assets/searches/folders
+List all search folders.
+
+
+Explore+ Analytics
+Fetch analytics on data within your private index.
+
+
+
+POST
+/v3/explore_plus/analytics/custom
+Analyse earned data in your private index.
+
+
+
+GET
+/v3/explore_plus/analytics/custom/catalog
+Fetch available analytics options.
+
+
+Explore+ Search
+Export earned documents from your private index.
+
+
+
+POST
+/v3/explore_plus/search
+Search for data in your private index.
+
+
+Bring Your Own Content (BYOC)
+Upload your own content into the Meltwater Platform.
+
+
+
+POST
+/v3/imports/documents
+Ingest BYOC documents
+
+
+
+GET
+/v3/imports/batches
+List import batches
+
+
+
+GET
+/v3/imports/batches/{batch_id}
+Get import batch
+
+
+
+GET
+/v3/imports/import_tags/{import_tag}
+Get import tag
+
+
+Mira API
+AI-powered chat completion and project listing features.
+
+
+
+POST
+/v3/mira/chat
+Chat completion endpoint
+
+
+
+POST
+/v3/mira/responses
+Chat responses endpoint
+
+
+
+GET
+/v3/mira/projects
+List available projects
+
+

@@ -1,0 +1,33 @@
+#540 - Curated Editor-Override Learning Log
+What & Why
+Editors constantly correct the Curated view in production — hiding stories, pinning/downgrading priority (P) scores, re-labeling topics, replacing photos/links, and blocking outlets. Today those actions are stored only as current-state overlays, so the signal about what kinds of content editors keep suppressing or boosting is lost. This task captures every editor moderation action as a rich, logged event, then compiles those events into (a) a plain aggregated report and (b) an AI-written actionable brief that proposes concrete edits to the relevance-filtering and P-scoring criteria. The output surfaces in the Source Oversight dialog on the Team page so the editor can review it and paste the brief to the agent to drive code changes.
+
+This is a human-in-the-loop feedback loop, not an auto-tuner: the system only captures and compiles data. It must never modify the live relevance/P-scoring logic or write to the curated scoring/hide overlays on its own.
+
+Done looks like
+Every editor action on Curated (hide story, hide image, priority pin up/down, topic/category override, photo replace, link replace, outlet block) writes a logged event the moment it happens, including a snapshot of the content acted on.
+Each logged event captures enough context to learn from: headline, outlet, country/region, content type (article/video/opinion/social), the AI's original P-score and its reasoning, the original topic/category, and the action + value (e.g. "pinned to 95", "hidden", "re-labeled to X", "outlet blocked").
+The Source Oversight dialog has a new tab/section showing:
+A plain aggregated report — counts and patterns grouped by topic, outlet, and content type (e.g. "consumer-brand HR stories from Outlet X hidden 7 times").
+An AI-written actionable brief on top, in plain language, that names specific proposed changes mapped to the real filter locations (soft-politics cap, personal-finance reject, strategic guard, AI rubric thresholds) — phrased so it can be pasted directly to the agent.
+A copy button to copy the brief (and/or report) to the clipboard.
+A pause-capture toggle that stops logging new events (persisted so it survives restarts), and a clear indicator of paused/active state.
+A recent-adjustments quick view — the raw event log, newest first, so the editor can quickly scan what's been changed.
+The AI brief is generated on demand via a button (and optionally refreshable), routed through the existing OpenRouter AI client with the Anthropic fallback, using a high-grade model.
+The new table is created idempotently at boot (fresh-DB safe), and all reads/writes are gated to the same curated/team access used by the rest of Source Oversight.
+Curated fail-closed isolation is preserved: the new logging and reporting never leak curated content into the main/Classic/Visual/custom-MCOP feeds or the public API, and never alter feed output.
+Out of scope
+Live auto-tuning: the system must NOT automatically adjust scores, hide patterns, or write a "learned" overlay that the relevance gate reads at runtime. (Explicitly deferred to a possible later, separately-guarded phase.)
+Actually changing the relevance/P-scoring criteria in code — that remains a human+agent step driven by the brief this task produces.
+Backfilling historical events from before this ships. Best-effort use of the existing current-state overlay tables to seed initial context is acceptable, but reconstructing a full action history is not required.
+Any change to how the main feed, Classic, Visual, custom-MCOP, or public API behave.
+Steps
+Event log data model — Add a new curated-only table that records each editor moderation action as an immutable event: action type, story/item key, a content snapshot (headline, outlet, country/region, content kind, original AI P-score + reasoning, original topic/category), the new value (e.g. override score, new topic, replacement url, blocked flag), the editor, and a timestamp. Add the insert/select schema and types. Add an idempotent CREATE for it in the boot migrator (fresh-DB safe, in FK order). Add a small persisted settings flag for "capture paused".
+
+Wire capture into every override action — At each existing curated moderation endpoint (priority override, hide story, hide image, replace link, replace image, classification/topic override) and the outlet-block action, write a corresponding event after the existing overlay write succeeds. Resolve the content snapshot from the curated store at the time of the action. Respect the pause flag (skip logging when paused). Keep the existing overlay behavior unchanged.
+
+Aggregation + AI brief backend — Add a curated/team-gated read endpoint that returns: the recent event log (newest first), a deterministic aggregated report (counts/patterns grouped by topic, outlet, and content type, plus AI-score-vs-action signals like "AI scored high, editor hid"), and an on-demand AI-generated actionable brief. The brief must be produced through the existing OpenRouter AI client (Anthropic fallback) with a high-grade model, and must propose concrete criteria edits mapped to the real filter locations (soft-politics cap, personal-finance reject, strategic guard, AI rubric thresholds). Add endpoints to read and toggle the pause flag. Guard AI calls with the standard transient-error/timeout handling and fail soft (return the report even if the brief generation fails).
+
+Source Oversight UI — Add a new tab/section to the Source Oversight dialog that renders the aggregated report, the AI brief (with a generate/refresh action and a copy-to-clipboard button), the pause-capture toggle with a clear active/paused indicator, and the recent-adjustments quick view. Follow the existing dialog's query/mutation patterns and design conventions; add data-testid attributes to interactive and key display elements.
+
+Isolation + safety checks — Confirm the new logging/reporting is read-only with respect to feed generation, never writes to scoring/hide overlays, and never crosses curated content into non-curated readers. Verify access gating matches the rest of Source Oversight, and that nothing the brief produces is applied automatically.

@@ -1,0 +1,39 @@
+Title: Improve curated-view P (priority) scoring — only if measurement shows it's needed
+Why this might be needed: Curated P scores feed two things — (a) which rows get pulled into the
+clustering candidate set (node selection), and (b) ordering within the curated surfaces. Scores are
+currently spread "at the source": per-batch rubric relative-scoring + in-batch declump + a reuse
+baseline derived from outlet role + recency, curated-lane only, never overwriting human/team scores.
+Known soft spot: scores from DIFFERENT ingest batches aren't directly comparable, so two rows about
+the same event can land with different P values. (This was the premise of the shelved holistic-
+rescore idea, #249.)
+IMPORTANT — verify it's actually a problem first (do this before building anything):
+- The clustering node-selection step already rescues "same-event buckets" and "near-dup" rows into
+  the clustering payload regardless of score comparability (visible in production logs:
+  "Node selection: ... + N rescued (same-event buckets) + M rescued (active-cluster / near-dup)").
+  So the cross-batch comparability gap is largely already covered. Confirm there is a real, observable
+  failure (same-event rows failing to co-cluster, or curated ordering looking wrong) before changing
+  scoring. If you can't demonstrate the problem, close this task.
+Hard constraints (these are why #249 was shelved — do not violate):
+1. DO NOT add recurring AI/LLM load. Production OpenRouter is rate-limited (intermittent 429s on the
+   clustering pass). Any periodic re-scoring pass that calls the model would worsen that. Strongly
+   prefer an AI-FREE approach: deterministic rank/percentile normalization of the EXISTING scores
+   across the live curated pool, with hysteresis to avoid churn. Zero provider cost.
+2. Never overwrite human/team-submitted P scores (they are authoritative / locked).
+3. Curated-lane only. The recomputed score must never leak into the main headline feed, Classic,
+   Visual, custom-MCOP, or the public REST API. Treat scoring as display/selection-only within the
+   curated path.
+4. Decay stays display-only — never use it (or the new score) as a clustering admission gate.
+Suggested direction (if the problem is confirmed):
+- Periodically map every live curated row's existing P score onto a pool-relative rank/percentile so
+  cross-batch values become comparable, gated to curated rows, with hysteresis/min-change threshold
+  so positions don't jitter every cycle. No model calls. No new ingest behavior.
+- Run it as a lightweight cron OR fold it into the existing curated read/selection path rather than a
+  separate AI pass.
+Verify:
+- Run the curated-isolation harness and confirm no leakage into non-curated surfaces (byte-identical
+  main feed / custom-MCOP checks).
+- Confirm same-event rows now co-cluster and curated ordering improves, with no increase in AI calls
+  (watch deployment logs for "[CuratedCluster] ... 429" — it must not rise).
+- Confirm human scores are untouched.
+Note: Start from the current main app. Do not carry over the abandoned #249 code (it added a
+recurring AI rescore pass, which conflicts with constraint #1).

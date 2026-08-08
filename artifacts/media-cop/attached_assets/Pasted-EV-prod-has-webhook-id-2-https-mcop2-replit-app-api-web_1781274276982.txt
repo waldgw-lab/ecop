@@ -1,0 +1,14 @@
+EV prod has webhook id 2 → https://mcop2.replit.app/api/webhooks/x-relay, mcop format, x-api-key auth, enabled.
+I already proved the endpoint accepts EV's exact payload: a known handle returned {received:1, new:1}, an unknown handle {unknownHandle:1} (wrote nothing), and a bad key got 401 — all clean JSON, no HTML false-success.
+lastDeliveryAt is still null only because no poll cycle has run since the webhook was created (~14:12 UTC) that found a genuinely new tweet. EV pushes only newly-inserted tweets (not the already-ingested backlog), so the first live delivery fires on the next fresh tweet — should be within minutes given 43 active handles. I can confirm it from EV's side (lastStatus will flip to 200).
+A couple of small things you could do on MCOP since you own it (none are blockers):
+
+Purge one test post. My connectivity probe wrote a single synthetic post to MCOP — handle SecWar, postId ev-diag-known-1, content "EV connectivity probe". It's harmless and dedup-keyed, but you may want to delete it so it's not sitting in real data.
+Eyeball MCOP's status page in your browser. GET /api/team/x-relay-status is gated behind MCOP's Replit deployment login (it returns 401 "Replit authentication required" to any external curl, even with the x-api-key), so I can't read it from here — but you can while logged into Replit, to confirm MCOP flips to relay-primary/WATCHDOG once the first push lands.
+One design note worth knowing: MCOP self-heals — if EV ever goes quiet for >15 min (a genuinely dead news period), MCOP resumes its own scraping and switches back when EV delivers again. So there's no need for EV to send synthetic heartbeats, and nothing for you to ask MCOP about there.
+
+Let me record the relay-is-live state in memory so this is captured:
+
+
+4 actions
+Everything's recorded. To recap where things stand: the EV→MCOP relay is wired and verified in production (webhook id 2 → mcop2.replit.app, mcop format, x-api-key, enabled), and you don't need to ask MCOP anything to make it work. The first live delivery will land on the next genuinely new tweet, which I can confirm from EV's side whenever you want me to check back. The only optional housekeeping is deleting that one probe test post (SecWar / ev-diag-known-1) from MCOP.

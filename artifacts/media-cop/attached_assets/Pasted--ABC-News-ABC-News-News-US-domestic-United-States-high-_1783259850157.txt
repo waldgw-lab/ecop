@@ -1,0 +1,693 @@
+
+ABC News
+ABC News
+News — US domestic · United States · high
+Corroborating
+Confirmed
+ABC News (Australia)
+ABC News (Australia)
+News — international · Australia · very-high
+Corroborating
+Curated only
+Confirmed
+Agence France-Presse
+Agence France-Presse
+News — international · France · high
+Corroborating
+Curated only
+Confirmed
+Al Arabiya
+Al Arabiya
+News — international · Saudi Arabia · low
+Contrast (anchor-only)
+Curated only
+Confirmed
+Al Jazeera
+Al Jazeera
+News — international · Qatar · high
+Corroborating
+Confirmed
+Al-Monitor
+Al-Monitor
+News — international · United States · very-high
+Corroborating
+Curated only
+Confirmed
+Arab News
+Arab News
+News — international · Saudi Arabia · low
+Contrast (anchor-only)
+Curated only
+Confirmed
+Associated Press
+Associated Press
+News — US domestic · United States · very-high
+Corroborating
+Confirmed
+Atlantic Council
+Atlantic Council
+Other source · United States · very-high
+Attach-only
+Confirmed
+Axios
+Axios
+News — US domestic · United States · high
+Corroborating
+Curated only
+Confirmed
+BBC News
+BBC News
+News — international · United Kingdom · very-high
+Corroborating
+Confirmed
+Bloomberg
+Bloomberg
+News — US domestic · United States · very-high
+Corroborating
+Confirmed
+Breaking Defense
+Breaking Defense
+News — US domestic · United States · very-high
+Corroborating
+Confirmed
+Breitbart
+Breitbart
+Other source · United States · low
+Attach-only
+Curated only
+Confirmed
+Brookings
+Brookings
+News — US domestic · United States · high
+Corroborating
+Curated only
+Confirmed
+CBS News
+CBS News
+News — US domestic · United States · high
+Corroborating
+Confirmed
+CENTCOM
+CENTCOM
+Release — US official · United States · high
+Primary (anchor)
+Confirmed
+CGTN
+CGTN
+News — CPC/SWL/EPC · China · high
+Contrast (anchor-only)
+Curated only
+State
+Confirmed
+CNBC
+CNBC
+News — US domestic · United States · high
+Corroborating
+Confirmed
+CNN
+CNN
+News — US domestic · United States · high
+Corroborating
+Curated only
+Confirmed
+CSIS
+CSIS
+News — US domestic · United States · very-high
+Corroborating
+Confirmed
+China Daily
+China Daily
+News — CPC/SWL/EPC · China · mixed
+Contrast (anchor-only)
+Curated only
+Confirmed
+China Military Online
+China Military Online
+News — CPC/SWL/EPC · China · low
+Contrast (anchor-only)
+Curated only
+State
+Confirmed
+DOWResponse
+DOWResponse
+Social — US official · United States · n/a
+Attach-only
+Confirmed
+Dataminr
+Dataminr
+Other source · United States · n/a
+Attach-only
+Confirmed
+Defense News
+Defense News
+News — US domestic · United States · very-high
+Corroborating
+Confirmed
+Defense One
+Defense One
+News — US domestic · United States · very-high
+Corroborating
+Confirmed
+Der Spiegel
+Der Spiegel
+News — international · Germany · high
+Corroborating
+Curated only
+Confirmed
+Deutsche Welle
+Deutsche Welle
+News — international · Germany · very-high
+Corroborating
+Confirmed
+Drudge Report
+Drudge Report
+Other source · United States · n/a
+Attach-only
+Confirmed
+El País
+El País
+News — international · Spain · high
+Corroborating
+Curated only
+Confirmed
+Fars News
+Fars News
+News — CPC/SWL/EPC · Iran · low
+Contrast (anchor-only)
+Curated only
+Confirmed
+Foreign Affairs
+Foreign Affairs
+Other source · United States · very-high
+Attach-only
+Confirmed
+Foreign Policy
+Foreign Policy
+Other source · United States · very-high
+Attach-only
+Confirmed
+Fox News
+Fox News
+News — US domestic · United States · high
+Corroborating
+Confirmed
+France 24
+France 24
+News — international · France · very-high
+Corroborating
+Confirmed
+Global Times
+Global Times
+News — CPC/SWL/EPC · China · low
+Contrast (anchor-only)
+Curated only
+Confirmed
+Gulf News
+Gulf News
+News — international · United Arab Emirates · mixed
+Contrast (anchor-only)
+Curated only
+Confirmed
+Haaretz
+Haaretz
+News — international · Israel · very-high
+Corroborating
+Curated only
+Confirmed
+IRNA
+IRNA
+News — CPC/SWL/EPC · Iran · low
+Contrast (anchor-only)
+Curated only
+Confirmed
+Infowars
+Infowars
+Other source · United States · very-low
+Attach-only
+Curated only
+Confirmed
+Inside Defense
+Inside Defense
+News — US domestic · United States · very-high
+Corroborating
+Curated only
+Confirmed
+Israel Hayom
+Israel Hayom
+News — international · Israel · mixed
+Contrast (anchor-only)
+Curated only
+Confirmed
+KCNA
+KCNA
+News — CPC/SWL/EPC · North Korea · very-low
+Contrast (anchor-only)
+Curated only
+State
+Confirmed
+Kyiv Post
+Kyiv Post
+News — international · Ukraine · mixed
+Contrast (anchor-only)
+Curated only
+Confirmed
+Le Monde
+Le Monde
+News — international · France · high
+Corroborating
+Curated only
+Confirmed
+MSNBC
+MSNBC
+News — US domestic · United States · mixed
+Contrast (anchor-only)
+Curated only
+Confirmed
+Marco Rubio (X)
+Marco Rubio (X)
+Social — US official · United States · high
+Attach-only
+Confirmed
+Mehr News Agency
+Mehr News Agency
+News — CPC/SWL/EPC · Iran · low
+Contrast (anchor-only)
+Curated only
+State
+Confirmed
+Military Times
+Military Times
+News — US domestic · United States · very-high
+Corroborating
+Confirmed
+Military.com
+Military.com
+News — US domestic · United States · high
+Corroborating
+Confirmed
+NBC News
+NBC News
+News — US domestic · United States · high
+Corroborating
+Confirmed
+NPR
+NPR
+News — US domestic · United States · very-high
+Corroborating
+Confirmed
+National Enquirer
+National Enquirer
+Other source · United States · very-low
+Attach-only
+Curated only
+Confirmed
+New York Post
+New York Post
+News — US domestic · United States · mixed
+Contrast (anchor-only)
+Curated only
+Confirmed
+NewsNation
+NewsNation
+News — US domestic · United States · high
+Corroborating
+Confirmed
+Newsweek
+Newsweek
+News — US domestic · United States · high
+Corroborating
+Curated only
+Confirmed
+POTUS (Truth Social)
+POTUS (Truth Social)
+Social — US official · United States · high
+Attach-only
+Confirmed
+Pentagon
+Pentagon
+Release — US official · United States · n/a
+Primary (anchor)
+Confirmed
+People's Daily
+People's Daily
+News — CPC/SWL/EPC · China · low
+Contrast (anchor-only)
+Curated only
+Confirmed
+Politico
+Politico
+News — US domestic · United States · high
+Corroborating
+Confirmed
+Prensa Latina
+Prensa Latina
+News — CPC/SWL/EPC · Cuba · low
+Contrast (anchor-only)
+Curated only
+Confirmed
+Press TV
+Press TV
+News — CPC/SWL/EPC · Iran · very-low
+Contrast (anchor-only)
+Curated only
+Confirmed
+PressSec (X)
+PressSec (X)
+Social — US official · United States · very-high
+Attach-only
+Confirmed
+RAND
+RAND
+News — US domestic · United States · very-high
+Corroborating
+Confirmed
+RIA Novosti
+RIA Novosti
+News — CPC/SWL/EPC · Russia · low
+Contrast (anchor-only)
+Curated only
+Confirmed
+RT
+RT
+News — CPC/SWL/EPC · Russia · very-low
+Contrast (anchor-only)
+Curated only
+Confirmed
+RapidResponse47
+RapidResponse47
+Social — US official · United States · n/a
+Attach-only
+Confirmed
+Reuters
+Reuters
+News — international · United Kingdom · very-high
+Corroborating
+Confirmed
+SOUTHCOM
+SOUTHCOM
+Release — US official · United States · high
+Primary (anchor)
+Confirmed
+Sean Parnell (X)
+Sean Parnell (X)
+Social — US official · United States · high
+Attach-only
+Confirmed
+SecWar / Pete Hegseth (X)
+SecWar / Pete Hegseth (X)
+Social — US official · United States · high
+Attach-only
+Confirmed
+Secretary of the Air Force (X)
+Secretary of the Air Force (X)
+Social — US official · United States · high
+Attach-only
+Confirmed
+Secretary of the Army (X)
+Secretary of the Army (X)
+Social — US official · United States · high
+Attach-only
+Confirmed
+Sputnik
+Sputnik
+News — CPC/SWL/EPC · Russia · very-low
+Contrast (anchor-only)
+Curated only
+Confirmed
+Stars and Stripes
+Stars and Stripes
+News — US domestic · United States · very-high
+Corroborating
+Curated only
+Confirmed
+TASS
+TASS
+News — CPC/SWL/EPC · Russia · mixed
+Contrast (anchor-only)
+Curated only
+Confirmed
+Taipei Times
+Taipei Times
+News — international · Taiwan · high
+Corroborating
+Curated only
+Confirmed
+Task & Purpose
+Task & Purpose
+News — US domestic · United States · very-high
+Corroborating
+Confirmed
+Tasnim News Agency
+Tasnim News Agency
+News — CPC/SWL/EPC · Iran · low
+Contrast (anchor-only)
+Curated only
+State
+Confirmed
+Tehran Times
+Tehran Times
+News — CPC/SWL/EPC · Iran · low
+Contrast (anchor-only)
+Curated only
+Confirmed
+The Blaze
+The Blaze
+Other source · United States · mixed
+Attach-only
+Curated only
+Confirmed
+The Daily Star
+The Daily Star
+News — international · Bangladesh · high
+Corroborating
+Curated only
+Confirmed
+The Daily Wire
+The Daily Wire
+Other source · United States · mixed
+Attach-only
+Curated only
+Confirmed
+The Diplomat
+The Diplomat
+News — US domestic · United States · very-high
+Corroborating
+Confirmed
+The Epoch Times
+The Epoch Times
+Other source · United States · mixed
+Attach-only
+Curated only
+Confirmed
+The Gateway Pundit
+The Gateway Pundit
+Other source · United States · very-low
+Attach-only
+Curated only
+Confirmed
+The Guardian
+The Guardian
+News — international · United Kingdom · very-high
+Corroborating
+Confirmed
+The Hill
+The Hill
+News — US domestic · United States · high
+Corroborating
+Confirmed
+The Hindu
+The Hindu
+News — international · India · very-high
+Corroborating
+Curated only
+Confirmed
+The Japan Times
+The Japan Times
+News — international · Japan · high
+Corroborating
+Curated only
+Confirmed
+The Jerusalem Post
+The Jerusalem Post
+News — international · Israel · high
+Corroborating
+Confirmed
+The Joint Staff (X)
+The Joint Staff (X)
+Social — US official · United States · very-high
+Attach-only
+Confirmed
+The Jordan Times
+The Jordan Times
+News — international · Jordan · mixed
+Contrast (anchor-only)
+Curated only
+Confirmed
+The National
+The National
+News — international · United Arab Emirates · high
+Corroborating
+Curated only
+Confirmed
+The New York Times
+The New York Times
+News — US domestic · United States · very-high
+Corroborating
+Curated only
+Confirmed
+The Straits Times
+The Straits Times
+News — international · Singapore · high
+Corroborating
+Curated only
+Confirmed
+The Sun
+The Sun
+Other source · United Kingdom · low
+Attach-only
+Curated only
+Confirmed
+The Wall Street Journal
+The Wall Street Journal
+News — US domestic · United States · very-high
+Corroborating
+Curated only
+Confirmed
+The War Zone
+The War Zone
+News — US domestic · United States · very-high
+Corroborating
+Confirmed
+The Washington Post
+The Washington Post
+News — US domestic · United States · very-high
+Corroborating
+Confirmed
+The White House (X)
+The White House (X)
+Social — US official · United States · high
+Attach-only
+Curated only
+Confirmed
+Times of Israel
+Times of Israel
+News — international · Israel · very-high
+Corroborating
+Curated only
+Confirmed
+U.S. Africa Command (AFRICOM)
+U.S. Africa Command (AFRICOM)
+Social — US official · United States · n/a
+Attach-only
+Curated only
+Confirmed
+U.S. Cyber Command
+U.S. Cyber Command
+Social — US official · United States · n/a
+Attach-only
+Curated only
+Confirmed
+U.S. Department of State (X)
+U.S. Department of State (X)
+Social — US official · United States · high
+Attach-only
+Confirmed
+U.S. European Command
+U.S. European Command
+Social — US official · United States · n/a
+Attach-only
+Curated only
+Confirmed
+U.S. Indo-Pacific Command
+U.S. Indo-Pacific Command
+Social — US official · United States · n/a
+Attach-only
+Curated only
+Confirmed
+U.S. Northern Command
+U.S. Northern Command
+Social — US official · United States · n/a
+Attach-only
+Curated only
+Confirmed
+U.S. Space Command
+U.S. Space Command
+Social — US official · United States · n/a
+Attach-only
+Curated only
+Confirmed
+USA Today
+USA Today
+News — US domestic · United States · high
+Corroborating
+Curated only
+Confirmed
+USSOCOM
+USSOCOM
+Social — US official · United States · n/a
+Attach-only
+Curated only
+Confirmed
+USTRANSCOM
+USTRANSCOM
+Social — US official · United States · n/a
+Attach-only
+Curated only
+Confirmed
+United States Strategic Command
+United States Strategic Command
+Social — US official · United States · n/a
+Attach-only
+Curated only
+Confirmed
+WND
+WND
+Other source · United States · very-low
+Attach-only
+Curated only
+Confirmed
+War on the Rocks
+War on the Rocks
+News — US domestic · United States · very-high
+Corroborating
+Confirmed
+Washington Examiner
+Washington Examiner
+News — US domestic · United States · high
+Corroborating
+Confirmed
+Washington Times
+Washington Times
+News — US domestic · United States · mixed
+Contrast (anchor-only)
+Curated only
+Confirmed
+Xinhua
+Xinhua
+News — CPC/SWL/EPC · China · mixed
+Contrast (anchor-only)
+Curated only
+Confirmed
+Ynetnews
+Ynetnews
+News — international · Israel · high
+Corroborating
+Curated only
+Confirmed
+Yonhap News Agency
+Yonhap News Agency
+News — international · South Korea · high
+Corroborating
+Confirmed
+sentdefender
+sentdefender
+Other source · United States · n/a
+Attach-only
+Confirmed
+teleSUR
+teleSUR
+News — CPC/SWL/EPC · Venezuela · very-low
+Contrast (anchor-only)
+Curated only
+State
+Confirmed

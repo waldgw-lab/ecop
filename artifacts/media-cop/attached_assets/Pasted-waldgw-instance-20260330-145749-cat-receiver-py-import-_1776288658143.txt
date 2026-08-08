@@ -1,0 +1,114 @@
+waldgw@instance-20260330-145749:~$ cat receiver.py
+import os
+import logging
+import sqlite3
+import requests
+import json
+import time
+from apscheduler.schedulers.background import BackgroundScheduler
+
+# --- PERMANENT LOGGING CONFIGURATION ---
+# This keeps track of everything in your webhook_log.txt file
+logging.basicConfig(
+    filename='webhook_log.txt',
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+
+# --- CONFIGURATION ---
+# Truth Social API for @WhiteHouse
+TS_API_URL = "https://truthsocial.com/api/v1/accounts/113686491998750334/statuses?exclude_replies=true&only_replies=false&with_muted=true"
+
+# Your Replit MCOP Destination
+REPLIT_URL = "https://mcop2.replit.app/api/webhooks/truth-social-relay"
+REPLIT_HEADERS = {
+    "Content-Type": "application/json",
+    "X-API-Key": "relay_key_9xV4pL2mK7zNlwQy"
+}
+
+# Local database to prevent duplicate posts
+DB_FILE = "mcop_bridge.db"
+
+# --- DATABASE SETUP ---
+def init_db():
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    # Stores only the ID of posts we have already sent to Replit
+    c.execute('''CREATE TABLE IF NOT EXISTS seen_posts (id TEXT PRIMARY KEY)''')
+    conn.commit()
+    conn.close()
+
+# --- THE POLLING & PUSHING ENGINE ---
+def fetch_and_relay():
+    # PERMANENT FIX: Ensure table exists on every cycle in case DB is deleted
+    init_db() 
+    
+    logging.info("Checking Truth Social for new posts...")
+    
+    # "HONEST" HEADERS FOR WHITELISTING
+    # This identifies your traffic to Truth Social's security team
+    headers = {
+        'User-Agent': 'MCOP-Data-Relay/1.0 (Contact: Gerhard.a.wald.mil@mail.mil)',
+        'Accept': 'application/json'
+    }
+
+    try:
+        response = requests.get(TS_API_URL, headers=headers, timeout=10)
+        
+        if response.status_code == 200:
+            posts = response.json()
+            conn = sqlite3.connect(DB_FILE)
+            c = conn.cursor()
+            new_posts_found = False
+            
+            # Process posts from oldest to newest
+            for post in reversed(posts):
+                post_id = post.get('id')
+                
+                # Check if we've already relayed this specific post ID
+                c.execute("SELECT id FROM seen_posts WHERE id=?", (post_id,))
+                if not c.fetchone():
+                    new_posts_found = True
+                    logging.info(f"New post {post_id} found. Relaying to Replit...")
+                    
+                    # Forward the data to Replit
+                    relay_res = requests.post(REPLIT_URL, json=post, headers=REPLIT_HEADERS)
+                    logging.info(f"Relayed to Replit! Status Code: {relay_res.status_code}")
+                    
+                    # Save ID to DB so we don't send it again
+                    c.execute("INSERT INTO seen_posts (id) VALUES (?)", (post_id,))
+                    conn.commit()
+            
+            if not new_posts_found:
+                logging.info("No new posts found this cycle.")
+            conn.close()
+
+        elif response.status_code == 403:
+            logging.error("Failed to fetch from TS: 403 (Whitelist required)")
+        else:
+            logging.error(f"Failed to fetch from TS: {response.status_code}")
+            
+    except Exception as e:
+        logging.error(f"SYSTEM ERROR in fetch loop: {e}")
+
+# --- MAIN EXECUTION ---
+if __name__ == '__main__':
+    init_db()
+    
+    # Start the background timer
+    scheduler = BackgroundScheduler()
+    scheduler.add_job(func=fetch_and_relay, trigger="interval", minutes=5)
+    scheduler.start()
+    
+    logging.info("--- BRIDGE PROGRAM STARTED ---")
+    logging.info("Identification: MCOP-Data-Relay/1.0")
+    
+    # Run an initial check immediately on startup
+    fetch_and_relay()
+    
+    # Keep the script running forever
+    try:
+        while True:
+            time.sleep(2)
+    except (KeyboardInterrupt, SystemExit):
+        scheduler.shutdown()

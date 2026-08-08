@@ -1,0 +1,36 @@
+Investigation complete — verdict: the Task #309 gap is NOT closed
+I traced the code, probed every feed URL from the server, and queried the live production curated store (all read-only). Bottom line: none of AP, Reuters, NPR, or CNN has a working direct, recurring intake into the Curated lane. They only trickle in opportunistically through the capped website-scraper "reject path" — and CNN currently gets nothing at all.
+
+Per-outlet picture (live production)
+Outlet	In curated direct roster?	Its RSS feed alive?	Recent curated rows	How they actually arrive
+AP	No (deliberately omitted)	Dead — feeds.apnews.com does not resolve (ENOTFOUND)	11 (last 7d), all apnews.com/article/…	Drudge website-reject path
+Reuters	No (deliberately omitted)	Dead — feeds.reuters.com does not resolve (ENOTFOUND)	3 (last 7d), all reuters.com/world/…	Drudge website-reject path
+NPR	No (deliberately omitted)	Blocked — feeds.npr.org returns HTTP 403 to our servers	12 (last 7d), all www.npr.org/2026/…	Drudge website-reject path
+CNN	No (deliberately omitted)	Resolves (HTTP 200) but content frozen/old → rejected as stale	0	Nothing — no scraper, RSS frozen
+The decisive proof: every AP/NPR/Reuters curated row carries a website article URL, never the RSS host. Since the RSS hosts are dead/blocked, those rows cannot be coming from RSS — they're coming from the website scrape.
+
+Answers to the three questions
+1. Which intake paths each is configured for. There are six callers of the curated admission function (admitCuratedCandidates):
+
+Direct curated RSS (curatedIngest.ts → reads curatedFeeds.ts): all four are explicitly omitted, with a code comment stating their public RSS is dead/blocked/frozen.
+RSS-bot reject path (rssFeedBot.ts, capped 60/cycle): rssFeeds.ts still lists all four, but with the same dead URLs (feeds.apnews.com, feeds.reuters.com, rss.cnn.com, feeds.npr.org), so it yields ~nothing for them.
+Drudge website-scraper reject path (scraper.ts, capped 50/cycle): this is what actually feeds them — Drudge surfaces apnews/npr/reuters links, the scraper grabs them, and the ones that fail the main CJCS relevance gate (the least relevant) get dropped into curated.
+Plus team submissions, social, and CPC paths (not relevant here).
+2. Do the configured feeds work right now? Verified by DNS + curl from the server:
+
+feeds.apnews.com → ENOTFOUND (dead) · feeds.reuters.com → ENOTFOUND (dead) · feeds.npr.org → HTTP 403 (blocks our datacenter) · rss.cnn.com → HTTP 200 but frozen/old content.
+3. By what path rows actually arrive (quantified). 100% via the Drudge website-reject path: AP 11, NPR 12, Reuters 3, CNN 0 — zero via direct intake, zero via working RSS. Important nuance: the dedicated apNewsBot/reutersBot scrapers only post their CJCS-relevant articles to the main feed and discard the rest — they never write to curated. So the reject path that feeds curated is the generic Drudge one, not the wire bots.
+
+Recommendation (narrow fix — for a future pass, not done here)
+The wire bots already scrape working hosts (apnews.com, reuters.com resolve fine — only the feeds.* RSS subdomains are dead). The clean fix:
+
+AP & Reuters: In apNewsBot.ts / reutersBot.ts, collect the non-relevant articles they currently drop (right after the relevance filter) and pass them to admitCuratedCandidates(..., { mode: 'gate', label: 'apnews-direct' / 'reuters-direct' }) — mirroring exactly what scraper.ts and rssFeedBot.ts already do. This gives both a dedicated, recurring direct curated intake from a live host. Isolation stays intact because that function writes only to curated_items.
+NPR: No dedicated scraper, but it's already getting reasonable volume (12) via Drudge. Lowest priority; could add a small npr.org website scraper with the same reject hook if more breadth is wanted.
+CNN: The real gap — 0 curated rows, frozen RSS, no scraper. Needs either a small cnn.com website scraper (with the reject hook) or a currently-working CNN feed (e.g. a lite.cnn.com source).
+I've left all app code untouched, per the brief. The only file I changed was an internal memory note that had wrongly credited AP's curated arrival to apNewsBot; it now reflects the real Drudge-reject path. I can't formally queue the fix as a follow-up task (that was already used earlier this session on an unrelated item), but the scope above is ready to hand to a build task whenever you want it.
+
+
+Planning next task investigation
+The investigation is complete and the full report is above. The mark_task_complete call only failed because there's no open task to close on this session (it's already merged) — that's a harmless state issue, not a problem with the work.
+
+Summary of what I found: AP, Reuters, NPR, and CNN have no working direct curated intake. AP/NPR/Reuters only trickle in via the capped Drudge website-reject path (11/12/3 rows, all website URLs), and CNN gets zero. Their RSS feeds are confirmed dead (AP/Reuters), blocked (NPR 403), or frozen (CNN). The narrow fix — wiring the existing AP/Reuters bots' discarded articles into curated, plus deciding on a small scraper for NPR/CNN — is scoped and ready whenever you'd like it built. No app code was touched.

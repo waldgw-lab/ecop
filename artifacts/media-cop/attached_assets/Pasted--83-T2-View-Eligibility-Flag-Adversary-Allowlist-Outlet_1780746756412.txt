@@ -1,0 +1,82 @@
+#83 - T2: View-Eligibility Flag + Adversary Allowlist + Outlet Registry
+What & Why
+The future Curated View is meant to let more in than Classic or Visual — including adversary/state media and gated source types — without those items leaking into Classic or Visual, which are not structured to display them. To make that possible safely, MCOP needs three pathway pieces built before any curated UI:
+
+A generalized view-eligibility flag on items that controls which views an item may appear in (Classic, Visual, Curated). MCOP already has the precedent for this in headlines.restrictedToMcops, which gates items to specific MCOP instances — T2 generalizes that idea into per-view eligibility.
+A small, manageable adversary-media allowlist of outlets that already have ingestion pathways today (the ones entering via Global Narrative Summary and Project Quasar), so Curated can surface them while Classic/Visual stay protected.
+An outlet registry — the single lookup that maps a source string/domain to its known metadata (display name, region, state-media status, curated-eligibility), seeded from the outlets MCOP already receives.
+This task builds pathways only. It introduces no new sources, no curated UI, and must not change what Classic or Visual show today.
+
+Done looks like
+Every item carries a view-eligibility designation; the default preserves current behavior — everything Classic/Visual show today still shows. The flag only adds curated-only eligibility for gated items.
+An outlet registry exists, seeded from the outlets MCOP already ingests (Global Narrative Summary REGIONS config + Project Quasar), mapping each known source/domain to display name, origin region, state-media flag, and curated-eligibility.
+A small adversary-media allowlist (drawn from those already-entering outlets) marks which adversary outlets are eligible for Curated; non-allowlisted/unconfirmed outlets are not curated-eligible.
+Feed queries respect view eligibility: Classic and Visual exclude anything not eligible for them; a curated-eligible-but-not-classic/visual item never appears in Classic or Visual.
+The relevance health harness (scripts/relevance-harness.ts) passes: Classic, Visual, and a custom MCOP feed are byte-identical before vs. after this task.
+Out of scope
+Any Curated View UI or per-cluster AI synthesis (later curated build).
+New sources of any kind beyond outlets already ingested.
+Ownership/control, origin-country, factuality, and source-type enrichment + overnight sweeps (T3).
+The consolidated Team-page oversight UI (T3).
+Promoting any currently-quarantined item into a live feed automatically.
+Steps
+Generalize a view-eligibility model — Define a per-item designation for which views an item is eligible for (Classic, Visual, Curated), modeled on the existing restrictedToMcops gating. Default it so existing items remain exactly as visible as they are today.
+Outlet registry — Add a registry (table/config) mapping source string/domain → display name, origin region, state-media flag, curated-eligibility. Seed it from the outlets already entering via Global Narrative Summary and Project Quasar.
+Adversary-media allowlist — Mark a small, manageable subset of adversary/state outlets (from the already-ingested set) as curated-eligible. Anything not on the allowlist is not curated-eligible by default.
+Apply eligibility in feed queries — Update storage/feed queries so Classic and Visual only return items eligible for them, and curated-only items are excluded from Classic/Visual. No curated feed endpoint is built here — only the gating that protects existing views.
+Prove non-disruption — Run the harness snapshot/compare and confirm Classic/Visual/custom MCOP feeds are unchanged.
+Constraints
+Default behavior must be a no-op for Classic/Visual; this task opens pathways, it does not change current visibility.
+Keep relevance/scoring logic in server/relevanceDefinition.ts; this task is about eligibility and outlet metadata, not relevance scoring.
+Do not change vite.config.ts, server/vite.ts, package.json, or drizzle.config.ts.
+Relevant files
+shared/schema.ts:20-46
+server/narrativeSummary.ts:68-163
+server/narrativeSummary.ts:428-479
+server/storage.ts
+server/routes.ts
+server/relevanceDefinition.ts
+scripts/relevance-harness.ts
+Dependencies
+Smart finance/weather pre-filter + low-credibility source quarantine
+
+#84 - T3: Source Enrichment Sweeps + Consolidated Oversight
+What & Why
+With the view-eligibility flag, allowlist, and outlet registry in place (T2), MCOP can start understanding who a source is. T3 adds the source-intelligence MCOP lacks today — ownership/control, origin country, factuality, and source-type — computed in overnight sweeps rather than at ingest, so ingest stays fast and any outlet that cannot be confirmed is gated rather than trusted. It also consolidates the scattered review surfaces (the quarantine review from the pre-filter task, filter metrics, and the new enrichment review) into a single oversight area on the Team page, gated by the same allowlist criteria that Curated View uses.
+
+This task adds enrichment and oversight only. It introduces no new sources, does not build the Curated UI, and must not change what Classic or Visual show.
+
+Done looks like
+An overnight sweep enriches outlets (via the T2 registry) and/or items with: ownership/control, origin country, factuality assessment, and source-type. Enrichment runs on a schedule, in batches, off the ingest hot path.
+Outlets/sources that cannot be confirmed by the sweep are gated (not auto-trusted, not auto-promoted) and flagged for review.
+A clean "US domestic vs. non-domestic" determination is available as a stored attribute, extending the existing domestic notion in server/subjectMatcher.ts rather than re-deriving it at render time.
+A single consolidated oversight area on the Team page replaces/absorbs the standalone quarantine review and filter-metric views, showing quarantine, filter pulse, and enrichment/confirmation status in one place.
+That oversight area is access-gated by the same allowlist criteria used for Curated View.
+The relevance health harness (scripts/relevance-harness.ts) passes: Classic, Visual, and a custom MCOP feed are byte-identical before vs. after this task.
+Out of scope
+Any Curated View UI or per-cluster AI synthesis (later curated build).
+New ingestion sources beyond what the allowlist (T2) already permits.
+Letting any gated source type (opinion/podcast/livestream/video/transcript/press-release/raw-social) into live feeds — those remain handled one-by-one later.
+Changing relevance/priority scoring of Classic/Visual items.
+Steps
+Enrichment data model — Add storage for ownership/control, origin country, factuality, and source-type, attached to the outlet registry (preferred) and/or items.
+Overnight sweep job — Build a scheduled, batched background job that populates enrichment using holistic/confirmable sources, and gates (flags, does not trust) any outlet it cannot confirm.
+Domestic vs. non-domestic attribute — Derive and store a clean US-domestic / non-domestic determination, extending the existing domestic classification logic instead of keyword-matching at render time.
+Consolidated oversight surface — Build one Team-page oversight area that absorbs the pre-filter quarantine review and filter metrics and adds enrichment/confirmation status, gated by the Curated View allowlist criteria.
+Prove non-disruption — Run the harness snapshot/compare and confirm Classic/Visual/custom MCOP feeds are unchanged.
+Constraints
+Enrichment must not run on the ingest hot path; ingest stays fast.
+Unconfirmed outlets are gated, never auto-promoted into any feed.
+Keep relevance/scoring logic in server/relevanceDefinition.ts.
+Do not change vite.config.ts, server/vite.ts, package.json, or drizzle.config.ts.
+Relevant files
+shared/schema.ts:20-46
+server/subjectMatcher.ts:191-220
+server/narrativeSummary.ts:428-479
+server/storage.ts
+server/routes.ts
+client/src/pages/Team.tsx
+server/relevanceDefinition.ts
+scripts/relevance-harness.ts
+Dependencies
+T2: View-eligibility flag + adversary allowlist + outlet registry

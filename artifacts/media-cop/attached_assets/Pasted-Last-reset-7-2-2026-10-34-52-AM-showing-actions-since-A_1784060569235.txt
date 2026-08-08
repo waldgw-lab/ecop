@@ -1,0 +1,671 @@
+Last reset 7/2/2026, 10:34:52 AM — showing actions since.
+AI tuning brief
+Copy
+Regenerate
+In the past 30 days, editorial actions have focused heavily on clustering and priority adjustments, particularly around Middle East military operations and economic statecraft. There is a notable pattern of manual linking and merging of articles related to US-Iran tensions and the Strait of Hormuz, indicating potential clustering improvements. Priority overrides suggest a need to adjust scoring for certain outlets and topics, especially those related to military operations and economic sanctions.
+
+Adjust Clustering for US-Iran Military Operations
+high
+server/curatedCluster.ts
+Lower the same-event grouping threshold for articles related to US-Iran military operations and strategic chokepoints in the Persian Gulf.
+Multiple manual-link actions indicate that articles related to US-Iran military operations and the Strait of Hormuz are being grouped together by editors. These articles share a common theme of escalating military tensions and strategic chokepoints in the Persian Gulf.
+Based on:
+Operation Boomerang: A return to military strikes reveals no good options — for Iran or the US — CNN · score 78 · Military Operations & Armed Conflict · Iran Military Strategy
+US-Iran Truce Collapses as Attacks Worsen and Blockade Returns — Bloomberg · score 85 · Military Operations & Armed Conflict · US-Iran Tensions
+Reevaluate Scoring for Economic Statecraft Articles
+medium
+server/scoreAdjustments.ts
+Increase the scoring for articles under the 'Economic Statecraft & Sanctions' topic, especially those related to strategic chokepoints like the Strait of Hormuz.
+Priority overrides and manual merges suggest that articles related to economic statecraft, particularly those involving the Strait of Hormuz and sanctions, are being undervalued. These articles often involve significant geopolitical and economic implications.
+Based on:
+Trump Backs Off 20% Fee for Strait of Hormuz Shipments — Bloomberg · Economic Statecraft & Sanctions · Strait of Hormuz Policy
+Adjust Scoring for Military Casualties and Civilian Impact
+medium
+server/scoreAdjustments.ts
+Increase the scoring for articles under 'Military Operations & Armed Conflict' that focus on military casualties and civilian impacts.
+Priority overrides for articles about military casualties and civilian impacts in conflict zones suggest these are being under-scored. These articles provide critical insights into the human cost of military operations.
+Based on:
+Devastating Russian attacks make June deadliest month for Ukraine’s civilians since 2022 — CNN · score 85 · Military Operations & Armed Conflict · Civilian Casualties
+US military's death toll rises to 14 in Iran war — NewsNation · score 88 · Military Operations & Armed Conflict · US Military Casualties
+Cautions: The scoring cap loop already addresses plain outlet×category over-scoring patterns, so no manual adjustments are needed for those. · There is no strong signal for relabeling topics or focus categories, as no relabel samples were provided.
+Most-relabeled topics
+No data yet.
+Action breakdown
+Link stories
+44
+Priority pin
+27
+Merge stories
+11
+Replace image
+6
+Hide image
+5
+replace-headline
+1
+unhide-story
+1
+Hide story
+1
+Score vs. editor conflicts
+(threshold 50)
+High-score hides (AI over-scored)
+0
+Low-score boosts (AI under-scored)
+0
+Clustering behavior changes
+(manual grouping — informs clustering tuning)
+Links
+44
+Merges
+11
+Unlinks
+0
+Pattern candidates
+(repeating corrections building toward a rule — observe-only, nothing auto-applied)
+Scoring cap
+CNN × Iran Military Strategy (over-scored)
+2× · 1 more to suggest
+Cited reasons
+(why editors said they made these corrections — 7 annotated)
+Same event, worded differently
+5×
+Follow-up development of same story
+2×
+Suggested rules
+(deterministic patterns mined from repeated corrections — approve to apply)
+No standing patterns found yet — needs repeated corrections to surface a suggestion.
+Recent adjustments
+Link stories
+7/14/2026, 4:21:15 PM
+linked 8 items: US troop withdrawal from Iraq set for September, 30 — https://www.dw.com/en/us-troop-withdrawal-from-iraq-set-for-september-30/a-77959648 + https://thehill.com/video-clips/5967215-watch-live-donald-trump-ali-al-zaidi-iraq-iran-war + https://www.foxnews.com/politics/trump-reveals-when-us-military-leave-iraq-after-23-year-mission + https://www.foxnews.com/politics/trump-us-no-longer-needs-military-presence-iraq-pm-moves-against-armed-factions + https://nypost.com/2026/07/14/us-news
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+The Daily Star
+7/14/2026, 4:09:19 PM
+Human error leaves small businesses exposed to cyber fraud
+article
+AI score: 70
+pinned to 30
+by chelsea.l.durante.mil@mail.mil
+Not relevant
+
+Link stories
+7/14/2026, 4:06:33 PM
+linked 11 items: U.S. strikes Iran before Hormuz Strait blockade restarts; AI concurred — https://www.cnbc.com/2026/07/14/iran-strikes-hormuz-strait-blockade-trump-tolls.html + https://www.jpost.com/middle-east/iran-news/article-902515 + https://www.nbcnews.com/business/energy/oil-prices-us-iran-strikes-blockade-rcna587432 + https://www.theguardian.com/business/2026/jul/14/oil-price-gas-rise-us-iran-interest-rates-stock-markets + https://abcnews.com/us/wirestory/oil-prices-jump-fighting-flares-m
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+CNN
+7/14/2026, 2:16:52 PM
+Devastating Russian attacks make June deadliest month for Ukraine’s civilians since 2022
+article
+AI score: 85
+pinned to 80
+by chelsea.l.durante.mil@mail.mil
+not emergent
+
+Priority pin
+NewsNation
+7/14/2026, 2:16:28 PM
+US military's death toll rises to 14 in Iran war
+AI score: 88
+pinned to 78
+by chelsea.l.durante.mil@mail.mil
+not super recent
+
+Priority pin
+ABC News
+7/14/2026, 2:14:43 PM
+'Trump does like a winner': Ukraine victories could mean US backing, adviser says
+AI score: 72
+pinned to 60
+by chelsea.l.durante.mil@mail.mil
+this is more analysis and not news
+
+Priority pin
+Jerusalem Post
+7/14/2026, 2:14:01 PM
+After Strait of Hormuz, Iran turns to Bab el-Mandeb as new pressure point - analysis
+AI score: 72
+pinned to 60
+by chelsea.l.durante.mil@mail.mil
+this is analysis, not news
+
+Priority pin
+Stars and Stripes
+7/14/2026, 2:13:17 PM
+Protecting US installations against aerial drones could cost billions, CBO says
+article
+AI score: 75
+pinned to 72
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Stars and Stripes
+7/14/2026, 2:13:06 PM
+Bang for Army’s billions of bucks not measuring up in 155 mm shell production, IG says
+article
+AI score: 75
+pinned to 69
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/14/2026, 1:43:18 PM
+linked 56 items: Trump announces US will charge fee for protecting Strait of Hormuz shipping; AI concurred — https://www.washingtonexaminer.com/daily-on-defense/4647241/trump-orders-resumption-iran-war-take-over-strait-of-hormuz + https://thehill.com/homenews/administration/5967204-trump-proposes-strait-hormuz-toll + https://www.cbsnews.com/news/trump-strait-of-hormuz-fee-shipping-oil-gas-costs-legality-pandoras-box + [Stars and Stripes] Experts question cost, viability of Trump’s proposed 20% t
+by chelsea.l.durante.mil@mail.mil
+Follow-up development of same story
+Priority pin
+Task & Purpose
+7/14/2026, 12:42:34 PM
+US plans to create ‘drone academy’ in Morocco amid strategy shift
+AI score: 75
+pinned to 50
+by chelsea.l.durante.mil@mail.mil
+shouldnt be linked - downgrading to lower visibility
+
+Hide image
+7/14/2026, 12:40:41 PM
+image hidden
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/14/2026, 12:19:45 PM
+linked 24 items: US launches third consecutive night of strikes on Iran amid escalating tensions — https://apnews.com/article/iran-us-hormuz-strait-war-july-14-2026-abd060c55feea216625689e57d8f76be + https://www.france24.com/en/us-and-iran-exchange-strikes-for-the-third-day + https://www.chinadaily.com.cn/a/202607/12/ws6a537d2da310986e2b464cfd.html + https://www.dw.com/en/iran-war-strait-of-hormuz-tanker-strikes-raise-tensions/live-77942892 + https://thehill.com/policy/defense/5967055-trump-us-i
+by chelsea.l.durante.mil@mail.mil
+Same event, worded differently
+Link stories
+CNN
+7/14/2026, 12:18:27 PM
+Operation Boomerang: A return to military strikes reveals no good options — for Iran or the US
+article
+AI score: 78
+linked 24 items: US and Iran Exchange Military Strikes Amid Rising Tensions; AI concurred — [CNN] Operation Boomerang: A return to military strikes reveals no good options — for Iran or the US + [Global Times] US, Iran exchange attacks amid Hormuz Strait dual blockades row; cycles of clashes and diplomacy to persist as brinkmanship drags on: expert + https://www.bloomberg.com/news/articles/2026-07-14/india-summons-iran-envoy-after-seafarer-dies-in-ship-attacks + https://newsus.cgtn.com/news/2026
+by chelsea.l.durante.mil@mail.mil
+Same event, worded differently
+Merge stories
+7/14/2026, 12:06:39 PM
+merged 3 items: Trump Backs Off 20% Fee for Strait of Hormuz Shipments — https://www.bloomberg.com/news/articles/2026-07-14/trump-backs-off-20-fee-for-strait-of-hormuz-shipments + https://thehill.com/homenews/administration/5967519-trump-scraps-strait-toll + https://en.yna.co.kr/view/aen20260715000200315
+by chelsea.l.durante.mil@mail.mil
+Same event, worded differently
+replace-headline
+Bloomberg
+7/14/2026, 12:05:55 PM
+India Wins Bigger Duty-Free Steel Export Quota in UK Trade Deal
+AI score: 62
+headline → India Wins Bigger Duty-Free Steel Export Quota in UK Trade Deal
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Jerusalem Post
+7/14/2026, 12:02:42 PM
+Iran-backed Lego AI propaganda channel claims regime behind Graham's death, threatens Laura Loomer
+AI score: 68
+pinned to 72
+by chelsea.l.durante.mil@mail.mil
+a relevant item with not much other coverage on the topic
+
+Link stories
+7/14/2026, 12:02:04 PM
+linked 2 items: Trump nixes 20 percent Strait of Hormuz toll proposal — https://thehill.com/homenews/administration/5967519-trump-scraps-strait-toll + https://en.yna.co.kr/view/aen20260715000200315
+by chelsea.l.durante.mil@mail.mil
+Same event, worded differently
+Link stories
+7/14/2026, 12:01:25 PM
+linked 36 items: Shippers balk at Trump's Strait of Hormuz fees: "Dangerous Pandora's Box" — https://www.cbsnews.com/news/trump-strait-of-hormuz-fee-shipping-oil-gas-costs-legality-pandoras-box + https://www.washingtonexaminer.com/daily-on-defense/4647241/trump-orders-resumption-iran-war-take-over-strait-of-hormuz + https://thehill.com/homenews/administration/5967204-trump-proposes-strait-hormuz-toll + [Stars and Stripes] Experts question cost, viability of Trump’s proposed 20% toll in Strait of
+by chelsea.l.durante.mil@mail.mil
+Follow-up development of same story
+its a reaction related to this story
+
+Link stories
+7/14/2026, 12:00:23 PM
+linked 2 items: Trump says he decided to replace 20 pct U.S. 'reimbursement' fee with investment deals with Gulf States; AI concurred — https://en.yna.co.kr/view/aen20260715000200315 + https://thehill.com/homenews/administration/5967519-trump-scraps-strait-toll
+by chelsea.l.durante.mil@mail.mil
+Same event, worded differently
+Priority pin
+Jerusalem Post
+7/14/2026, 11:59:24 AM
+Escalation in Hormuz pushing Iran to 'run faster toward the nuclear bomb,' Iran expert says
+AI score: 75
+pinned to 70
+by chelsea.l.durante.mil@mail.mil
+no real breaking news just expert analysis
+
+Priority pin
+Fox News
+7/14/2026, 11:58:23 AM
+Air Force helicopter makes emergency landing in DC
+AI score: 88
+pinned to 80
+by chelsea.l.durante.mil@mail.mil
+this is important and relevant but no injuries or major implications so not quite so important per the p score
+
+Priority pin
+Bloomberg
+7/14/2026, 11:57:38 AM
+Russia Struggles to Sell All the Oil It's Being Forced to Export
+AI score: 82
+pinned to 72
+by chelsea.l.durante.mil@mail.mil
+important but not this important for such a high p score
+
+Link stories
+7/14/2026, 11:57:10 AM
+linked 19 items: US and Iran exchange strikes for the third day; AI concurred — https://www.france24.com/en/us-and-iran-exchange-strikes-for-the-third-day + https://apnews.com/article/iran-us-hormuz-strait-war-july-14-2026-abd060c55feea216625689e57d8f76be + https://www.chinadaily.com.cn/a/202607/12/ws6a537d2da310986e2b464cfd.html + https://www.dw.com/en/iran-war-strait-of-hormuz-tanker-strikes-raise-tensions/live-77942892 + https://thehill.com/policy/defense/5967055-trump-us-iran-trade-strikes-n
+by chelsea.l.durante.mil@mail.mil
+its the same event
+
+Priority pin
+Bloomberg
+7/14/2026, 11:55:11 AM
+Five Ways Putin Is in Trouble Over His War in Ukraine
+AI score: 85
+pinned to 60
+by chelsea.l.durante.mil@mail.mil
+This specific article is technically an explainer - more like analysis or opinion and not really "news" per se
+
+Priority pin
+CNN
+7/14/2026, 11:53:30 AM
+Operation Boomerang: A return to military strikes reveals no good options — for Iran or the US
+article
+AI score: 78
+pinned to 55
+by chelsea.l.durante.mil@mail.mil
+This item is analysis so should be attach only- it lacks unbiased or fact based content despite the outlet being a news outlet
+
+Priority pin
+CNN
+7/14/2026, 11:53:22 AM
+Operation Boomerang: A return to military strikes reveals no good options — for Iran or the US
+article
+AI score: 78
+pinned to 55
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+7/14/2026, 8:44:14 AM
+merged 3 items: Oil hits $87 per barrel again after latest U.S. strikes on Iran, looming blockade — https://www.nbcnews.com/business/energy/oil-prices-us-iran-strikes-blockade-rcna587432 + https://www.theguardian.com/business/2026/jul/14/oil-price-gas-rise-us-iran-interest-rates-stock-markets + https://abcnews.com/us/wirestory/oil-prices-jump-fighting-flares-middle-east-ai-134735479
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/14/2026, 8:30:19 AM
+linked 31 items: US Faces Challenges Reopening Strait of Hormuz Amid Iran Tensions — https://apnews.com/article/iran-war-trump-strait-hormuz-f8d20baa977b2162ba235a1bbfd4246f + https://www.cbsnews.com/news/us-iran-war-strait-of-hormuz-control-difficulties + https://www.washingtonexaminer.com/daily-on-defense/4647241/trump-orders-resumption-iran-war-take-over-strait-of-hormuz + https://www.washingtonpost.com/world/2026/07/14/oil-prices-jump-after-trumps-threats-strait-hormuz + https://news.cgtn.co
+by chelsea.l.durante.mil@mail.mil
+Link stories
+Bloomberg
+7/14/2026, 8:17:48 AM
+US-Iran Truce Collapses as Attacks Worsen and Blockade Returns
+AI score: 85
+linked 14 items: US-Iran Truce Collapses as Attacks Worsen and Blockade Returns; AI concurred — [Bloomberg] US-Iran Truce Collapses as Attacks Worsen and Blockade Returns + https://apnews.com/article/iran-us-hormuz-strait-war-july-14-2026-abd060c55feea216625689e57d8f76be + https://www.dw.com/en/iran-war-strait-of-hormuz-tanker-strikes-raise-tensions/live-77942892 + https://thehill.com/policy/defense/5967055-trump-us-iran-trade-strikes-naval-blockade-threat + [CNN] Pres. Trump calls latest Iran s
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/14/2026, 8:16:22 AM
+linked 13 items: Trump says US will hit Iran 'hard' after bombings: Live updates; AI concurred — https://www.usatoday.com/story/news/world/2026/07/14/iran-us-war-trump-strait-of-hormuz--live/90910381007 + https://apnews.com/article/iran-us-hormuz-strait-war-july-14-2026-abd060c55feea216625689e57d8f76be + https://www.dw.com/en/iran-war-strait-of-hormuz-tanker-strikes-raise-tensions/live-77942892 + https://thehill.com/policy/defense/5967055-trump-us-iran-trade-strikes-naval-blockade-threat + [CNN]
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/14/2026, 8:11:18 AM
+linked 27 items: First Thing: Trump threatens to impose US tolls on Hormuz shipping as strikes on Iran continue; AI concurred — https://www.theguardian.com/us-news/2026/jul/14/first-thing-trump-us-tolls-hormuz-iran + https://www.washingtonexaminer.com/daily-on-defense/4647241/trump-orders-resumption-iran-war-take-over-strait-of-hormuz + https://www.washingtonpost.com/world/2026/07/14/oil-prices-jump-after-trumps-threats-strait-hormuz + https://news.cgtn.com/news/2026-07-14/brazilian-president-ca
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Defense One
+7/14/2026, 8:10:28 AM
+DHS network intrusion was twice ruled a false positive before breach confirmed
+AI score: 82
+pinned to 77
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/14/2026, 8:10:00 AM
+linked 7 items: Iran war: Strait of Hormuz tanker strikes raise tensions — https://www.dw.com/en/iran-war-strait-of-hormuz-tanker-strikes-raise-tensions/live-77942892 + https://apnews.com/article/iran-us-hormuz-strait-war-july-14-2026-abd060c55feea216625689e57d8f76be + https://thehill.com/policy/defense/5967055-trump-us-iran-trade-strikes-naval-blockade-threat + [CNN] Pres. Trump calls latest Iran strikes a ‘skirmish’ as ceasefire crumbles + https://www.military.com/us-attacks-iran-and-tehran-re
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+7/14/2026, 8:09:42 AM
+merged 4 items: Senator Lindsey Graham's death raises questions about US Ukraine policy — https://www.usatoday.com/story/news/world/2026/07/13/lindsey-graham-death-us-foreign-policy-impact/90898026007 + https://www.reuters.com/legal/government/can-us-senator-lindsey-grahams-ukraine-initiatives-survive-without-him-2026-07-14 + https://www.military.com/lindsey-graham-toured-ukrainian-drone-factory-before-death + https://www.usatoday.com/story/news/politics/2026/07/14/lindsey-graham-death-fallout-r
+by chelsea.l.durante.mil@mail.mil
+Replace image
+Reuters
+7/14/2026, 8:08:16 AM
+Can US Senator Lindsey Graham's Ukraine initiatives survive without him?
+AI score: 72
+photo uploaded
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/13/2026, 5:01:51 PM
+linked 3 items: Military action against Iran formally restarted last week, Trump told lawmakers — https://www.cbsnews.com/news/iran-military-action-formally-restarted-trump-lawmakers-war-powers + https://thehill.com/policy/defense/5966415-trump-congress-resumes-strikes-iran + https://www.politico.com/news/2026/07/13/trump-notifies-congress-of-new-war-against-iran-00995170
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/13/2026, 4:56:57 PM
+linked 3 items: Military action against Iran formally restarted last week, Trump told lawmakers — https://www.cbsnews.com/news/iran-military-action-formally-restarted-trump-lawmakers-war-powers + https://thehill.com/policy/defense/5966415-trump-congress-resumes-strikes-iran + https://www.politico.com/news/2026/07/13/trump-notifies-congress-of-new-war-against-iran-00995170
+by chelsea.l.durante.mil@mail.mil
+Hide image
+7/13/2026, 3:05:23 PM
+image hidden
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/13/2026, 3:04:49 PM
+linked 2 items: Iranian-born engineer convicted in US of exporting technology to Iran — https://www.reuters.com/legal/government/iranian-born-engineer-convicted-us-exporting-technology-iran-2026-07-13 + https://abcnews.com/us/wirestory/us-citizen-found-guilty-helping-export-tech-iran-134716949
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+AP News
+7/13/2026, 3:03:47 PM
+Why the fastest-growing Ebola outbreak in history is becoming more challenging
+AI score: 75
+pinned to 70
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/13/2026, 3:03:13 PM
+linked 17 items: US to begin enforcing maritime blockade on Iran on Tuesday; AI concurred — https://www.militarytimes.com/news/your-navy/2026/07/13/us-to-begin-enforcing-maritime-blockade-on-iran-on-tuesday + https://www.dw.com/en/iran-war-trump-reinstates-us-blockade-of-strait-of-hormuz/live-77926628 + https://www.bbc.co.uk/news/articles/c8d2vn38dy1o + https://www.usatoday.com/story/news/world/2026/07/13/iran-war-updates-trump-strait-hormuz/90900021007 + https://www.telesurenglish.net/trump-wan
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/13/2026, 3:01:24 PM
+linked 17 items: US to begin enforcing maritime blockade on Iran on Tuesday; AI concurred — https://www.militarytimes.com/news/your-navy/2026/07/13/us-to-begin-enforcing-maritime-blockade-on-iran-on-tuesday + https://www.dw.com/en/iran-war-trump-reinstates-us-blockade-of-strait-of-hormuz/live-77926628 + https://www.bbc.co.uk/news/articles/c8d2vn38dy1o + https://www.usatoday.com/story/news/world/2026/07/13/iran-war-updates-trump-strait-hormuz/90900021007 + https://www.telesurenglish.net/trump-wan
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/13/2026, 2:58:37 PM
+linked 15 items: US will take control of Strait of Hormuz, charge for shipping, Trump says — https://www.usatoday.com/story/news/world/2026/07/13/iran-war-updates-trump-strait-hormuz/90900021007 + https://www.dw.com/en/iran-war-trump-reinstates-us-blockade-of-strait-of-hormuz/live-77926628 + https://www.telesurenglish.net/trump-wants-payment-for-being-the-strait-of-hormuzs-guardian-angel + [NPR] Trump says the U.S. will reinstate its blockade on Iran and charge a toll on ships + https://www.nbcn
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/13/2026, 2:37:25 PM
+linked 8 items: US Attacks Iranian Port Using Sea Drones for the First Time — https://www.bloomberg.com/news/articles/2026-07-13/us-attacks-iranian-port-using-sea-drones-for-the-first-time + https://www.defensenews.com/news/your-military/2026/07/13/sea-drones-strike-iranian-port-in-combat-first-for-us-navy + https://thehill.com/policy/defense/5966167-us-military-sea-drones-iran + https://breakingdefense.com/2026/07/in-first-us-uses-sea-drones-in-combat-in-iran-strikes-centcom + https://www.washi
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+The War Zone
+7/13/2026, 2:08:41 PM
+Ukraine Lands Armed Robot Ashore In Russian-Held Territory Via Drone Boat
+AI score: 88
+pinned to 80
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+The Guardian
+7/13/2026, 8:17:59 AM
+Iran launches attacks on American military facilities in Bahrain and Kuwait after fresh US strikes – Middle East crisis live
+article
+AI score: 85
+merged 22 items: Iran launches attacks on American military facilities in Bahrain and Kuwait after fresh US strikes – Middle East crisis — [The Guardian] Iran launches attacks on American military facilities in Bahrain and Kuwait after fresh US strikes – Middle East crisis live + [CNBC] U.S. and Iran exchange strikes as Strait of Hormuz standoff escalates + https://www.theguardian.com/us-news/2026/jul/13/first-thing-us-iran-strikes-hormuz + https://thehill.com/policy/defense/5965278-us-iran-str
+by chelsea.l.durante.mil@mail.mil
+Hide image
+7/13/2026, 8:10:57 AM
+image hidden
+by chelsea.l.durante.mil@mail.mil
+Link stories
+CNBC
+7/13/2026, 8:10:52 AM
+U.S. and Iran exchange strikes as Strait of Hormuz standoff escalates
+AI score: 91
+linked 14 items: US and Iran Exchange Strikes Amid Dispute Over Strait of Hormuz Status; AI concurred — [CNBC] U.S. and Iran exchange strikes as Strait of Hormuz standoff escalates + https://www.theguardian.com/us-news/2026/jul/13/first-thing-us-iran-strikes-hormuz + https://news.cgtn.com/news/2026-07-13/us-iran-exchange-strikes-as-tensions-escalate-over-strait-of-hormuz-1okjyjrzrra/p.html + [The Washington Post] Airstrikes intensify between U.S. and Iran + [Military.com] US and Iran Vie for Str
+by chelsea.l.durante.mil@mail.mil
+Replace image
+Reuters
+7/13/2026, 7:39:14 AM
+Iran widens attacks on US bases in Gulf, Hormuz tensions lift oil prices
+AI score: 88
+photo uploaded
+by chelsea.l.durante.mil@mail.mil
+Hide image
+7/13/2026, 7:16:15 AM
+image hidden
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+The Hindu
+7/12/2026, 3:18:12 PM
+Nine dead as Russia, Ukraine exchange strikes
+article
+AI score: 85
+pinned to 80
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+Taipei Times
+7/12/2026, 3:17:54 PM
+China sea test signals new norm
+article
+AI score: 82
+pinned to 74
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/12/2026, 11:13:40 AM
+linked 13 items: Iran targets Gulf Arab nations amid new US strikes — https://www.newsnationnow.com/politics/iran-targets-gulf-arab-nations-amid-new-us-strikes + https://www.aljazeera.com/news/2026/7/12/iran-attacks-five-gulf-nations-shuts-hormuz-after-us-bombing-all-to-know + [France 24] US strikes Iran, Tehran hits Gulf states, says Strait of Hormuz closed + [The Guardian] Iran attacks Gulf countries following fresh US strikes – Middle East crisis live + https://www.aljazeera.com/news/2026/7/1
+by chelsea.l.durante.mil@mail.mil
+Hide image
+7/12/2026, 11:09:51 AM
+image hidden
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/12/2026, 11:09:40 AM
+linked 13 items: Iran targets Gulf Arab nations amid new US strikes — https://www.newsnationnow.com/politics/iran-targets-gulf-arab-nations-amid-new-us-strikes + https://www.aljazeera.com/news/2026/7/12/iran-attacks-five-gulf-nations-shuts-hormuz-after-us-bombing-all-to-know + [France 24] US strikes Iran, Tehran hits Gulf states, says Strait of Hormuz closed + [The Guardian] Iran attacks Gulf countries following fresh US strikes – Middle East crisis live + https://www.aljazeera.com/news/2026/7/1
+by chelsea.l.durante.mil@mail.mil
+Replace image
+Reuters
+7/12/2026, 11:01:53 AM
+Ukraine's Zelenskiy proposes to replace Prime Minister Svyrydenko
+AI score: 72
+photo uploaded
+by chelsea.l.durante.mil@mail.mil
+Link stories
+The Hindu
+7/11/2026, 10:52:30 AM
+Iran’s Supreme Leader vows revenge for father’s killing
+article
+AI score: 75
+linked 13 items: Iran’s Supreme Leader vows revenge for father’s killing — [The Hindu] Iran’s Supreme Leader vows revenge for father’s killing + https://www.dw.com/en/iran-s-supreme-leader-vows-revenge-for-khamenei-s-killing/live-77913349 + https://news.cgtn.com/news/2026-07-11/iran-s-supreme-leader-pledges-revenge-for-slain-father-and-predecessor-1ohhpsgqgba/p.html + [The Jerusalem Post] Iran's Supreme Leader pledges revenge for Ali Khamenei's death, says people worldwide will help + https://w
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/11/2026, 10:15:42 AM
+linked 11 items: Iran's Mojtaba Khamenei vows revenge for father's killing — https://www.dw.com/en/iran-s-mojtaba-khamenei-vows-revenge-for-father-s-killing/live-77913349 + [Al-Monitor] Iran supreme leader vows revenge for father's killing + [The Jerusalem Post] Iran's Supreme Leader pledges revenge for Ali Khamenei's death, says people worldwide will help + https://www.reuters.com/world/middle-east/irans-supreme-leader-pledges-revenge-slain-father-predecessor-2026-07-11 + [Axios] Iran's supreme
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+7/11/2026, 10:14:03 AM
+merged 9 items: Iran's Supreme Leader vows revenge for Khamenei's killing — https://www.dw.com/en/iran-s-supreme-leader-vows-revenge-for-khamenei-s-killing/live-77913349 + [Al-Monitor] Iran supreme leader vows revenge for father's killing + [The Jerusalem Post] Iran's Supreme Leader pledges revenge for Ali Khamenei's death, says people worldwide will help + https://www.reuters.com/world/middle-east/irans-supreme-leader-pledges-revenge-slain-father-predecessor-2026-07-11 + [The Hindu] Iran’s Supr
+by chelsea.l.durante.mil@mail.mil
+Link stories
+Le Monde
+7/11/2026, 9:50:46 AM
+War in Ukraine: Kyiv spends sleepless nights underground as Russia intensifies attacks
+article
+AI score: 85
+linked 10 items: War in Ukraine: Kyiv spends sleepless nights underground as Russia intensifies attacks — [Le Monde] War in Ukraine: Kyiv spends sleepless nights underground as Russia intensifies attacks + [The Hindu] Six injured as Russia strikes Kyiv with missiles, officials say + https://www.dw.com/en/russia-hits-ukraine-s-kyiv-odesa-in-fresh-attacks/a-77915808 + [France 24] 11 injured in overnight Russian missile and drone strikes on Kyiv + https://www.aljazeera.com/news/2026/7/11/russian-mi
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/11/2026, 9:50:16 AM
+linked 10 items: 11 wounded in Russian strikes on Kyiv; Ukraine attacks Russian vessels; AI concurred — https://abcnews.com/international/wirestory/11-wounded-overnight-russian-missile-drone-strikes-kyiv-134672177 + [The Hindu] Six injured as Russia strikes Kyiv with missiles, officials say + https://www.dw.com/en/russia-hits-ukraine-s-kyiv-odesa-in-fresh-attacks/a-77915808 + [France 24] 11 injured in overnight Russian missile and drone strikes on Kyiv + https://www.aljazeera.com/news/2026/7/11/
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+CNN
+7/11/2026, 9:49:23 AM
+He gave his girlfriend what he thought was fancy perfume. It contained deadly poison from Russian spies
+article
+AI score: 85
+pinned to 70
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+Associated Press
+7/10/2026, 12:32:52 PM
+A US license could let Ukraine produce Patriot missiles, but it won’t be simple or quick
+AI score: 72
+merged 4 items: A US license could let Ukraine produce Patriot missiles, but it won’t be simple or quick — [Associated Press] A US license could let Ukraine produce Patriot missiles, but it won’t be simple or quick + https://www.aljazeera.com/news/2026/7/10/trump-grants-kyiv-patriots-licences-whats-next-in-the-russia-ukraine-war + [France 24] Can Ukraine really build its own Patriots? + https://www.dw.com/en/trump-signals-support-for-patriot-production-in-ukraine/a-77909681
+by chelsea.l.durante.mil@mail.mil
+Link stories
+Military.com
+7/10/2026, 12:19:23 PM
+US Says Iran Talks to Continue Despite Hormuz Skirmishes
+AI score: 75
+linked 8 items: US Says Iran Talks to Continue Despite Hormuz Skirmishes — [Military.com] US Says Iran Talks to Continue Despite Hormuz Skirmishes + [Washington Examiner] Trump agrees to restart talks with Iran after claiming ceasefire is over + [Axios] Trump says Iran talks will continue, but "ceasefire is OVER" + https://x.com/statedept/status/2075595999846846795 + [Sputnik] Trump Says US Agreed to Continue Talks With Iran but Declares Ceasefire Over + [Al-Monitor] Iran has asked to continue t
+by chelsea.l.durante.mil@mail.mil
+Link stories
+Axios
+7/10/2026, 12:18:03 PM
+Trump says Iran talks will continue, but "ceasefire is OVER"
+article
+AI score: 72
+linked 7 items: Trump says Iran talks will continue, but "ceasefire is OVER" — [Axios] Trump says Iran talks will continue, but "ceasefire is OVER" + [Washington Examiner] Trump agrees to restart talks with Iran after claiming ceasefire is over + https://x.com/statedept/status/2075595999846846795 + [Sputnik] Trump Says US Agreed to Continue Talks With Iran but Declares Ceasefire Over + [Al-Monitor] Iran has asked to continue talks and the US agreed, Trump says + [The Straits Times] Iran has aske
+by chelsea.l.durante.mil@mail.mil
+Link stories
+Axios
+7/10/2026, 12:17:20 PM
+Trump says Iran talks will continue, but "ceasefire is OVER"
+article
+AI score: 72
+linked 7 items: Trump says Iran talks will continue, but "ceasefire is OVER" — [Axios] Trump says Iran talks will continue, but "ceasefire is OVER" + [Washington Examiner] Trump agrees to restart talks with Iran after claiming ceasefire is over + https://x.com/statedept/status/2075595999846846795 + [Sputnik] Trump Says US Agreed to Continue Talks With Iran but Declares Ceasefire Over + [Al-Monitor] Iran has asked to continue talks and the US agreed, Trump says + [The Straits Times] Iran has aske
+by chelsea.l.durante.mil@mail.mil
+Link stories
+Washington Examiner
+7/10/2026, 12:16:06 PM
+Trump agrees to restart talks with Iran after claiming ceasefire is over
+AI score: 72
+linked 5 items: Trump agrees to restart talks with Iran after claiming ceasefire is over — [Washington Examiner] Trump agrees to restart talks with Iran after claiming ceasefire is over + [Al-Monitor] Iran has asked to continue talks and the US agreed, Trump says + https://x.com/statedept/status/2075595999846846795 + [The Straits Times] Iran has asked to continue talks and the US agreed, Trump says + https://x.com/whitehouse/status/2075591403279638661
+by chelsea.l.durante.mil@mail.mil
+Link stories
+The Hill
+7/10/2026, 11:57:06 AM
+Live updates: Iran reportedly developed plot to target Trump; housing bill reaches veto deadline
+AI score: 88
+linked 17 items: Reports indicate Iran developed plot to target Trump; AI concurred — [The Hill] Live updates: Iran reportedly developed plot to target Trump; housing bill reaches veto deadline + [TASS] Iran warns US it will retaliate to its attacks — senior security official + [Fox News] Trump says he's Iran's 'No. 1' target as renewed conflict raises assassination fears + [France 24] Israel warns US of alleged Iran plot to assassinate Trump + [Al-Monitor] Israel warns US of new Iran plot to as
+by chelsea.l.durante.mil@mail.mil
+Link stories
+France 24
+7/10/2026, 10:44:18 AM
+Can Ukraine really build its own Patriots?
+article
+AI score: 76
+linked 2 items: Can Ukraine really build its own Patriots? — [France 24] Can Ukraine really build its own Patriots? + https://www.aljazeera.com/news/2026/7/10/trump-grants-kyiv-patriots-licences-whats-next-in-the-russia-ukraine-war
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/10/2026, 10:22:10 AM
+linked 9 items: US-Iran tensions threaten regional stability and oil supply; AI concurred — https://www.aljazeera.com/news/2026/7/10/us-iran-escalation-threatens-oil-supply-recovery-warns-iea + [France 24] Iran ramps up regional pressure after renewed US strikes + [Al Jazeera] Strait of Hormuz shipping grinds to halt as US, Iran resume fighting + [Al-Monitor] Tanker traffic slows in Strait of Hormuz after US and Iran clashes + [The Straits Times] Tanker traffic slows in Strait of Hormuz after US
+by chelsea.l.durante.mil@mail.mil
+Replace image
+Bloomberg
+7/10/2026, 10:13:17 AM
+China Again Warns Russia Not to Use Nuclear Arms Against Ukraine
+AI score: 72
+photo uploaded
+by chelsea.l.durante.mil@mail.mil
+Replace image
+Reuters
+7/10/2026, 10:11:28 AM
+Missile test showcases sensitive Chinese submarine capabilities key to nuclear deterrent
+AI score: 82
+photo uploaded
+by chelsea.l.durante.mil@mail.mil
+Replace image
+The Wall Street Journal
+7/10/2026, 10:09:45 AM
+Ukraine Drones Now Reaching Siberia and Imperiling Russian Energy Assets...
+AI score: 82
+photo uploaded
+by chelsea.l.durante.mil@mail.mil
+Link stories
+The Guardian
+7/9/2026, 9:02:07 AM
+First Thing: Second day of US strikes on Iran as Trump says Tehran ‘behaving very badly’
+AI score: 88
+linked 21 items: First Thing: Second day of US strikes on Iran as Trump says Tehran ‘behaving very badly’; AI concurred — [The Guardian] First Thing: Second day of US strikes on Iran as Trump says Tehran ‘behaving very badly’ + [Washington Examiner] US resumes bombing Iran ‘to further degrade’ its ability to threaten ships in Strait of Hormuz + [Washington Examiner] US strikes target Iran’s ability to control Strait of Hormuz after Trump declares MOU ‘over’ + [Sputnik] CENTCOM Confirms US Conduc
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+7/8/2026, 12:13:51 PM
+pinned to 74
+by chelsea.l.durante.mil@mail.mil
+Link stories
+The Hill
+7/8/2026, 11:39:48 AM
+Live updates: Trump warns Iran ceasefire may be ‘over’ as sides trade strikes
+AI score: 75
+linked 23 items: Live updates: Trump warns Iran ceasefire may be ‘over’ as sides trade strikes — [The Hill] Live updates: Trump warns Iran ceasefire may be ‘over’ as sides trade strikes + [The Jerusalem Post] Trump warns US will 'probably strike Iran tonight' after saying MoU is 'over' + [Washington Examiner] Trump says US attacked Kharg Island and threatens takeover + https://www.aljazeera.com/video/newsfeed/2026/7/8/trump-on-iran-well-probably-hit-them-hard-again + https://thehill.com/homenews
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+Al-Monitor
+7/8/2026, 11:39:24 AM
+Trump says US will give Patriot missile license to Ukraine
+article
+AI score: 85
+merged 9 items: Trump says US will give Patriot missile license to Ukraine; AI concurred — [Al-Monitor] Trump says US will give Patriot missile license to Ukraine + https://www.militarytimes.com/global/europe/2026/07/08/ukraine-to-get-license-for-making-patriot-interceptors-trump-pledges + https://www.defensenews.com/global/europe/2026/07/08/ukraine-to-get-license-for-making-patriot-interceptors-trump-pledges + [Bloomberg] Trump Says US Will Give Ukraine License to Make Patriot Missiles + [Kyiv
+by chelsea.l.durante.mil@mail.mil
+unhide-story
+7/8/2026, 11:36:44 AM
+un-hidden (1 key)
+by chelsea.l.durante.mil@mail.mil
+Hide story
+7/8/2026, 6:40:27 AM
+hidden
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+The Straits Times
+7/8/2026, 6:39:10 AM
+Russia tries to jam Musk's Starlink systems to counter Ukrainian drones
+article
+AI score: 85
+pinned to 74
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+7/6/2026, 9:16:39 AM
+merged 4 items: Huge crowds fill Tehran streets for Khamenei's funeral procession — https://www.bbc.co.uk/news/articles/cdejj44kl70o + https://www.aljazeera.com/news/2026/7/6/huge-crowd-joins-funeral-procession-for-irans-supreme-leader-khamenei + [The Guardian] Middle East crisis live: Funeral procession for supreme leader Ali Khamenei begins in Iran + https://www.thenationalnews.com/news/mena/2026/07/06/vast-crowds-join-funeral-procession-in-tehran-for-ayatollah-ali-khamenei
+by chelsea.l.durante.mil@mail.mil
+Link stories
+Washington Examiner
+7/6/2026, 9:14:52 AM
+Russian missile and drone attack on Ukraine’s capital kills at least 12
+AI score: 88
+linked 28 items: Russian missile and drone attack on Ukraine’s capital kills at least 12; AI concurred — [Washington Examiner] Russian missile and drone attack on Ukraine’s capital kills at least 12 + [CNN] Russia attacks Ukrainian capital Kyiv with ballistic missiles on eve of critical NATO summit + [CNN] Russia attacks Kyiv ahead of Trump’s NATO summit trip + https://www.npr.org/2026/07/06/g-s1-132088/russian-missile-drone-attack-kyiv-kills-at-least-12 + [The Jerusalem Post] Twice in one week:
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/5/2026, 10:12:49 AM
+linked 2 items: Nigeria says 2 nationals were killed during anti-migrant violence in South Africa — https://abcnews.com/international/wirestory/nigeria-2-nationals-killed-anti-migrant-violence-south-134494102 + https://www.bbc.co.uk/news/articles/cqj11lxwnn0o
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+7/5/2026, 10:12:02 AM
+pinned to 35
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/5/2026, 10:11:34 AM
+linked 2 items: Iran's supreme leader absent as senior officials attend ayatollah's funeral — https://www.bbc.co.uk/news/articles/cevllyj9vv3o + [CNBC] Three sons of Iran's slain leader Khamenei appear at funeral, not his successor
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+The Jerusalem Post
+7/5/2026, 10:10:33 AM
+Newly revealed documents show deeper insight into Hamas, Hezbollah cooperation ahead of Oct. 7
+AI score: 75
+pinned to 66
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+ABC News
+7/5/2026, 9:58:27 AM
+British military says cargo ship reports being under attack in the Red Sea off the coast of Yemen
+AI score: 75
+pinned to 78
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/5/2026, 9:51:42 AM
+linked 3 items: Top Iranian officials attend day 2 of Ali Khamenei's funeral — https://www.dw.com/en/top-iranian-officials-attend-day-2-of-ali-khamenei-s-funeral/a-77836567 + [CNN] Iran’s new supreme leader yet to be seen as funeral for his father enters second day + [The Guardian] Iran’s supreme leader absent from funeral of father Ali Khamenei
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/5/2026, 9:51:08 AM
+linked 2 items: Iran's supreme leader absent as senior officials attend ayatollah's funeral — https://www.bbc.co.uk/news/articles/cevllyj9vv3o + [CNBC] Three sons of Iran's slain leader Khamenei appear at funeral, not his successor
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+The Straits Times
+7/5/2026, 9:48:15 AM
+Iran-backed Hezbollah and Hamas attend Khamenei funeral ceremonies
+article
+AI score: 82
+merged 25 items: Iran-backed Hezbollah and Hamas attend Khamenei funeral ceremonies — [The Straits Times] Iran-backed Hezbollah and Hamas attend Khamenei funeral ceremonies + https://www.bbc.co.uk/news/articles/cevllyj9vv3o + [Le Monde] Tehran sees crowds gather to pray on second day of funeral ceremonies for Iran's Ali Khamenei + [The Straits Times] Prayers offered for Iran’s Khamenei on day two of funeral ceremonies + [CNN] Mourners carry Khamenei’s coffin out to weeping crowd + [CNN] Iran’s n
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+7/5/2026, 9:47:14 AM
+merged 27 items: Millions Mourn Iran's Supreme Leader Khamenei in Tehran — https://www.thenationalnews.com/news/mena/2026/07/05/trump-vows-to-hold-fire-as-tens-of-thousands-mourn-khamenei-in-iran + [NBC News] Millions Pour Into Tehran to Mourn Late Supreme Leader + https://www.rt.com/news/642585-iran-ayatollah-khamenei-mourning + https://www.bbc.co.uk/news/articles/cevllyj9vv3o + [Le Monde] Tehran sees crowds gather to pray on second day of funeral ceremonies for Iran's Ali Khamenei + [The Strai
+by chelsea.l.durante.mil@mail.mil
+Merge stories
+The Hindu
+7/5/2026, 9:45:53 AM
+Iran holds funeral for Ali Khamenei: Who is attending?
+article
+AI score: 65
+merged 6 items: Iran holds funeral for Ali Khamenei: Who is attending?; AI concurred — [The Hindu] Iran holds funeral for Ali Khamenei: Who is attending? + https://www.reuters.com/world/middle-east/three-sons-irans-slain-leader-khamenei-appear-funeral-not-his-successor-2026-07-05 + [CNBC] Three sons of Iran's slain leader Khamenei appear at funeral, not his successor + https://www.dw.com/en/top-iranian-officials-attend-day-2-of-ali-khamenei-s-funeral/a-77836567 + [The Straits Times] Three sons o
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/5/2026, 9:43:18 AM
+linked 4 items: Top Iranian officials attend day 2 of Ali Khamenei's funeral; AI concurred — https://www.dw.com/en/top-iranian-officials-attend-day-2-of-ali-khamenei-s-funeral/a-77836567 + https://www.reuters.com/world/middle-east/three-sons-irans-slain-leader-khamenei-appear-funeral-not-his-successor-2026-07-05 + [CNBC] Three sons of Iran's slain leader Khamenei appear at funeral, not his successor + [The Straits Times] Three sons of Iran's slain leader Khamenei appear at funeral, not his succe
+by chelsea.l.durante.mil@mail.mil
+Link stories
+7/5/2026, 9:41:56 AM
+linked 2 items: 'His life is in danger': Lawyer fears for Gaza hospital director Hussam Abu Safiya held in Israeli prison — https://www.thenationalnews.com/news/mena/2026/07/05/his-life-is-in-danger-lawyer-fears-for-gaza-hospital-director-hussam-abu-safiya-held-in-israeli-prison + [Associated Press] Lawyer warns detained Palestinian doctor Hussam Abu Safiya is in critical condition
+by chelsea.l.durante.mil@mail.mil
+Priority pin
+CNN
+7/5/2026, 9:41:06 AM
+Bodies lie unclaimed and rats run rampant as months on Gaza’s ceasefire remains unfulfilled
+article
+AI score: 85
+pinned to 74
+by chelsea.l.durante.mil@mail.mil

@@ -1,0 +1,197 @@
+Here's an explanation of how the backup source for POTUS Truth Social was implemented:
+
+POTUS Truth Social Backup Source Implementation
+Overview
+The primary source (TrumpsTruth.org) uses simple HTTP requests with Cheerio for HTML parsing. The backup source (CivicTracker.us) requires Playwright browser automation because it's a dynamic JavaScript-rendered page.
+
+Backup Source: CivicTracker.us
+URL: https://civictracker.us/executive/member/?uuid=3094abf7-4a95-4b8d-8c8d-af7d1c3747a1
+
+This page displays Trump's Truth Social posts but requires a full browser to render the content.
+
+File: server/truthSocialBackupScraper.ts
+import { chromium, Browser } from 'playwright';
+let activeBrowser: Browser | null = null;
+export async function scrapeTruthSocialBackup(): Promise<TruthSocialPost[]> {
+  const posts: TruthSocialPost[] = [];
+  
+  try {
+    // Launch headless browser
+    const browser = await chromium.launch({ 
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+    activeBrowser = browser;
+    
+    const context = await browser.newContext({
+      userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+    });
+    const page = await context.newPage();
+    
+    // Navigate and wait for content to load
+    await page.goto('https://civictracker.us/executive/member/?uuid=3094abf7-4a95-4b8d-8c8d-af7d1c3747a1', {
+      waitUntil: 'networkidle',
+      timeout: 30000
+    });
+    
+    // Wait for posts to render
+    await page.waitForTimeout(3000);
+    
+    // Extract posts using page.evaluate()
+    const pageContent = await page.evaluate(() => {
+      // Get all text content from the page
+      const fullText = document.body.innerText || '';
+      const results: Array<{content: string, timestamp: string, imageUrl: string | null}> = [];
+      
+      // CivicTracker timestamps format: "Jan 20, 2026 • 1:53 AM"
+      const timestampPattern = /([A-Z][a-z]{2}\s+\d{1,2},\s+\d{4}\s*•\s*\d{1,2}:\d{2}\s*[AP]M)/g;
+      
+      // Find all timestamps
+      const timestamps: Array<{match: string, index: number}> = [];
+      let m;
+      while ((m = timestampPattern.exec(fullText)) !== null) {
+        timestamps.push({ match: m[0], index: m.index });
+      }
+      
+      // For each timestamp, extract the content block before it
+      for (let i = 0; i < timestamps.length; i++) {
+        const ts = timestamps[i];
+        const prevEnd = i > 0 ? timestamps[i-1].index + timestamps[i-1].match.length : 0;
+        
+        let contentBlock = fullText.substring(prevEnd, ts.index).trim();
+        
+        // Clean up boilerplate text
+        contentBlock = contentBlock
+          .replace(/Donald J\. Trump\s*President of the United States/g, '')
+          .replace(/Loading executive member…/g, '')
+          .replace(/Your browser does not support the video tag\./g, '')
+          .replace(/Post media/g, '')
+          .trim();
+        
+        // Get the last substantial line (the actual post content)
+        const lines = contentBlock.split('\n').filter(l => l.trim().length > 10);
+        const postContent = lines[lines.length - 1]?.trim() || '';
+        
+        // Filter out placeholder/navigation text
+        if (postContent.length > 15 && 
+            !postContent.includes('CivicTracker') && 
+            !postContent.includes('Sign In') &&
+            !postContent.includes('Upgrade to Pro') &&
+            !postContent.toLowerCase().includes('click to view')) {
+          
+          results.push({
+            content: postContent,
+            timestamp: ts.match,
+            imageUrl: null
+          });
+        }
+      }
+      
+      return results;
+    });
+    
+    // Process extracted content
+    for (const item of pageContent) {
+      const parsedTime = parseTimestamp(item.timestamp);
+      
+      // Generate a unique post ID from content hash
+      const contentHash = item.content.split('').reduce((a, b) => {
+        a = ((a << 5) - a) + b.charCodeAt(0);
+        return a & a;
+      }, 0);
+      const postId = `ct_${Math.abs(contentHash)}`;
+      
+      posts.push({
+        postId,
+        content: item.content,
+        postedAt: parsedTime,
+        truthSocialUrl: 'https://truthsocial.com/@realDonaldTrump',
+      });
+    }
+    
+    await browser.close();
+    activeBrowser = null;
+    
+    return posts.slice(0, 20);
+    
+  } catch (error) {
+    console.error('Backup scraper error:', error);
+    if (activeBrowser) {
+      await activeBrowser.close();
+      activeBrowser = null;
+    }
+    return [];
+  }
+}
+Timestamp Parsing Function
+CivicTracker uses format like "Jan 20, 2026 • 1:53 AM":
+
+function parseTimestamp(timestampStr: string): Date {
+  // Remove the bullet separator
+  const cleaned = timestampStr.replace('•', '').trim();
+  
+  // Parse "Jan 20, 2026 1:53 AM" format
+  const months: Record<string, number> = {
+    'Jan': 0, 'Feb': 1, 'Mar': 2, 'Apr': 3, 'May': 4, 'Jun': 5,
+    'Jul': 6, 'Aug': 7, 'Sep': 8, 'Oct': 9, 'Nov': 10, 'Dec': 11
+  };
+  
+  const match = cleaned.match(/([A-Z][a-z]{2})\s+(\d{1,2}),\s+(\d{4})\s+(\d{1,2}):(\d{2})\s*(AM|PM)/i);
+  
+  if (match) {
+    const [, monthStr, day, year, hour, minute, ampm] = match;
+    let hours = parseInt(hour);
+    
+    // Convert to 24-hour format
+    if (ampm.toUpperCase() === 'PM' && hours !== 12) hours += 12;
+    if (ampm.toUpperCase() === 'AM' && hours === 12) hours = 0;
+    
+    return new Date(
+      parseInt(year),
+      months[monthStr],
+      parseInt(day),
+      hours,
+      parseInt(minute)
+    );
+  }
+  
+  // Fallback to current time if parsing fails
+  return new Date();
+}
+Integration with Main Scraper
+In your main Truth Social scraping function, call the backup after the primary:
+
+export async function scrapeAllTruthSocial(storage: IStorage): Promise<number> {
+  let addedCount = 0;
+  
+  // 1. Scrape primary source first
+  const primaryPosts = await scrapeTruthSocialPrimary();
+  for (const post of primaryPosts) {
+    const existing = await storage.getTruthSocialPost(post.postId);
+    if (!existing) {
+      await storage.createTruthSocialPost(post);
+      addedCount++;
+    }
+  }
+  
+  // 2. Scrape backup source for any missing posts
+  const backupPosts = await scrapeTruthSocialBackup();
+  for (const post of backupPosts) {
+    // Content-based deduplication (check first 50 chars)
+    const existingByContent = await storage.getTruthSocialPostByContentPrefix(
+      post.content.substring(0, 50)
+    );
+    if (!existingByContent) {
+      await storage.createTruthSocialPost(post);
+      addedCount++;
+    }
+  }
+  
+  return addedCount;
+}
+Key Points
+Playwright is required - CivicTracker is JavaScript-rendered, Cheerio won't work
+Use networkidle + timeout - Wait for dynamic content to fully load
+Prefix backup post IDs - Use ct_ prefix to identify backup-sourced posts
+Content-based deduplication - Essential when merging from multiple sources
+Filter placeholder text - Always check for "click to view", site navigation text, etc.

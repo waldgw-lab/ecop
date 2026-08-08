@@ -1,0 +1,76 @@
+Some considerations (for overall fixing the current process instead of adding to or attempting to compensate for faults now)- understand my input now so you can tell me what I am fundamentally not considering or what WILL fall short from this guidance- it's important to consider also what is wasteful or duplicating effort or unnecessarily calling LLMs etc.
+
+So we confirm understanding - MCOP handles a few different outputs but primarily: (Main=Classic+Visual, Curated, Custom MCOP, War): This is the content that survives the relevance and "trusted outlets" concept – this is the baseline of any MCOP and what they all have/share
+Curated Lane: feeds curated view only and includes content that is rescued at ingestion from the drops as well as the fact that curated view can handle more outlets. In addition to rescuing/recycling content that main abandons – curated view also accepts additional sources of content
+
+Some previous understanding of MCOP Relevance filtering and P scoring that I'd like to challenge/revise (don't assume this is all true and work to widely determine how my guidance fits to the actual process upon exploration. Above all- the MCOPs performance in production is paramount and the actual place where behavior and performance need to be understood)
+
+I believe this is possibly the most important task/revision we will ever do to MCOP so use the highest level of care and meticulous action – don’t assume previously drafted or proposed tasks cover things or that I understand I need to approve them and don’t build follow-up tasks that require approval to fundamentally make the whole task work. Follow up tasks are only for work that legitimately cannot be done until a later time based on republishing or another key reason.
+
+For the next guidance I will provide you with what the agent has given me previously and how I'd like to revise it… keep in mind that risks to performance and stability of MCOP must be taken in small batches so I can fundamentally undo them if they cause an irreparable problem. Some things I tell you might vastly work against my intent for MCOP and its important you don’t take everything I say verbatim or MUST happen- challenge and use good judgement when applying fixes. If I start something with "WHAT MCOP DOES" this means its just based on my general understanding but I could be incorrect- for "HOW I THINK THIS SHOULD LOOK" its my general understanding of how I'd fix it but I need it to work within the confines of my intent and not to damage anything (this is where you need to use good judgement)
+
+Right now for Relevance filtering I understand this:
+WHAT MCOP DOES:
+"CJCS-relevant" is shorthand for one question your system asks of every incoming headline:
+Would the Chairman of the Joint Chiefs of Staff (the top U.S. military officer) need to know about this?
+That single question is the first gate content has to pass before it can enter the main feed. Here's exactly what the criteria are and how the process runs.
+The criteria — what counts as "relevant"
+A headline qualifies if it touches at least one of these five areas (this is the rubric the AI is given):
+1.	Geopolitical strategy & conflict — peer/near-peer adversaries (China, Russia, Iran, North Korea), active conflict zones, alliance shifts.
+2.	Force readiness & defense policy — recruitment, morale, training, budgets, major weapons systems, DoD policy/structure changes.
+3.	Domestic strategy & political environment — major legislation, big court rulings, crises that could require national mobilization. (Trump / Congress / elections are kept here for situational awareness, even if not directly military.)
+4.	Global context & macro trends — major economic shifts, large-scale disasters, big international political movements.
+5.	Technology & cyber warfare — military tech (AI, space, hypersonics) and significant cyber incidents.
+HOW I THINK THIS SHOULD LOOK:
+For "A headline qualifies if it touches at least one of these five areas (this is the rubric the AI is given)"
+Could we instead base this on the revised Topic list we've instituted since then?
+This is these:
+1	Military Operations & Armed Conflict	Military Ops	strikes, airstrikes, missile/drone attacks, shelling, bombardment, offensives, invasions, incursions, ground ops, captures/seizures, clashes, fighting, combat, frontlines, troops, military sites/bases/targets. Legacy: Military Operations/Incident/Action, Combat Operations, Iran/Middle East/Regional Conflict, US-Iran Military Action, Ukraine Battlefield, Iran-Israel/Gaza/Israel-Lebanon Conflict
+2	Force Posture & Deployments	Force Posture	deployments, troop/military buildup, reinforcements, mobilization, carrier strike groups. Legacy: Missile Buildup, Adversary Military Buildup, Missile Threats/Program, Military Modernization, Arms Buildup
+3	Defense Policy & Military Readiness	Defense Policy	defense policy, force readiness, posture reviews (AI-classified; no keyword remap)
+4	Weapons, Procurement & Defense Industry	Defense Industry	Defense Procurement, Defense Technology
+5	Nuclear, WMD & Strategic Deterrence	Nuclear & WMD	nuclear, uranium, enrichment, warheads, ICBM, WMD, chemical/biological weapons; Iran Nuclear Program/Deal/Agreement, Nuclear Policy
+6	Cyber, Space & Emerging Technology	Space & Tech	cyberattacks, ransomware, malware, data breach, hacking, satellites, Space Force; Military/AI/Space Tech, Cyber Espionage, Cybersecurity
+7	Foreign Policy & Diplomacy	Diplomacy	summit, negotiations, ceasefire, peace talks/deal/plan, diplomat, envoy, ambassador, bilateral talks; US-Iran/Ukraine/US Foreign-Policy relations + the …relations / …diplomacy suffix catch
+8	Alliances & Multilateral Institutions	Alliances	G7 Summit/Diplomacy, NATO Force Posture
+9	Economic Statecraft & Sanctions	Economic Pressure	sanctions, embargo, asset freeze, export controls; Sanctions/Economic Diplomacy
+10	Intelligence, Espionage & Security Services	Intel & Espionage	intelligence, espionage, security services (AI-classified)
+11	Information Environment & Influence	Information Ops	Information Environment/Warfare, Press Freedom, Political Commentary
+12	Terrorism, Insurgency & Non-State Armed Groups	Terrorism & Insurgency	terrorism, ISIS, al-Qaeda, al-Shabaab, Boko Haram, suicide bombing; Counterterrorism, Domestic Terrorism, Transnational Crime, Drug Trafficking, Insurgency, Militancy
+13	Border, Homeland & Internal Security	Domestic Security	Immigration/Border/Migration/Visa/Asylum/Refugee Policy, Homeland/Internal Security, Public Safety
+14	Maritime Security & Chokepoints	Maritime Security	Hormuz, straits, chokepoints, shipping/sea lanes, freedom of navigation, oil/LNG/crude tankers, Bab-el-Mandeb, Suez, Malacca, South China Sea, Red Sea
+15	Critical Infrastructure, Energy & Supply Chains	Infrastructure & Energy	oil/gas/fuel supply/output/exports, pipelines, refineries, power grid/plants, natural gas, LNG, supply chains; Energy Security/Policy
+16	Humanitarian, Civilian Harm & Displacement	Humanitarian Impact	Humanitarian Crisis, civilian harm, displacement, large scale natural disasters
+17	Governance, Elections & Domestic Stability	Governance & Stability	Domestic/US/Indian/Israeli Politics, Election Integrity, Civil Unrest, Political Instability, Government Shutdown, Legislation + the …politics suffix catch
+18	Law, Courts & International Norms	Legal & Norms	Human Rights, Legal Proceedings, Court Ruling, Litigation, Criminal Charges, Indictment, War Crimes
+19	Public Health, Disaster & Environmental Security	Disaster & Health	Natural Disaster, Public Health, Climate Change
+20	Global Markets & Strategic Economics	Strategic Markets	Economic/Trade Policy, Russian Economy, Trade Relations, Economic/Market Impact
+—	Other / Emerging (catch-all)	(no short label)	anything off-list; the card shows the row's specific free-form category instead, else a neutral "—"
+
+HOW MCOP WORKS:
+Stage 1 — Deterministic keyword gate (cheap, runs first).
+Before any AI is involved, each scraped headline is checked against keyword lists:
+•	Hard-exclusion words (celebrity, NFL, Netflix, recipe, etc.) → dropped immediately, no appeal.
+•	Finance/weather words → dropped unless the headline also contains a security-context term, in which case it's rescued and passed forward.
+•	Blocked outlets → filtered out by domain here too (saves the cost of running AI on sources you don't trust).
+HOW I THINK IT SHOULD WORK:
+For the keyword gate – the headlines are checked- however, in the event the keyword check is uncertain – I think more than just the headline should be conaidered – which could/should defer the determination down the line (to coincide with an already occurring consideration/drop)
+On the previous list of Hard-exclusion keywords (always dropped, no appeal) the guidance for finance/weather words (i.e. " dropped unless the headline also contains a security-context term, in which case it's rescued and passed forward") I think could also be applied to some of these other current lists but my hang up is what is considered "security-context term" and in which case I think the fix is either A. do the same as before and push the questionable content to a checkpoint where more than the headline can be considered or potentially – we institute the current next (finance weather only) step as applying to more than just finance/weather
+Of course, Here is where outlets are considered for whether it can go to main (or curated lane only) or needs dropped and that needs to happen because curated accepts more outlets than just main/visual
+AI relevance judgement
+If this is really the prompt that the AI is given… this really needs corrected if it's true. This is incredibly problematic:
+"You are a senior intelligence analyst compiling the daily strategic brief for the Chairman of the Joint Chiefs of Staff (CJCS). Your task is to analyze news article titles and determine if they are relevant to U.S. national security strategy, the readiness of the Joint Force, or the critical domestic and global environments."
+Is this true? This should not look like this….
+Maybe some of this existing revised relevance criteria can be salvaged/added to the proposed topic but make a good judgement – remember we want to use my revised list instead of just this one
+THIS IS WHAT I THINK MCOP ALREADY DOES:
+Geopolitical Strategy & Conflict: Articles concerning major peer or near-peer adversaries, active conflict zones, or developments impacting international alliances.
+Force Readiness & Defense Policy: Topics related to U.S. military recruitment, morale, training, budget, major weapons systems, or shifts in DoD policy/structure.
+Domestic Strategy & Political Environment: High-level domestic news, major legislative actions, significant court rulings, or crises that could require national mobilization.
+Global Context & Macro Trends: Major global economic shifts, widespread environmental catastrophes, or significant international political movements that alter the global strategic landscape.
+Technology & Cyber Warfare: Developments in critical military technology (AI, space, hypersonic weapons) and significant national or global cybersecurity incidents.
+Guidance/ HOW I THINK IT SHOULD WORK: strategic tags that are hot spots or based on "current concerns" will always fail the MCOP later because these priorities change… MCOP should follow the information environment and project priority accordingly to how its being prioritized in the environment per source (concepts like "how prevalent is this topic being reported on or published? Per this platform (i.e. news media) and then the filter/scope removes irrelevant content to the overall industry and related industries of importance
+Prompt that exists?: "You are a senior intelligence analyst compiling the daily strategic brief for the Chairman of the Joint Chiefs of Staff (CJCS). Your task is to analyze news article titles and determine if they are relevant to U.S. national security strategy, the readiness of the Joint Force, or the critical domestic and global environments."
+If this is truly an existing prompt… it needs fundamentally redone more intelligently
+it should not mention the chairman of the Joint chiefs of staff at all… this is not a intelligence analyst tool… the AI is not qualified to be the determiner
+
+This is an extremely large task and should maybe have a  lot of steps of small changes with republishes and tests/checks on production for it to move well…. Consider all of this – retain whats been written in before now as applicable (the dataminr guidance and other guidance I've given), carry this understanding and content on into follow on tasks – I expect you to ask me a bunch of questions where you need general clarity but let's do this

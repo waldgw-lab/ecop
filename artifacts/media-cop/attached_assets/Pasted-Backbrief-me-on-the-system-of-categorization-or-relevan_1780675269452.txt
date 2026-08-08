@@ -1,0 +1,115 @@
+Backbrief me on the system of categorization or relevance filtering the MCOP uses (either at the point of ingestion or before hitting the MCOP interface) - provide each in totality and include the logic
+
+5 hours ago
+
+5 messages & 15 actions
+
+Worked for 2 minutes
+For the Layer 1 — Deterministic pre-filter (at scrape, no AI) - B. Exclusion keywords:
+
+• Finance/markets (non-strategic): tax shield, real estate market, stock market, cryptocurrency, bitcoin, mortgage rate, housing market, stock price, earnings report, wall street
+• Weather (non-crisis): weather forecast, tropical storm, hurricane forecast, winter storm warning
+
+Can we let these pass when/if they are also tied to a conflict, foreign policy, military, national/global security, NATO, U.S. partners, humanitarian aid, etc.? this would need to be done with precision but keep the ingest relatively fast?
+
+Also for C. Source credibility — after extraction, anything whose source string reads as blog photo/video, blog, blogger, social media user, user photo/video, reporter photo/video, or local source is filtered out. - is there a way to not necessarily release to MCOP but store them separately in the MCOP DB? they wont automatically leak in but can be produced if called to a specific area?
+
+Can you give me an idea of what is not currently pulled in based on the current Layer 1 — Deterministic pre-filter (at scrape, no AI) on the deployed side? looking at maybe the last 7 days for an equilibrium
+
+
+Show more
+4 hours ago
+
+5 messages & 11 actions
+Where should the quarantined low-credibility-source items be viewable (they won't appear in normal feeds)?
+
+I'm thinking somewhere from the team page- correct me if I'm wrong but the admin-only area is gone now?
+Should I also capture the finance/weather keyword drops into that same quarantine store, so you can audit over time exactly what the pre-filter is removing and tune for equilibrium?
+
+I actually want to modify the filter for those two items but its contingent upon feedback for if it can be done with my intent that i gave earlier... I do want to see things like "Stock market plunges on China-Taiwan invasion fears," "Russia evades bitcoin sanctions," "Wall Street reacts to Strait of Hormuz closure," "Hurricane forecast threatens Norfolk naval base," "Winter storm warning grounds NATO exercise," etc. but I dont want to see things like mortgage rates, tropical storms, Finance/markets, and weather topics that AREN'T related to conflicts, military, foreign policy, etc. does that make sense? It's also important for me to keep a pulse on any changes that will adversely or largely impact the performance or health of the MCOP in ways that are risky
+4 hours ago
+
+Worked for 1 minute
+
+4 messages & 8 actions
+
+Proposed 1 task
+
+Worked for 1 minute
+I intend on revising the other aspects of MCOP too namely the Layer 2 — AI relevance + priority scoring (server/aiAnalyzer.ts) and also Layer 3 — Bot relevance filter (RSS + news bots)
+
+Is it better to edit/update them layer by layer (without adding new sublayers or steps like this current proposal would) or holistically shape all layers/steps by continuing to plan in this chat and then shipping as one or multiple tasks?
+
+3 hours ago
+
+2 messages & 5 actions
+
+Worked for 1 minute
+yes - additionally (an important concept to convey) I need to open up the relevance filtering layers for a specific new capability I'm building for the new curated view that is currently in progress. During this process I want the classic view and visual view to continue to operate generally undisturbed/as they do and not be adversely impacted as i reshape the process for 1. efficiency and 2. the new curated view.
+
+I do agree - one structural decision - that shipping (A) Consolidate them into one shared relevance definition every bot imports (plus Layer 2).
+
+I do want you to run a holistic design pass right here — i.e. draft that single relevance + scoring + tagging spec for your review — before we cut any Layer 2/3 tasks
+
+but i also want to give you a very general idea of the changes i intend to implement in lieu of the new curated view as a consideration
+
+standby i will provide those anticipated changes next
+
+
+Show more
+2 hours ago
+
+2 messages & 5 actions
+For the new curated view, should its relevance/scoring behave differently from classic/visual, or just present the same scored data differently?
+
+Not sure yet — I'll clarify in the changes I'm about to send
+2 hours ago
+
+Worked for 2 minutes
+
+1 message & 1 action
+
+Pasted-Curated-View-Concept-and-Categorization-Logic-Curated-V_1780671242605.txt
+(i dont need you to build out these capabilities for curated view per se but i need you to understand them to help me shape how i will alter the MCOPs existing processes to allow for me to accomplish this)
+
+For curated view I'm going to let more in than on classic or visual view (meaning in some ways classic and visual view must be protected from certain things or sources because they arent structured to display them logically) because:
+
+While in some areas i will retain single source items like articles, tweets, etc.:
+
+1 hour ago
+
+3 messages & 6 actions
+
+Worked for 2 minutes
+to be clear- wiht this task im looking to Modify current MCOP processes and categorizations to allow for me to build curated view later- i'm not looking to intriduce and new sources or build out curated view in this sweep- but ensuring the right pathways are built is key. i think this is understood but want to clarify
+
+1 hour ago
+
+1 message & 2 actions
+we need to build the concept with understanding of what Data MCOP currently receives that can be seeded correctly as they are- and anything that is not currently sourced can be let in slowly later- understanding what adversary outlets current have existing pathways (i.e. the ones allowed in by Global Narrative Summary and linking from https://projectquasar.replit.app/ that exist now and then we source a small but manageable allowist of adversary media ensuring it stay clear of the other classic and visual views.
+the current clustering and categorization serve function or will not impact the visual or classic views in ways i may or may not understand so thats a very important concept to keep track of.
+for the gated items (opinion / podcast / livestream / video / transcript / press-release / raw-social) we can let them in later and handle one by one
+
+for capabilities MCOP doesnt have like the ownership/control, origin country, factuality, source-type)- i have an idea on how to build mcop cpaable of understanding these but want to do it carefully and focus on overnight sweeps and holistic sources of infomration (gating outlets or sources that cant be confirmed by it)
+
+any oversight mechanism that are striclly needed shoulkd be consolidated and built as one area on the team page that is accessed by the same allowist criteria that curated view cirrently has
+
+the sequenced task concept is great but i want the follow on tasks to be at my approval and after i review them when the previous task is not only built but refined by me with built in checks to ensure MCOP stays healthy and the critical functions and branched views and MCOPs stay fully functionoing and unimpacted
+
+
+Show more
+48 minutes ago
+
+3 messages & 7 actions
+
+Proposed 1 task
+
+Worked for 5 minutes
+is there a good place to build in for the MCOP to determine quickly/cleanly "is this us domestic or not us domestic?" or does it already or is that a later change?
+
+35 minutes ago
+
+2 messages & 4 actions
+
+Worked for 56 seconds
+how are T2 and T3 being captured? whats my next step? if i approve the proposed task (#80 - Consolidate Relevance Definitions + Health Harness) will this chat close and how will we manage next steps?

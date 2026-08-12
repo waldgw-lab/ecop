@@ -88,40 +88,44 @@ function withTimeoutAndCleanup<T>(
   ]);
 }
 
-// Find Chromium executable path dynamically
+// Find Chromium executable path dynamically (cached — the lookup must never
+// run repeatedly, and must never scan /nix/store: that blocks the event loop
+// for minutes and freezes the whole server)
+let cachedChromiumPath: string | null = null;
+
 export function getChromiumPath(): string {
-  // Try to find chromium using 'which' command
+  if (cachedChromiumPath) {
+    return cachedChromiumPath;
+  }
+
+  // Try to find chromium using 'which' command (fast)
   try {
-    const path = execSync('which chromium', { encoding: 'utf-8' }).trim();
+    const path = execSync('which chromium', { encoding: 'utf-8', timeout: 5000 }).trim();
     if (path) {
       console.log(`Found Chromium via 'which': ${path}`);
+      cachedChromiumPath = path;
       return path;
     }
   } catch (e) {
     console.log('Could not find Chromium via which command, trying fallback paths...');
   }
-  
-  // Try to find any chromium in Nix store
-  try {
-    const nixStorePath = execSync('find /nix/store -maxdepth 2 -name chromium -type f -executable 2>/dev/null | head -1', { encoding: 'utf-8' }).trim();
-    if (nixStorePath) {
-      console.log(`Found Chromium in Nix store: ${nixStorePath}`);
-      return nixStorePath;
-    }
-  } catch (e) {
-    console.log('Could not find Chromium in Nix store');
-  }
-  
-  // Fallback paths in order of preference
+
+  // Fallback paths in order of preference (no /nix/store scan — too slow)
   const fallbackPaths = [
-    '/nix/store/zi4f80l169xlmivz8vja8wlphq74qqk0-chromium-125.0.6422.141/bin/chromium',
     '/usr/bin/chromium',
     '/usr/bin/chromium-browser',
   ];
-  
-  const fallbackPath = fallbackPaths[0];
-  console.log(`Using fallback Chromium path: ${fallbackPath}`);
-  return fallbackPath;
+
+  for (const p of fallbackPaths) {
+    try {
+      execSync(`test -x ${p}`, { timeout: 2000 });
+      console.log(`Using fallback Chromium path: ${p}`);
+      cachedChromiumPath = p;
+      return p;
+    } catch {}
+  }
+
+  throw new Error('Chromium not installed — skipping browser-based scrape');
 }
 
 // Helper function to scrape a single X account

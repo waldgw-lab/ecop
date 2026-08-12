@@ -710,6 +710,33 @@ export async function ensureDatabaseSchema() {
       }
       console.log(`✅ Reconciled team_members revoke list (${teamRevokedEmails.length} emails)`);
 
+      // Always-on seed list: guarantee these accounts have Team page access in
+      // every environment (dev/prod DBs differ, so members added in one may be
+      // missing in the other). Idempotent via ON CONFLICT; runs after the
+      // revoke deletes but is filtered against the revoke list so revocation
+      // always takes precedence if an email ever appears in both.
+      const teamSeedEmails = [
+        'joel.j.gill.civ@mail.mil',
+        'kevin.r.princic.ctr@mail.mil',
+        'peter.c.thomas20.ctr@mail.mil',
+        'nahla.s.qader.ctr@mail.mil',
+        'gerhard.a.wald.mil@mail.mil',
+        'joseph.r.holstead.civ@mail.mil',
+        'waldgw@gmail.com',
+        'chelsea.l.durante.mil@mail.mil',
+      ];
+      const revokedSet = new Set(teamRevokedEmails.map((e) => e.toLowerCase()));
+      for (const rawEmail of teamSeedEmails) {
+        const email = rawEmail.toLowerCase().trim();
+        if (revokedSet.has(email)) continue;
+        await db.execute(sql`
+          INSERT INTO team_members (email, added_by)
+          VALUES (${email}, 'System')
+          ON CONFLICT (email) DO NOTHING
+        `);
+      }
+      console.log(`✅ Seeded team_members allowlist (${teamSeedEmails.length} emails)`);
+
       // --- War dashboard tables ---
       await db.execute(sql`
         CREATE TABLE IF NOT EXISTS war_articles (

@@ -39,8 +39,11 @@ export class ObjectNotFoundError extends Error {
 }
 
 // The object storage service is used to interact with the object storage service.
-const CURRENT_BUCKET_ID = "replit-objstore-73e6fd8e-547b-47cb-94f3-e2f737c70f3f";
+const CURRENT_BUCKET_ID =
+  process.env.DEFAULT_OBJECT_STORAGE_BUCKET_ID ||
+  "replit-objstore-73e6fd8e-547b-47cb-94f3-e2f737c70f3f";
 const LEGACY_BUCKET_IDS = [
+  "replit-objstore-73e6fd8e-547b-47cb-94f3-e2f737c70f3f",
   "replit-objstore-8a7cd9ba-b5ee-4ea1-87e2-6a2b963405dd",
   "replit-objstore-0889b600-9ed6-4abc-95ca-04efbd6b353d",
 ];

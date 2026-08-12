@@ -1836,7 +1836,8 @@ export async function ensureDatabaseSchema() {
         ADD COLUMN IF NOT EXISTS media_scraped_at TIMESTAMP,
         ADD COLUMN IF NOT EXISTS media_attempt_count INTEGER NOT NULL DEFAULT 0,
         ADD COLUMN IF NOT EXISTS last_media_attempt_at TIMESTAMP,
-        ADD COLUMN IF NOT EXISTS media_rescue_at TIMESTAMP
+        ADD COLUMN IF NOT EXISTS media_rescue_at TIMESTAMP,
+        ADD COLUMN IF NOT EXISTS bullets_failure_reason TEXT
       `);
       // One-time enrichment rescue (Task #339, widened Task #644, widened again
       // for WSJ). Hard-blocked outlets (Bloomberg, Reuters, WSJ — the same set

@@ -7312,6 +7312,70 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // use the dev DB's references and could remove files the deployed app still
   // uses. A non-deployment caller therefore always gets a scan-only result even
   // with { dryRun: false } — the response's `deletionsAllowed` reports this.
+  // Bullets-coverage telemetry (Task #14). Explains WHY curated Top Stories
+  // cards lack summary bullets: per-reason breakdown (recorded at generation
+  // time), enrichment lifecycle for unexplained rows, and a sample of the most
+  // recent bullet-less rows. Read-only.
+  app.get("/api/admin/curated/bullets-coverage", requireAdmin, async (req, res) => {
+    try {
+      const rawHours = Number(req.query.hours);
+      const hours = Number.isFinite(rawHours) && rawHours > 0 ? Math.min(rawHours, 24 * 14) : 72;
+      const { db } = await import('./db');
+      const { sql } = await import('drizzle-orm');
+      const totals = await db.execute(sql`
+        SELECT count(*)::int AS total,
+               count(*) FILTER (WHERE summary_bullets IS NOT NULL AND cardinality(summary_bullets) > 0)::int AS with_bullets
+        FROM curated_items WHERE scraped_at > now() - make_interval(hours => ${hours})`);
+      const byReason = await db.execute(sql`
+        SELECT COALESCE(bullets_failure_reason, CASE
+                 WHEN media_scraped_at IS NOT NULL THEN 'unclassified_stamped'
+                 WHEN media_attempt_count >= 6 THEN 'retry_capped_unclassified'
+                 WHEN media_attempt_count > 0 THEN 'retrying'
+                 ELSE 'pending_never_attempted' END) AS reason,
+               count(*)::int AS count
+        FROM curated_items
+        WHERE scraped_at > now() - make_interval(hours => ${hours})
+          AND (summary_bullets IS NULL OR cardinality(summary_bullets) = 0)
+        GROUP BY 1 ORDER BY 2 DESC`);
+      const sample = await db.execute(sql`
+        SELECT id, title, source, url, bullets_failure_reason, media_scraped_at,
+               media_attempt_count, last_media_attempt_at, scraped_at
+        FROM curated_items
+        WHERE scraped_at > now() - make_interval(hours => ${hours})
+          AND (summary_bullets IS NULL OR cardinality(summary_bullets) = 0)
+        ORDER BY scraped_at DESC LIMIT 50`);
+      const t = (totals.rows?.[0] ?? {}) as { total?: number; with_bullets?: number };
+      res.json({
+        windowHours: hours,
+        total: t.total ?? 0,
+        withBullets: t.with_bullets ?? 0,
+        coveragePct: t.total ? Math.round(((t.with_bullets ?? 0) / t.total) * 1000) / 10 : null,
+        withoutBulletsByReason: byReason.rows,
+        sampleWithoutBullets: sample.rows,
+      });
+    } catch (error) {
+      console.error('[Admin] bullets-coverage failed:', error);
+      res.status(500).json({ error: (error as Error).message });
+    }
+  });
+
+  // Manual bullets/media backfill trigger (Task #14) — same pass the recurring
+  // cron runs, with an operator-chosen window/batch for one-time catch-ups.
+  app.post("/api/admin/curated/backfill-bullets", requireAdmin, async (req, res) => {
+    try {
+      const rawHours = Number(req.body?.hoursBack);
+      const hoursBack = Number.isFinite(rawHours) && rawHours > 0 ? Math.min(rawHours, 24 * 14) : 72;
+      const rawMax = Number(req.body?.maxItems);
+      const maxItems = Number.isFinite(rawMax) && rawMax > 0 ? Math.min(rawMax, 200) : 60;
+      const { backfillStaleCuratedMedia } = await import('./streamPrefetch');
+      const result = await backfillStaleCuratedMedia(hoursBack, maxItems);
+      res.json({ hoursBack, maxItems, ...result });
+    } catch (error) {
+      console.error('[Admin] backfill-bullets failed:', error);
+      res.status(500).json({ error: (error as Error).message });
+    }
+  });
+
   app.post("/api/admin/curated/orphan-image-sweep", requireAdmin, async (req, res) => {
     try {
       const isDeployment = process.env.REPLIT_DEPLOYMENT === '1' || process.env.NODE_ENV === 'production';

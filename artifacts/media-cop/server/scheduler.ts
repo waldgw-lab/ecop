@@ -833,7 +833,12 @@ export function startScheduledScraping() {
   cron.schedule('6,16,26,36,46,56 * * * *', async () => {
     try {
       const { backfillStaleCuratedMedia } = await import('./streamPrefetch');
-      const result = await backfillStaleCuratedMedia(6, 30);
+      // Window widened 6h → 30h (Task #14): ingest bursts bigger than the
+      // per-tick capacity used to age rows past the 6h lookback before they
+      // were ever attempted, leaving them permanently bullet-less. 30h keeps
+      // every row reachable for a full day of retries (back-off + attempt cap
+      // still bound the total work per row).
+      const result = await backfillStaleCuratedMedia(30, 30);
       if (result.enhanced > 0 || result.carried > 0 || result.failed > 0) {
         console.log(`[Scheduler] Curated backfill: ${result.carried} carried, ${result.enhanced} enhanced, ${result.skipped} skipped, ${result.failed} failed (scanned ${result.scanned})`);
       }

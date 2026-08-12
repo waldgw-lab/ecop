@@ -1486,6 +1486,14 @@ export const curatedItems = pgTable("curated_items", {
   source: text("source").notNull(),
   summary: text("summary").notNull().default(''),
   summaryBullets: text("summary_bullets").array(),
+  // Why this row has no summary bullets (Task #14 bullets-coverage work). NULL when
+  // bullets exist or the row has never been through bullet generation. Values:
+  // 'short_text' (article text + metadata fallback both too short — terminal),
+  // 'social' (social/flash post, bullets intentionally skipped — terminal),
+  // 'carried_no_bullets' (media carried from main store which had no bullets — terminal),
+  // 'junk_page', 'refusal', 'ai_error', 'empty_output', 'ai_not_configured', 'no_title'
+  // (transient — the backfill keeps retrying these, bounded by MAX_MEDIA_ATTEMPTS).
+  bulletsFailureReason: text("bullets_failure_reason"),
   // Condensed, ATTRIBUTED claims / key statements from the article body (Task #256).
   attributedClaims: text("attributed_claims").array(),
   // Per-article one-sentence angle/framing characterization for standalone single-source

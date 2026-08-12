@@ -1701,11 +1701,18 @@ export async function admitCuratedCandidates(
           // Generate bullets from text we already hold (no new article fetch).
           // Returns [] when the text is too short — the row still gets stamped
           // with its real image and falls back to its summary text on the card.
+          // Track refusal + failure reason (Task #14): a refusal or transient
+          // AI failure must keep the row retryable instead of being stamped
+          // done-with-no-bullets forever; the recorded reason explains any gap.
+          const bulletsMeta: { refused?: boolean; reason?: import('./streamPrefetch').BulletsFailureReason } = {};
           const bullets = await generateSummaryBullets(
             row.title,
             row.text,
-            undefined,
-            { mode: 'curated-evidence' },
+            bulletsMeta,
+            // row.text is fullText || summary; passing it as the fallback too
+            // lets short-but-substantive (>80 char) summaries still produce
+            // best-effort bullets instead of failing the >200-char body gate.
+            { mode: 'curated-evidence', fallbackText: row.text },
           );
           // Persist the image to object storage (no-op for already-persisted
           // /objects/ paths; rejects favicons). cacheCuratedItemMedia stamps
@@ -1718,7 +1725,11 @@ export async function admitCuratedCandidates(
             persisted && persisted !== row.image && /^https?:\/\//i.test(row.image)
               ? row.image
               : null;
-          await cacheCuratedItemMedia(row.id, persisted, bullets, null, [], false, null, false, null, null, imageSourceUrl);
+          await cacheCuratedItemMedia(
+            row.id, persisted, bullets, undefined, [], !!bulletsMeta.refused,
+            null, false, null, null, imageSourceUrl,
+            bullets.length > 0 ? null : (bulletsMeta.reason ?? 'empty_output'),
+          );
           enrichedInline++;
         } catch (error) {
           console.error(`[CuratedIntake:${opts.label}] Inline enrich failed for "${row.title.substring(0, 50)}":`, (error as Error).message);

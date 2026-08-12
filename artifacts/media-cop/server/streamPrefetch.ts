@@ -749,6 +749,14 @@ interface EnrichableItem {
   // The row's raw outlet source string, used by the curated batch to resolve the
   // outlet via the registry and flag social posts.
   source?: string | null;
+  // The row's stored one-line summary (RSS/AI one-liner), used as a metadata
+  // fallback for bullet generation when the fetched article text is too short
+  // (Task #14). Curated lane only.
+  summaryText?: string | null;
+  // Recorded no-bullets cause (Task #14). Terminal reasons (short_text/social/
+  // carried_no_bullets) let a bullet-less stamped row still count as cached;
+  // a transient/missing reason keeps the row selectable for bullets retry.
+  bulletsFailureReason?: string | null;
   // Resolved once per curated batch (Task #354). Social posts (X / Truth Social /
   // DataMinr) show the post itself — enrichment skips the forced 3-bullet summary
   // and attributed-claims generation for them and just keeps any real image.
@@ -1053,14 +1061,39 @@ export function buildSummaryBulletsSystemPrompt(
 export async function generateSummaryBullets(
   title: string | null | undefined,
   articleText: string,
-  meta?: { refused?: boolean },
-  options?: { mode?: 'default' | 'curated-evidence' },
+  meta?: { refused?: boolean; reason?: BulletsFailureReason },
+  options?: { mode?: 'default' | 'curated-evidence'; fallbackText?: string },
 ): Promise<string[]> {
-  if (!(articleText.length > 200 && isAIConfigured() && title)) return [];
+  // Classify the no-output cause instead of silently returning [] (Task #14
+  // bullets-coverage): the caller records meta.reason per row so operators can
+  // see WHY a story has no bullets and the backfill can retry only transient
+  // causes. Precedence: config/title gates first, then text-length.
+  if (!isAIConfigured()) {
+    if (meta) meta.reason = 'ai_not_configured';
+    return [];
+  }
+  if (!title) {
+    if (meta) meta.reason = 'no_title';
+    return [];
+  }
+  if (articleText.length <= 200) {
+    // Metadata fallback (Task #14): when the article body is too short/missing,
+    // fall back to the RSS summary / one-liner the caller already holds so a
+    // best-effort set of bullets can still be produced. Only used when the
+    // fallback is substantive enough to say something real.
+    const fallback = (options?.fallbackText ?? '').trim();
+    if (fallback.length > 80) {
+      articleText = fallback;
+    } else {
+      if (meta) meta.reason = 'short_text';
+      return [];
+    }
+  }
   // Skip enrichment for junk/stub pages — they produce only meta-filler output.
   // Returning [] keeps the row retryable under the normal back-off machinery.
   if (isJunkPageContent(articleText)) {
     console.log(`[StreamPrefetch] Skipping summary bullets for junk/stub page content (title: "${title.substring(0, 50)}")`);
+    if (meta) meta.reason = 'junk_page';
     return [];
   }
   try {
@@ -1088,7 +1121,7 @@ export async function generateSummaryBullets(
     // bullets here are a transient refusal, NOT a finished "no summary" state).
     if (isAIRefusalText(responseText)) {
       console.warn(`[StreamPrefetch] Discarded AI refusal/meta summary reply for "${title.substring(0, 50)}"`);
-      if (meta) meta.refused = true;
+      if (meta) { meta.refused = true; meta.reason = 'refusal'; }
       return [];
     }
     // Keep at most 3 bullets, but do NOT hard-slice each line to a fixed word
@@ -1107,9 +1140,12 @@ export async function generateSummaryBullets(
     const rawBullets = deduplicateLines(filtered).slice(0, 3);
     const { groundGeneratedLinesInSources } = await import('./staleStatusSanitizer');
     const srcTexts = [title, articleText];
-    return groundGeneratedLinesInSources(rawBullets, srcTexts);
+    const grounded = await groundGeneratedLinesInSources(rawBullets, srcTexts);
+    if (grounded.length === 0 && meta) meta.reason = 'empty_output';
+    return grounded;
   } catch (e: any) {
     console.error(`[StreamPrefetch] AI summary error for "${title.substring(0, 50)}":`, e?.message || e);
+    if (meta) meta.reason = 'ai_error';
     return [];
   }
 }
@@ -1316,9 +1352,17 @@ async function enrichOneItem(item: EnrichableItem): Promise<'enhanced' | 'skippe
   if (item.manuallyEdited) return 'skipped';
 
   const isFaviconOnly = isPlaceholderImageUrl(item.ogImageUrl);
+  // Curated bullets retry (Task #14): a stamped curated row whose bullets are
+  // still missing WITHOUT a terminal reason (short_text/social/carried) is NOT
+  // considered fully cached — the backfill re-selects it so bullets can be
+  // filled in. Main-feed semantics unchanged.
+  const curatedBulletsUnsatisfied = item.kind === 'curated' &&
+    !(item.summaryBullets && item.summaryBullets.length > 0) &&
+    (!item.bulletsFailureReason || isTransientBulletsFailure(item.bulletsFailureReason as BulletsFailureReason));
   const hasCachedMedia = item.mediaScrapedAt &&
     !isFaviconOnly &&
-    (item.ogImageUrl || item.videoUrl || (item.summaryBullets && item.summaryBullets.length > 0));
+    (item.ogImageUrl || item.videoUrl || (item.summaryBullets && item.summaryBullets.length > 0)) &&
+    !curatedBulletsUnsatisfied;
 
   if (hasCachedMedia) return 'skipped';
 
@@ -1726,14 +1770,20 @@ async function enrichOneItem(item: EnrichableItem): Promise<'enhanced' | 'skippe
   // A refusal yields empty bullets/claims that must be treated as NO output —
   // the row must stay retryable (never stamped media_scraped_at) so a later,
   // healthy cycle can regenerate the summary, even if a real image landed.
-  const summaryMeta: { refused?: boolean } = {};
+  const summaryMeta: { refused?: boolean; reason?: BulletsFailureReason } = {};
   const claimsMeta: { refused?: boolean } = {};
   if (!item.isSocial) {
     summaryBullets = await generateSummaryBullets(
       item.title,
       articleText,
       summaryMeta,
-      { mode: item.kind === 'curated' ? 'curated-evidence' : 'default' },
+      {
+        mode: item.kind === 'curated' ? 'curated-evidence' : 'default',
+        // Metadata fallback (Task #14): when article text is too short, fall
+        // back to the stored one-line summary so best-effort bullets can still
+        // be produced. Curated lane only.
+        fallbackText: item.kind === 'curated' ? (item.summaryText ?? undefined) : undefined,
+      },
     );
     // Attributed claims / key statements (Task #256) — generated from the SAME
     // article text alongside the bullets. Empty array is normal (no attributed
@@ -1822,7 +1872,13 @@ async function enrichOneItem(item: EnrichableItem): Promise<'enhanced' | 'skippe
         }
       }
     }
-    await cacheCuratedItemMedia(item.id, imageUrl, summaryBullets, resolvedContentKind, attributedClaims, hadRefusal, regeneratedSummary, summaryUpgradeAttempted, recoveredPublishedAt, sourceSpin, imageSourceUrl);
+    // Classified no-bullets reason (Task #14): 'social' for skipped social
+    // posts; otherwise whatever generateSummaryBullets recorded. Null when
+    // bullets exist.
+    const bulletsReason: BulletsFailureReason | null = summaryBullets.length > 0
+      ? null
+      : (item.isSocial ? 'social' : (summaryMeta.reason ?? 'empty_output'));
+    await cacheCuratedItemMedia(item.id, imageUrl, summaryBullets, resolvedContentKind, attributedClaims, hadRefusal, regeneratedSummary, summaryUpgradeAttempted, recoveredPublishedAt, sourceSpin, imageSourceUrl, bulletsReason);
     // Automated headline repair (Task #176 automated counterpart). The bypass
     // chain above ALREADY fetched the article's real headline (Reuters and other
     // hard-blocked outlets skip the direct fetch, so needsArticleText is true and
@@ -2332,6 +2388,22 @@ export function shouldStampCuratedMediaDone(
   return hasRealImage && !hadRefusal && !summaryUpgradeFailed;
 }
 
+/**
+ * Per-row classification of why bullet generation produced no output (Task #14).
+ * Recorded in curated_items.bullets_failure_reason so operators can see why a
+ * story card has no bullets, and so the backfill retries only causes that can
+ * plausibly succeed on a later attempt.
+ */
+export type BulletsFailureReason =
+  | 'short_text'        // article text + metadata fallback both too short — terminal
+  | 'no_title'          // row has no title to summarize — terminal
+  | 'social'            // social/flash post: bullets intentionally skipped — terminal
+  | 'carried_no_bullets'// media carried from a main-store row that itself had none — terminal
+  | 'junk_page'         // stub/junk page content — transient (a later fetch may recover real text)
+  | 'refusal'           // AI refusal/meta reply — transient
+  | 'ai_error'          // AI call threw/timed out — transient
+  | 'empty_output'      // AI replied but filtering left zero usable bullets — transient
+  | 'ai_not_configured';// no AI key at attempt time — transient (retry once configured)
 export type CuratedEnrichmentLifecycle =
   | 'ready'
   | 'pending'
@@ -2360,7 +2432,7 @@ export function getCuratedEnrichmentLifecycle(
   return 'pending';
 }
 
-export async function cacheCuratedItemMedia(curatedItemId: string, ogImageUrl: string | null, summaryBullets: string[], contentKind?: 'audio' | 'article' | 'opinion' | 'explainer' | null, attributedClaims: string[] = [], hadRefusal: boolean = false, regeneratedSummary: string | null = null, summaryUpgradeAttempted: boolean = false, recoveredPublishedAt: Date | null = null, sourceSpin: string | null = null, ogImageSourceUrl: string | null = null) {
+export async function cacheCuratedItemMedia(curatedItemId: string, ogImageUrl: string | null, summaryBullets: string[], contentKind?: 'audio' | 'article' | 'opinion' | 'explainer' | null, attributedClaims: string[] = [], hadRefusal: boolean = false, regeneratedSummary: string | null = null, summaryUpgradeAttempted: boolean = false, recoveredPublishedAt: Date | null = null, sourceSpin: string | null = null, ogImageSourceUrl: string | null = null, bulletsFailureReason: BulletsFailureReason | null = null) {
   // Recovered original-publish date (Task #933). Written in its OWN atomic,
   // NULL-guarded statement (WHERE article_published_at IS NULL) so it can never
   // clobber an upstream (RSS/Meltwater/team) or human-set date, and so the two
@@ -2452,7 +2524,22 @@ export async function cacheCuratedItemMedia(curatedItemId: string, ogImageUrl: s
     // Source spin (Task #937): persist whenever a spin was generated. A null spin
     // clears any previously stored value so outdated framing is not shown.
     const spinSet = sourceSpin !== null ? { sourceSpin } : { sourceSpin: null };
-    if (shouldStampCuratedMediaDone(hasRealImage, hadRefusal, summaryUpgradeFailed)) {
+    // Bullets-coverage retryability (Task #14): a row with a real image but NO
+    // bullets used to be stamped done and stayed blank forever. Now, when the
+    // no-bullets cause is TRANSIENT (AI error, refusal-adjacent empty output,
+    // junk page, AI unconfigured), the row falls through to the retryable
+    // branch below (bounded by MAX_MEDIA_ATTEMPTS) so a later cycle can fill
+    // the bullets in. Terminal causes (short_text after metadata fallback,
+    // social posts, carried-without-bullets) still stamp done — the recorded
+    // reason explains the gap instead of churning retries that cannot succeed.
+    const bulletsRetryable = !hasBullets && isTransientBulletsFailure(bulletsFailureReason);
+    // Persist the reason on every write: null when bullets exist, else the
+    // classified cause (or keep whatever was recorded before when the caller
+    // didn't classify — legacy/main-carry paths pass null with bullets present).
+    const reasonSet = hasBullets
+      ? { bulletsFailureReason: null }
+      : (bulletsFailureReason ? { bulletsFailureReason } : {});
+    if (shouldStampCuratedMediaDone(hasRealImage, hadRefusal, summaryUpgradeFailed) && !bulletsRetryable) {
       // Success: stamp media_scraped_at and clear the back-off counter so this
       // row is treated as fully enriched going forward.
       await db.update(curatedItems).set({
@@ -2462,6 +2549,7 @@ export async function cacheCuratedItemMedia(curatedItemId: string, ogImageUrl: s
         // replaced image can never keep a stale source URL.
         ogImageSourceUrl,
         summaryBullets: hasBullets ? summaryBullets : null,
+        ...reasonSet,
         mediaScrapedAt: new Date(),
         lastMediaAttemptAt: new Date(),
         mediaAttemptCount: 0,
@@ -2486,6 +2574,7 @@ export async function cacheCuratedItemMedia(curatedItemId: string, ogImageUrl: s
     await db.update(curatedItems).set({
       ...(ogImageUrl ? { ogImageUrl, ogImageSourceUrl } : {}),
       ...(hasBullets ? { summaryBullets } : {}),
+      ...reasonSet,
       ...(attributedClaims.length > 0 ? { attributedClaims } : {}),
       ...spinSet,
       mediaScrapedAt: null,
@@ -2557,7 +2646,8 @@ async function carryOverCuratedMedia(items: EnrichableItem[]): Promise<Set<strin
     // curated standalone feed unflagged). Also carry summary so an upgraded
     // main-lane summary reaches the curated copy in the same pass.
     const carriedSummary = found.summary && found.summary.trim().length > 10 ? found.summary : null;
-    await cacheCuratedItemMedia(item.id, found.ogImageUrl, found.summaryBullets ?? [], (found.contentKind as 'audio' | 'article' | 'opinion' | 'explainer' | null) ?? null, found.attributedClaims ?? [], false, carriedSummary);
+    const carriedBullets = found.summaryBullets ?? [];
+    await cacheCuratedItemMedia(item.id, found.ogImageUrl, carriedBullets, (found.contentKind as 'audio' | 'article' | 'opinion' | 'explainer' | null) ?? null, found.attributedClaims ?? [], false, carriedSummary, false, null, null, null, carriedBullets.length > 0 ? null : 'carried_no_bullets');
     handled.add(item.id);
   }
 
@@ -2568,15 +2658,18 @@ async function carryOverCuratedMedia(items: EnrichableItem[]): Promise<Set<strin
 }
 
 function curatedItemToEnrichable(c: {
-  id: string; url: string; title: string; source?: string | null;
+  id: string; url: string; title: string; source?: string | null; summary?: string | null;
   ogImageUrl: string | null; summaryBullets: string[] | null; mediaScrapedAt: Date | null;
   mediaAttemptCount?: number | null; lastMediaAttemptAt?: Date | null;
+  bulletsFailureReason?: string | null;
 }): EnrichableItem {
   return {
     id: c.id,
     url: c.url,
     title: c.title,
     source: c.source ?? null,
+    summaryText: c.summary ?? null,
+    bulletsFailureReason: c.bulletsFailureReason ?? null,
     ogImageUrl: c.ogImageUrl,
     summaryBullets: c.summaryBullets ?? null,
     mediaScrapedAt: c.mediaScrapedAt,
@@ -2728,9 +2821,14 @@ export async function prefetchCuratedMedia(topN = 14) {
     // being spent re-confirming complete rows. Mirrors enrichOneItem's
     // hasCachedMedia skip. Curated-only; the main-feed prefetch is untouched.
     const needsEnrichment = curated.filter(c => {
+      // Bullets retry (Task #14): mirror enrichOneItem — a stamped row with no
+      // bullets and no TERMINAL failure reason still needs enrichment.
+      const bulletsSatisfied = (c.summaryBullets && c.summaryBullets.length > 0) ||
+        (!!c.bulletsFailureReason && !isTransientBulletsFailure(c.bulletsFailureReason as BulletsFailureReason));
       const hasCachedMedia = c.mediaScrapedAt &&
         !isFaviconUrl(c.ogImageUrl) &&
-        (c.ogImageUrl || (c.summaryBullets && c.summaryBullets.length > 0));
+        (c.ogImageUrl || (c.summaryBullets && c.summaryBullets.length > 0)) &&
+        bulletsSatisfied;
       if (hasCachedMedia) return false;
       // Back-off exclusion (Task #1022): rows currently inside their escalating
       // back-off window (or at the hard attempt cap) would only be skipped by
@@ -2814,6 +2912,17 @@ export function staleCuratedMediaFilters(cutoff: Date) {
       // The sphdigital.com.sg check heals rows whose real photo was previously
       // wrongly rejected by the old byte-size gate and left pointing at the raw CDN URL.
       sql`(${curatedItems.ogImageUrl} LIKE '%gstatic.com/faviconV2%' OR ${curatedItems.ogImageUrl} LIKE '%logo.clearbit.com%' OR ${curatedItems.ogImageUrl} LIKE '%abc_news_default%' OR ${curatedItems.ogImageUrl} ~* '[-_/]default[-_][0-9]+x[0-9]+' OR ${curatedItems.ogImageUrl} LIKE '%media.npr.org/include/images/facebook-default%' OR ${curatedItems.ogImageUrl} LIKE '%sphdigital.com.sg%')`,
+      // Bullets-coverage retry (Task #14): rows stamped fully done but with NO
+      // summary bullets, where the recorded failure reason is transient (or was
+      // never recorded — legacy rows stamped before reason tracking existed).
+      // These are re-enriched so bullets can be filled in; terminal reasons
+      // (short_text / social / carried_no_bullets) are excluded so rows that
+      // genuinely cannot have bullets don't churn. Bounded by the same
+      // attempt-count cap + escalating back-off below.
+      sql`(
+        (${curatedItems.summaryBullets} IS NULL OR cardinality(${curatedItems.summaryBullets}) = 0)
+        AND (${curatedItems.bulletsFailureReason} IS NULL OR ${curatedItems.bulletsFailureReason} IN ('junk_page','refusal','ai_error','empty_output','ai_not_configured'))
+      )`,
     ),
     // Back-off (Task #132): skip rows that have failed too many times, and
     // rows whose last failed attempt is still inside the escalating
@@ -2844,6 +2953,8 @@ export async function backfillStaleCuratedMedia(hoursBack = 48, maxItems = 40): 
       url: curatedItems.url,
       title: curatedItems.title,
       source: curatedItems.source,
+      summary: curatedItems.summary,
+      bulletsFailureReason: curatedItems.bulletsFailureReason,
       ogImageUrl: curatedItems.ogImageUrl,
       summaryBullets: curatedItems.summaryBullets,
       mediaScrapedAt: curatedItems.mediaScrapedAt,
@@ -3315,4 +3426,13 @@ export async function triggerCuratedRadarEnrichment(itemId: string): Promise<voi
     radarRescueStatus.set(itemId, { status: 'failed', at: Date.now() });
     console.warn(`[StreamPrefetch:Radar] one-shot enrichment failed for ${itemId}:`, e?.message || e);
   }
+}
+
+/** Reasons the backfill should keep retrying (bounded by MAX_MEDIA_ATTEMPTS). */
+export const TRANSIENT_BULLETS_FAILURE_REASONS: BulletsFailureReason[] = [
+  'junk_page', 'refusal', 'ai_error', 'empty_output', 'ai_not_configured',
+];
+
+export function isTransientBulletsFailure(reason: BulletsFailureReason | null | undefined): boolean {
+  return !!reason && (TRANSIENT_BULLETS_FAILURE_REASONS as string[]).includes(reason);
 }

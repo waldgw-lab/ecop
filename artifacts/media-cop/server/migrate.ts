@@ -1371,6 +1371,14 @@ export async function ensureDatabaseSchema() {
       // every cron pass. Curated-lane only.
       await db.execute(sql`ALTER TABLE curated_items ADD COLUMN IF NOT EXISTS pubdate_attempt_count INTEGER NOT NULL DEFAULT 0`);
       await db.execute(sql`ALTER TABLE curated_items ADD COLUMN IF NOT EXISTS last_pubdate_attempt_at TIMESTAMP`);
+      // Re-hosted image provenance + one-time placeholder re-check marker
+      // (stop re-hosted placeholder logos in curated view). og_image_source_url
+      // records the ORIGINAL remote URL a re-hosted /objects/stream-images/…
+      // image was fetched from, so isPlaceholderImageUrl remains checkable after
+      // re-hosting. placeholder_recheck_at gates the one-time legacy backfill
+      // sweep (placeholderImageBackfill.ts) per row.
+      await db.execute(sql`ALTER TABLE curated_items ADD COLUMN IF NOT EXISTS og_image_source_url TEXT`);
+      await db.execute(sql`ALTER TABLE curated_items ADD COLUMN IF NOT EXISTS placeholder_recheck_at TIMESTAMP`);
       // Catch-all repair counter (Task #1088). Lets the boot-time catch-all
       // repair skip chronically ambiguous 'Other / Emerging' rows after a few
       // repair cycles instead of re-resetting (and re-AI-classifying) the same

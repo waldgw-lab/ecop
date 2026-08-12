@@ -1712,7 +1712,13 @@ export async function admitCuratedCandidates(
           // media_scraped_at ONLY when a real image survives, so an image that
           // fails to persist leaves the row retryable (back-off intact).
           const persisted = await persistImageToStorage(row.image);
-          await cacheCuratedItemMedia(row.id, persisted, bullets);
+          // Record provenance when the image was actually re-hosted from a
+          // remote URL, so placeholder checks stay possible after re-hosting.
+          const imageSourceUrl =
+            persisted && persisted !== row.image && /^https?:\/\//i.test(row.image)
+              ? row.image
+              : null;
+          await cacheCuratedItemMedia(row.id, persisted, bullets, null, [], false, null, false, null, null, imageSourceUrl);
           enrichedInline++;
         } catch (error) {
           console.error(`[CuratedIntake:${opts.label}] Inline enrich failed for "${row.title.substring(0, 50)}":`, (error as Error).message);

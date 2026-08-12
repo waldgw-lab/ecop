@@ -133,7 +133,7 @@ const ssrfAgent = new Agent({ connect: { lookup: ssrfPinnedLookup } });
  * redirect chain is too long; every caller already treats a throw as "fetch
  * failed" (falls back to a bypass / returns null / records 'unknown').
  */
-async function safeFetch(urlStr: string, init: RequestInit, maxRedirects = 4): Promise<Response> {
+export async function safeFetch(urlStr: string, init: RequestInit, maxRedirects = 4): Promise<Response> {
   let current = urlStr;
   for (let hop = 0; ; hop++) {
     if (!(await isPublicFetchableUrl(current))) {
@@ -1668,9 +1668,20 @@ async function enrichOneItem(item: EnrichableItem): Promise<'enhanced' | 'skippe
     }
   }
 
+  // Provenance for the re-hosted image (Task: stop re-hosted placeholder
+  // logos). Re-hosting into object storage destroys the original URL, making
+  // isPlaceholderImageUrl un-checkable afterwards — so record the remote URL
+  // the bytes came from alongside the /objects/ path. Only set when the image
+  // was actually re-hosted from a remote URL this pass (an already-/objects/
+  // input has no recoverable origin).
+  let imageSourceUrl: string | null = null;
   if (imageUrl) {
+    const preRehostUrl = imageUrl;
     const persistedPath = await persistImageToStorage(imageUrl);
     if (persistedPath) {
+      if (persistedPath !== preRehostUrl && /^https?:\/\//i.test(preRehostUrl)) {
+        imageSourceUrl = preRehostUrl;
+      }
       imageUrl = persistedPath;
     } else if (isArchiveHost(imageUrl)) {
       // Re-hosting the archive image (and its wrapped original) failed. Never
@@ -1811,7 +1822,7 @@ async function enrichOneItem(item: EnrichableItem): Promise<'enhanced' | 'skippe
         }
       }
     }
-    await cacheCuratedItemMedia(item.id, imageUrl, summaryBullets, resolvedContentKind, attributedClaims, hadRefusal, regeneratedSummary, summaryUpgradeAttempted, recoveredPublishedAt, sourceSpin);
+    await cacheCuratedItemMedia(item.id, imageUrl, summaryBullets, resolvedContentKind, attributedClaims, hadRefusal, regeneratedSummary, summaryUpgradeAttempted, recoveredPublishedAt, sourceSpin, imageSourceUrl);
     // Automated headline repair (Task #176 automated counterpart). The bypass
     // chain above ALREADY fetched the article's real headline (Reuters and other
     // hard-blocked outlets skip the direct fetch, so needsArticleText is true and
@@ -2349,7 +2360,7 @@ export function getCuratedEnrichmentLifecycle(
   return 'pending';
 }
 
-export async function cacheCuratedItemMedia(curatedItemId: string, ogImageUrl: string | null, summaryBullets: string[], contentKind?: 'audio' | 'article' | 'opinion' | 'explainer' | null, attributedClaims: string[] = [], hadRefusal: boolean = false, regeneratedSummary: string | null = null, summaryUpgradeAttempted: boolean = false, recoveredPublishedAt: Date | null = null, sourceSpin: string | null = null) {
+export async function cacheCuratedItemMedia(curatedItemId: string, ogImageUrl: string | null, summaryBullets: string[], contentKind?: 'audio' | 'article' | 'opinion' | 'explainer' | null, attributedClaims: string[] = [], hadRefusal: boolean = false, regeneratedSummary: string | null = null, summaryUpgradeAttempted: boolean = false, recoveredPublishedAt: Date | null = null, sourceSpin: string | null = null, ogImageSourceUrl: string | null = null) {
   // Recovered original-publish date (Task #933). Written in its OWN atomic,
   // NULL-guarded statement (WHERE article_published_at IS NULL) so it can never
   // clobber an upstream (RSS/Meltwater/team) or human-set date, and so the two
@@ -2446,6 +2457,10 @@ export async function cacheCuratedItemMedia(curatedItemId: string, ogImageUrl: s
       // row is treated as fully enriched going forward.
       await db.update(curatedItems).set({
         ogImageUrl,
+        // Keep provenance in lockstep with the image it describes: written on
+        // every success (null when the origin is unknown, e.g. carry-over) so a
+        // replaced image can never keep a stale source URL.
+        ogImageSourceUrl,
         summaryBullets: hasBullets ? summaryBullets : null,
         mediaScrapedAt: new Date(),
         lastMediaAttemptAt: new Date(),
@@ -2469,7 +2484,7 @@ export async function cacheCuratedItemMedia(curatedItemId: string, ogImageUrl: s
     // recompute them and the row still shows content) and the favicon fallback
     // image when present.
     await db.update(curatedItems).set({
-      ...(ogImageUrl ? { ogImageUrl } : {}),
+      ...(ogImageUrl ? { ogImageUrl, ogImageSourceUrl } : {}),
       ...(hasBullets ? { summaryBullets } : {}),
       ...(attributedClaims.length > 0 ? { attributedClaims } : {}),
       ...spinSet,

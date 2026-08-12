@@ -744,6 +744,18 @@ async function runSelfHealingCheck(): Promise<void> {
 }
 
 export function startScheduledScraping() {
+  // One-time re-hosted placeholder-logo cleanup (curated view). Runs shortly
+  // after boot, off the request path; per-row gated by placeholder_recheck_at
+  // so already-checked rows are never re-fetched. See placeholderImageBackfill.ts.
+  setTimeout(async () => {
+    try {
+      const { runPlaceholderImageBackfill } = await import('./placeholderImageBackfill');
+      await runPlaceholderImageBackfill();
+    } catch (error) {
+      console.error('[Scheduler] Placeholder image backfill error:', error);
+    }
+  }, 45 * 1000);
+
   // Run scraper every 10 minutes
   cron.schedule('*/10 * * * *', async () => {
     // Sample + log file-descriptor usage once per scrape cycle so a slow FD

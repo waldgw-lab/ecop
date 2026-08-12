@@ -1494,6 +1494,18 @@ export const curatedItems = pgTable("curated_items", {
   // the framing is neutral/straight-news with no discernible angle. Curated-lane only.
   sourceSpin: text("source_spin"),
   ogImageUrl: text("og_image_url"),
+  // Provenance for a re-hosted image (Task: stop re-hosted placeholder logos).
+  // When ogImageUrl is an `/objects/stream-images/…` path, this records the
+  // ORIGINAL remote URL the bytes were fetched from, so placeholder/logo checks
+  // (isPlaceholderImageUrl) remain possible AFTER re-hosting destroys the URL.
+  // NULL for legacy rows re-hosted before this column existed and for carried-
+  // over images whose origin the main lane did not record.
+  ogImageSourceUrl: text("og_image_source_url"),
+  // One-time placeholder re-check marker for the legacy-row backfill: stamped
+  // when the boot-time sweep has examined this row's re-hosted image for a
+  // placeholder origin (via provenance or a page re-fetch), so the sweep never
+  // re-fetches the same row twice.
+  placeholderRecheckAt: timestamp("placeholder_recheck_at"),
   // Curated-only source video. Social/flash posts may retain supported video in
   // Additional Coverage, but this field is never consulted for story stills,
   // representatives, formation, or any non-curated feed.

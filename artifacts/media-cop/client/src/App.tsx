@@ -8,6 +8,11 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { CURATED_THEME_STORAGE_KEY } from "@/lib/curatedTheme";
 // Login stays eager: it is the auth gate that must render immediately.
 import Login from "@/pages/Login";
+import {
+  PREFERRED_VIEW_PATHS,
+  decidePostLoginDestination,
+} from "@/lib/preferredView";
+import { resolvePreferredView } from "@/lib/curatedPrefsSync";
 
 // Page components are lazy-loaded so each route ships as its own JS chunk,
 // dramatically shrinking the initial bundle and first page load.
@@ -23,6 +28,7 @@ const AdditionalMcops = lazy(() => import("@/pages/AdditionalMcops"));
 const PrivacyPolicy = lazy(() => import("@/pages/PrivacyPolicy"));
 const TermsAndConditions = lazy(() => import("@/pages/TermsAndConditions"));
 const Curated = lazy(() => import("@/pages/Curated"));
+const SelectView = lazy(() => import("@/pages/SelectView"));
 const CuratedArchive = lazy(() => import("@/pages/CuratedArchive"));
 const CuratedMethodology = lazy(() => import("@/pages/CuratedMethodology"));
 const NotFound = lazy(() => import("@/pages/not-found"));
@@ -41,6 +47,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Dashboard} />
       <Route path="/stream" component={Stream} />
+      <Route path="/select-view" component={SelectView} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -84,13 +91,22 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
+  // In dev only, curated routes keep their legacy bypass of the outer auth
+  // gate (the server's CURATED_DEV_BYPASS grants view access without a session,
+  // so the preview never demands a password). In production every main-view
+  // route — Classic, Visual, AND Curated (incl. sub-pages) — funnels
+  // unauthenticated visitors through the shared password screen, then the
+  // splash/preference flow.
+  const curatedBypassesOuterAuth = isCuratedRoute && import.meta.env.DEV;
+
   useEffect(() => {
-    // Only check main app authentication for non-war routes
-    if (!isWarRoute && !isCustomMcopRoute && !isTeamRoute && !isCuratedRoute) {
+    // Only check main app authentication for routes governed by the shared
+    // password gate (war/mcop/team have their own auth; dev-curated bypasses).
+    if (!isWarRoute && !isCustomMcopRoute && !isTeamRoute && !curatedBypassesOuterAuth) {
       setIsCheckingAuth(true);
       checkAuthStatus();
     }
-  }, [isWarRoute, isCustomMcopRoute, isTeamRoute, isCuratedRoute]);
+  }, [isWarRoute, isCustomMcopRoute, isTeamRoute, curatedBypassesOuterAuth]);
 
   const checkAuthStatus = async () => {
     try {
@@ -108,7 +124,47 @@ function App() {
   const handleLoginSuccess = () => {
     setIsAuthenticated(true);
     queryClient.invalidateQueries({ queryKey: ['/api/auth/curated-access'] });
+    // Post-login routing (see decidePostLoginDestination): no saved default →
+    // the splash, with a deep entry path carried as ?return= so the splash
+    // can restore it after the pick; a saved default only redirects entries
+    // on the main-view ROOTS — deep links are never hijacked.
+    // resolvePreferredView consults the server first (a Replit-authenticated
+    // user's choice made on another device wins over an empty/stale local
+    // copy) and falls back to localStorage for password-only users or on
+    // network failure. The entry path (incl. query/hash) is captured at login
+    // time on purpose.
+    const entryPath =
+      window.location.pathname + window.location.search + window.location.hash;
+    void (async () => {
+      const pref = await resolvePreferredView();
+      const dest = decidePostLoginDestination(pref, entryPath);
+      if (dest) setLocation(dest);
+    })();
   };
+
+  // Already-authenticated sessions landing on the ROOT get steered to their
+  // saved default view (or the splash when none is saved) exactly once per
+  // page load. Any other entry URL — /stream, /curated, sub-pages — is an
+  // explicit destination and is left alone. Skipped in dev, where the preview
+  // steering effect above owns the root.
+  const didPrefRedirect = useRef(false);
+  useEffect(() => {
+    if (didPrefRedirect.current) return;
+    if (isAuthenticated !== true) return;
+    didPrefRedirect.current = true;
+    if (import.meta.env.DEV) return;
+    if (location !== '/') return;
+    // Server-first resolution (see handleLoginSuccess) so a second device
+    // with an empty localStorage still lands on the user's saved view.
+    void (async () => {
+      const pref = await resolvePreferredView();
+      if (!pref) {
+        setLocation('/select-view');
+      } else if (pref !== 'classic') {
+        setLocation(PREFERRED_VIEW_PATHS[pref]);
+      }
+    })();
+  }, [isAuthenticated, location, setLocation]);
 
   if (isPrivacyRoute || isTermsRoute) {
     return (
@@ -160,12 +216,16 @@ function App() {
     );
   }
 
-  // Curated View route bypasses the outer app-auth wrapper because the page
-  // gates itself via /api/auth/curated-access: any app-password session gets
-  // view access (and the page shows the MCOP password login in-place for
-  // logged-out visitors), while the Replit-auth tester allowlist gates the
-  // editor/moderation controls inside the page.
-  if (isCuratedRoute) {
+  // Curated View routes render through this branch (its own ThemeProvider and
+  // sub-page handling). In production they sit BEHIND the shared password gate
+  // below — an unauthenticated visitor hitting /curated or a sub-page sees the
+  // shared Login and then the splash/preference flow, the same as the root. In
+  // dev they render immediately (server-side CURATED_DEV_BYPASS grants view
+  // access without a session, so the preview never demands a password). The
+  // page's own /api/auth/curated-access check remains as the access source of
+  // truth: any app-password session gets view access, while the Replit-auth
+  // tester allowlist gates the editor/moderation controls inside the page.
+  const renderCurated = () => {
     let curatedPage = <Curated />;
     if (location === '/curated/archive') curatedPage = <CuratedArchive />;
     else if (location === '/curated/methodology') {
@@ -199,6 +259,11 @@ function App() {
         </ThemeProvider>
       </QueryClientProvider>
     );
+  };
+
+  // Dev-only: curated routes bypass the shared password gate (see above).
+  if (curatedBypassesOuterAuth) {
+    return renderCurated();
   }
 
   // Custom MCOP routes bypass main app auth (use Replit/team auth)
@@ -241,6 +306,12 @@ function App() {
         </ThemeProvider>
       </QueryClientProvider>
     );
+  }
+
+  // Authenticated curated routes (production path): render with the curated
+  // theme wrapper. The shared password session already grants view access.
+  if (isCuratedRoute) {
+    return renderCurated();
   }
 
   return (

@@ -1,4 +1,5 @@
 import { Link } from "wouter";
+import { Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -107,6 +108,23 @@ export default function ViewSwitcher({
       >
         {renderButton("team", "/team", "Team")}
       </div>
+      {/* Lightweight way back to the view-selection splash to change or reset
+          the remembered default view. */}
+      <Button
+        asChild
+        size="sm"
+        variant="ghost"
+        className={cn(
+          "min-h-7 px-1.5",
+          tone === "dark" ? "text-slate-400" : "text-muted-foreground",
+        )}
+        title="Change default view"
+        data-testid="link-select-view"
+      >
+        <Link href="/select-view" aria-label="Change default view">
+          <Star className="h-3.5 w-3.5" />
+        </Link>
+      </Button>
     </div>
   );
 }

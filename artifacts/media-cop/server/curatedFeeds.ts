@@ -255,9 +255,23 @@ const INTERNATIONAL_FEEDS: CuratedFeedConfig[] = [
   // Reuters and CNN were REQUESTED but NOT added: Reuters retired public RSS
   // (401/HTML from this egress) and CNN's legacy feed serves recycled 2023
   // items — both already documented in server/rssFeeds.ts. Do not re-add
-  // without a fresh live probe. LA Times / Euronews carry a heavy domestic /
-  // general-news mix, so expect the relevance gate to screen most items —
-  // low admission there is gate behavior, not a broken feed.
+  // without a fresh live probe.
+  //
+  // ADMISSION VERIFIED (Task #22, prod curated_intake_telemetry + curated_items
+  // reviewed 2026-08-13 after the gate backlog drained — none of the seven is a
+  // "silent source" à la CSIS/pre-fix ABC Australia/The Hindu-national):
+  //   UPI 17 · Euronews 14 · The Independent 8 · CBC News 6 · Sky News 4 ·
+  //   ANSA 3 · Los Angeles Times 1 admitted rows in the first hour.
+  // Los Angeles Times is EXPECTED-LOW-YIELD, not broken: its world-nation feed
+  // is a ~week-deep archive (98 items/pass, ~89 aged out past the 48h window,
+  // only ~9 fresh) and the fresh slice is mostly US-domestic (CA politics,
+  // local business) that the gate rightly rejects (~8/9 relevance-rejected).
+  // No better desk feed exists — probed live 2026-08-13: /world/rss2.0.xml and
+  // /politics/rss2.0.xml serve the IDENTICAL item list as world-nation (CDN
+  // aliases), and /index.rss is an even more domestic general-news firehose.
+  // Do not re-point; expect ~0-2 admissions/day from LAT. Euronews' domestic/
+  // general mix concern did NOT materialize — its world coverage clears the
+  // gate at a healthy rate.
   { sourceName: "The Independent", url: "https://www.independent.co.uk/news/world/rss" },
   { sourceName: "Los Angeles Times", url: "https://www.latimes.com/world-nation/rss2.0.xml" },
   { sourceName: "United Press International", url: "https://rss.upi.com/news/tn_int.rss" },

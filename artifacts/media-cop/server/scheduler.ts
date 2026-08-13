@@ -71,12 +71,13 @@ const MAX_SCRAPE_DURATION_MS = 15 * 60 * 1000;
 // last_scrape_time frozen for hours while the watchdog force-killed it each cycle.
 const SCRAPE_BODY_TIMEOUT_MS = MAX_SCRAPE_DURATION_MS - 60 * 1000; // 14 min
 
-// Soft time budget for the OPTIONAL backfill browser scrapers (the X handle lanes
-// + the 19-account OSINT list), measured from the body start. Left unbounded these
-// loops alone run ~15-25 min every cycle — mostly fixed anti-rate-limit delays
-// (9 X accounts x 35s + 19 OSINT accounts x 15s + 4 x 45s inter-scraper cooldowns)
-// plus per-account scrape time — so the body never reaches its completion stamp and
-// the SCRAPE_BODY_TIMEOUT_MS hard bound fires instead, EVERY cycle. When the X relay
+// Soft time budget for the OPTIONAL backfill browser scrapers (the X handle
+// lanes), measured from the body start. (Task #15 moved the 19-account OSINT
+// list to its own dedicated cron, cutting ~5+ min off this chain.) Left
+// unbounded these loops alone can run past the hard bound — mostly fixed
+// anti-rate-limit delays (9 X accounts x 35s + 3 x 45s inter-scraper cooldowns)
+// plus per-account scrape time — and then the body never reaches its completion
+// stamp and the SCRAPE_BODY_TIMEOUT_MS hard bound fires instead. When the X relay
 // is healthy (the normal state) these scrapers are backfill-only (dedup-by-postId),
 // so capping how long they may run is safe: any account not reached this cycle is
 // delivered by the relay or picked up next cycle. Absolute deadline so slow upstream
@@ -236,7 +237,6 @@ async function runFullScrape(source: string): Promise<boolean> {
     let rapidResponseResult = { addedCount: 0, scrapedCount: 0 };
     let dowResponseResult = { addedCount: 0, scrapedCount: 0 };
     let sentDefenderResult = { addedCount: 0, scrapedCount: 0 };
-    let osintResult = { addedCount: 0, scrapedCount: 0 };
     let xRelaySkipped = false;
     {
       const xRelayHealthy = isXRelayHealthy();
@@ -250,9 +250,16 @@ async function runFullScrape(source: string): Promise<boolean> {
       } else {
         console.log('[X-Relay] Relay stale/absent — running X Playwright scrapers in PRIMARY mode');
 
-        // @SecWar/@PeteHegseth
+        // @SecWar/@PeteHegseth — capped at its own 5-min sub-budget. Left at the
+        // full backfillDeadline this 9-account lane (35s anti-rate-limit sleeps +
+        // per-account scrape time) consumes the ENTIRE soft budget by design, so
+        // the three unbounded single-account scrapers below (each can take 2-3
+        // min with their 60s zero-post retry cooldowns) always ran on an already
+        // spent budget and pushed the body past the 14-min hard bound anyway.
+        // Accounts not reached this cycle are covered by the relay or next cycle.
         console.log('Scraping @SecWar...');
-        xResult = await updateXPosts(storage, backfillDeadline);
+        const xLaneDeadline = Math.min(backfillDeadline, Date.now() + 5 * 60 * 1000);
+        xResult = await updateXPosts(storage, xLaneDeadline);
         console.log(`@SecWar scrape complete: ${xResult.addedCount} new posts added (${xResult.scrapedCount} scraped)`);
 
         console.log('Waiting 45 seconds before next X scraper to allow resource cleanup...');
@@ -278,16 +285,18 @@ async function runFullScrape(source: string): Promise<boolean> {
         console.log('Scraping @sentdefender...');
         sentDefenderResult = await updateSentDefenderPosts(storage);
         console.log(`@sentdefender scrape complete: ${sentDefenderResult.addedCount} new posts added (${sentDefenderResult.scrapedCount} scraped)`);
-
-        console.log('Waiting 45 seconds before OSINT scrapers to allow resource cleanup...');
-        await backfillCooldown(45000);
-
-        // OSINT feeds (@MATA_osint, @CENTCOM, @SOUTHCOM, @Osint613, @Osinttechnical, @FirstSquawk, @AggregateOsint)
-        console.log('Scraping OSINT feeds (@MATA_osint, @CENTCOM, @SOUTHCOM, @Osint613, @Osinttechnical, @FirstSquawk, @AggregateOsint)...');
-        osintResult = await updateOsintPosts(storage, backfillDeadline);
-        console.log(`OSINT scrape complete: ${osintResult.addedCount} new posts added (${osintResult.scrapedCount} scraped)`);
       }
     }
+
+    // NOTE (Task #15): The OSINT feeds (19 accounts x 15s anti-rate-limit sleeps,
+    // ~5 min alone) used to run HERE, at the very tail of this chain, after the
+    // Truth Social + 4 X handle lanes and their fixed 45s cooldowns. The chain
+    // regularly hit its 14-min hard bound (SCRAPE_BODY_TIMEOUT_MS) BEFORE ever
+    // reaching this point, so the OSINT column stayed empty and every cycle
+    // stamped a "Timeout ... for runFullScrape" lastError. OSINT now runs on its
+    // own dedicated cron (see "OSINT X Feed" schedule below), serialized against
+    // the other Playwright lanes via the shared scrape/browser locks in
+    // osintScraper.ts, so it can never be starved by this chain again.
     
     // NOTE: The Journalists X Feed (curated-lane-only) used to run here, at the
     // very tail of this long sequential chain, so it almost never got reached
@@ -395,11 +404,8 @@ async function runFullScrape(source: string): Promise<boolean> {
       : sentDefenderResult.scrapedCount === 0
         ? (currentMetadata?.sentDefenderConsecutiveEmpty || 0) + 1
         : 0;
-    const osintConsecutiveEmpty = xRelaySkipped
-      ? (currentMetadata?.osintConsecutiveEmpty || 0)
-      : osintResult.scrapedCount === 0
-        ? (currentMetadata?.osintConsecutiveEmpty || 0) + 1
-        : 0;
+    // OSINT consecutive-empty tracking moved to the dedicated OSINT cron
+    // (Task #15) — this chain no longer runs OSINT and must not touch its counter.
     
     // Log blocking warnings (only meaningful when scrapers actually ran)
     if (!xRelaySkipped) {
@@ -414,9 +420,6 @@ async function runFullScrape(source: string): Promise<boolean> {
       }
       if (sentDefenderConsecutiveEmpty >= 2) {
         console.warn(`⚠️ @sentdefender: ${sentDefenderConsecutiveEmpty} consecutive scrapes with 0 posts found - possible blocking`);
-      }
-      if (osintConsecutiveEmpty >= 2) {
-        console.warn(`⚠️ OSINT feeds: ${osintConsecutiveEmpty} consecutive scrapes with 0 posts found - possible blocking`);
       }
     }
     
@@ -438,14 +441,11 @@ async function runFullScrape(source: string): Promise<boolean> {
         dowResponseLastCount: dowResponseResult.addedCount,
         sentDefenderLastScrapeTime: lastRunEndedAt,
         sentDefenderLastCount: sentDefenderResult.addedCount,
-        osintLastScrapeTime: lastRunEndedAt,
-        osintLastCount: osintResult.addedCount,
       }),
       xPostsConsecutiveEmpty,
       rapidResponseConsecutiveEmpty,
       dowResponseConsecutiveEmpty,
       sentDefenderConsecutiveEmpty,
-      osintConsecutiveEmpty,
       scrapeStatus: 'idle',
     });
   };
@@ -1312,8 +1312,68 @@ export function startScheduledScraping() {
 
   // Run an initial Journalist scrape a few minutes after startup so the Press
   // column fills quickly. The shared scrape lock will make it wait its turn if
-  // the initial main scrape is still mid-OSINT.
+  // the initial main scrape is still running.
   setTimeout(() => runJournalistScrape('Initial Journalist X scrape'), 3 * 60 * 1000);
+
+  // OSINT X Feed (Task #15) — runs on its own schedule at :25 and :55 (offset
+  // from the main */10 scrape, Journalist at :05/:35, and InfluencerX at
+  // :15/:45). It used to sit at the very tail of the main scrape chain, after
+  // the Truth Social + 4 X handle lanes and their fixed cooldowns — the chain
+  // hit its 14-min hard bound before ever reaching it, so osint_posts stayed
+  // empty and every cycle logged a runFullScrape timeout. The shared scrape +
+  // browser locks inside osintScraper.ts serialize this against the main chain
+  // and the journalist cron so their Playwright browsers never collide.
+  // Like the other X lanes, this is skipped when the EV relay is healthy — the
+  // relay delivers OSINT posts and this Playwright scraper is only the PRIMARY
+  // fallback when the relay heartbeat goes stale.
+  const OSINT_RUN_BUDGET_MS = 12 * 60 * 1000; // hard per-run bound (19 accounts x 15s sleeps + scrape time)
+  let osintRunning = false;
+  const runOsintScrape = async (label: string) => {
+    if (osintRunning) {
+      console.log(`[Scheduler] ${label} already in progress, skipping`);
+      return;
+    }
+    if (isXRelayHealthy()) {
+      console.log(`[Scheduler] ${label} SKIPPED — X relay healthy, OSINT posts already delivered via EV`);
+      return;
+    }
+    osintRunning = true;
+    console.log(`[Scheduler] Running ${label} (@MATA_osint, @CENTCOM, @SOUTHCOM, @Osint613, @Osinttechnical, @FirstSquawk, @AggregateOsint, ...)...`);
+    try {
+      const result = await updateOsintPosts(storage, Date.now() + OSINT_RUN_BUDGET_MS);
+      console.log(`[Scheduler] ${label} complete - Added: ${result.addedCount} (scraped: ${result.scrapedCount})`);
+      // Persist outcome so the pipeline-health dashboard and the blocking
+      // watchdog keep working now that the main chain no longer stamps OSINT.
+      try {
+        const current = await storage.getScrapeMetadata();
+        const osintConsecutiveEmpty = result.scrapedCount === 0
+          ? (current?.osintConsecutiveEmpty || 0) + 1
+          : 0;
+        if (osintConsecutiveEmpty >= 2) {
+          console.warn(`⚠️ OSINT feeds: ${osintConsecutiveEmpty} consecutive scrapes with 0 posts found - possible blocking`);
+        }
+        await storage.updateScrapeMetadata({
+          osintLastScrapeTime: new Date(),
+          osintLastCount: result.addedCount,
+          osintConsecutiveEmpty,
+        });
+      } catch (metaError) {
+        console.error(`[Scheduler] Failed to record OSINT scrape metadata:`, metaError);
+      }
+    } catch (error) {
+      console.error(`[Scheduler] ${label} error:`, error);
+    } finally {
+      osintRunning = false;
+    }
+  };
+  cron.schedule('25,55 * * * *', () => runOsintScrape('OSINT X scrape'));
+
+  // Run an initial OSINT scrape after startup so the OSINT X column fills
+  // without waiting up to 30 min for the next cron tick. Deliberately delayed
+  // past the boot warm-up chain's 14-min hard bound: an early OSINT run holds
+  // the shared browser lock for up to ~7 min mid-chain, which pushed the boot
+  // chain itself into its runFullScrape timeout.
+  setTimeout(() => runOsintScrape('Initial OSINT X scrape'), 16 * 60 * 1000);
 
   // Task #811 — Score-retry sweep. Bot items whose AI score failed at post time
   // are flagged score_source='unscored_fallback' and pinned at the UNSCORED

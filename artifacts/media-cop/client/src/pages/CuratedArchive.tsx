@@ -90,7 +90,9 @@ interface ArchiveStory {
   // still fresh and it remains eligible — it simply isn't currently surfaced in
   // Top Stories (crowded out by the priority cap or a transient missed pass);
   // 'phased_out' = it genuinely aged out at lastSeenAt.
-  status: "active" | "phased_out";
+  // 'superseded' = the story is live in Top Stories right now under a newer
+  // grouping; this archived row is the older version it replaced.
+  status: "active" | "phased_out" | "superseded";
 }
 
 interface ArchiveResponse {
@@ -341,7 +343,11 @@ function StoryDetailDialog({ story, onClose }: { story: ArchiveStory | null; onC
                 <span className="text-xs text-muted-foreground font-mono" data-testid="text-detail-firstseen">
                   · First seen {formatDateTime(story.firstSeenAt)}
                 </span>
-                {story.status === "active" ? (
+                {story.status === "superseded" ? (
+                  <span className="text-xs text-muted-foreground font-mono" data-testid="text-detail-status">
+                    · Superseded — newer version live in Top Stories
+                  </span>
+                ) : story.status === "active" ? (
                   <span className="text-xs text-muted-foreground font-mono" data-testid="text-detail-status">
                     · Active — not currently in Top Stories
                   </span>
@@ -488,7 +494,11 @@ function StoryCard({ story, onOpen }: { story: ArchiveStory; onOpen: () => void 
               </>
             )}
             <span>·</span>
-            {story.status === "active" ? (
+            {story.status === "superseded" ? (
+              <span data-testid={`text-status-${story.id}`}>
+                Superseded — newer version live in Top Stories
+              </span>
+            ) : story.status === "active" ? (
               <span data-testid={`text-status-${story.id}`}>
                 Active — not currently in Top Stories
               </span>

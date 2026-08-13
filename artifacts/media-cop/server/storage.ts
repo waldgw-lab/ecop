@@ -2455,16 +2455,43 @@ export class DatabaseStorage implements IStorage {
     // Stories — e.g. crowded out by the priority cap or a transient missed pass),
     // NOT 'phased_out'. Derived from the SAME staleness rule the clustering pass
     // uses, so the label the archive shows never contradicts the engine.
+    //
+    // SUPERSEDED refinement: an archived VERSION whose story is actually live
+    // right now under a NEWER grouping (a live cluster shares at least one
+    // member article URL) previously read "Active — not currently in Top
+    // Stories", which contradicted the visible feed. Detect the overlap against
+    // the current live member URL set (bounded: live members only) and label
+    // those rows 'superseded' instead. Read-only; curated lane only.
     const now = Date.now();
-    const items = rows.map((r) => ({
+    const preliminary = rows.map((r) => ({
       ...r,
       status: archiveRowStatus(
         (r.members ?? []) as CuratedArchiveMember[],
         now,
         r.lastSeenAt ? new Date(r.lastSeenAt).getTime() : null,
-      ),
+      ) as ArchiveStatus,
     }));
-    return { items, total: Number(total) };
+    if (preliminary.some((r) => r.status === 'active')) {
+      try {
+        const liveUrls = new Set(
+          (
+            await db
+              .selectDistinct({ url: curatedClusterMembers.url })
+              .from(curatedClusterMembers)
+          ).map((x) => x.url),
+        );
+        for (const r of preliminary) {
+          if (r.status !== 'active') continue;
+          const memberUrls = ((r.members ?? []) as CuratedArchiveMember[])
+            .map((m) => m.url)
+            .filter((u): u is string => !!u);
+          if (memberUrls.some((u) => liveUrls.has(u))) r.status = 'superseded';
+        }
+      } catch {
+        // Fail-open: on any error keep the plain active/phased_out statuses.
+      }
+    }
+    return { items: preliminary, total: Number(total) };
   }
 
   // Recently-seen but currently NOT-live archived stories for the clustering

@@ -197,7 +197,11 @@ export function lastContributingMs(
 // Top Stories (e.g. crowded out by the priority cap or a transient missed pass).
 // Used by the storage archive read so the UI never mislabels a still-fresh story
 // as "phased out".
-export type ArchiveStatus = 'active' | 'phased_out';
+// 'superseded' = the story is live in Top Stories right now under a NEWER
+// grouping (a live cluster shares at least one member article); this archived
+// version is the older snapshot it replaced. Derived at read time in
+// searchCuratedStoryArchive — archiveRowStatus itself never returns it.
+export type ArchiveStatus = 'active' | 'phased_out' | 'superseded';
 
 // Pure status derivation from an archive row's stored members. Mirrors EXACTLY
 // the verdict the clustering pass would reach (all member publish times for the

@@ -4115,6 +4115,10 @@ export async function clusterCuratedLane(
     // the expansion call site so raw snapshot URLs still on screen always have
     // metadata even after their prior-member rows churned.
     const manualLinkUrlMeta = new Map<string, ManualLinkUrlMeta>();
+    // Fresh-member release (episode split) — populated in the carry-over walk
+    // below; declared here so the (a2) rescue union after the try/catch can see
+    // it even if carry-over partially fails.
+    const releasedFreshMemberUrls = new Set<string>();
     try {
       const prevMembers = await storage.getCuratedClusterMembers(CARRY_LOAD_WINDOW_HOURS);
       const prevByCluster = new Map<string, typeof prevMembers>();
@@ -4135,6 +4139,15 @@ export async function clusterCuratedLane(
       );
       const now = Date.now();
       const seenCarry = new Set<string>();
+      // Fresh-member release (episode split). When a cluster is phased out at
+      // carry-over, its STILL-FRESH contributing members previously vanished
+      // with it — a fresh article that attached to an old episode was dragged
+      // into the archive instead of re-forming as a new story. Collect those
+      // members' normalized URLs here and feed them into the SAME (a2) rescue
+      // sub-lane as archive-grace, so the priority cap re-admits the live
+      // candidates and they can form a NEW cluster (fresh origination) this
+      // pass. Contributing-only + freshness-gated (the cluster's own roll
+      // window), so an old episode can never be resurrected through this lane.
       for (const [prevClusterId, mem] of Array.from(prevByCluster.entries())) {
         const repMem = mem.find(m => m.isRepresentative) ?? mem[0];
         // Staleness phase-out (Task #177). Derive the cluster's lifecycle from its
@@ -4167,7 +4180,27 @@ export async function clusterCuratedLane(
             lastContributingMs: lastContributingMs(mem),
           });
         }
-        if (!keep) continue; // phased-out / inactive — let the cluster drop
+        if (!keep) {
+          // Phased-out cluster — let it drop, but RELEASE its still-fresh
+          // contributing members so they can re-form as a NEW story instead of
+          // being dragged into the archive with the old episode. Freshness =
+          // the cluster's own current-state roll window (kinetic 24h / process
+          // 48h, measured from NOW); contributing-only mirrors the archive-
+          // grace anti-resurrection rule.
+          const releaseWindowMs = (clusterIsProcess
+            ? CARRY_MEMBER_PROCESS_ROLL_WINDOW_H
+            : CARRY_MEMBER_ROLL_WINDOW_H) * 3_600_000;
+          const releaseCutoffMs = now - releaseWindowMs;
+          for (const m of mem) {
+            if (((m as { cls?: string | null }).cls ?? (m as { behaviorClass?: string | null }).behaviorClass) !== 'corroborating') continue;
+            if (!m.publishedAt) continue;
+            const pubMs = new Date(m.publishedAt).getTime();
+            if (!Number.isFinite(pubMs) || pubMs < releaseCutoffMs) continue;
+            const mu = normalizeMemberUrl(m.url);
+            if (mu) releasedFreshMemberUrls.add(mu);
+          }
+          continue;
+        }
         // Per-member rolling-window decay. A kept cluster sheds its aged-out
         // members whose publishedAt is older than the current-state window,
         // measured from NOW:
@@ -4291,6 +4324,14 @@ export async function clusterCuratedLane(
       archiveGraceMemberUrls = buildArchiveGraceMemberUrls(graceRows, Date.now());
     } catch (graceErr) {
       console.warn('[CuratedCluster] archive-grace load failed (non-fatal):', graceErr instanceof Error ? graceErr.message : graceErr);
+    }
+    // Fresh-member release union (episode split). Still-fresh contributing
+    // members of clusters phased out THIS pass share the (a2) rescue sub-lane
+    // with archive-grace — same URL bound, same ARCHIVE_GRACE_ADMIT_MAX
+    // admission cap inside RESCUE_BUDGET, so HARD_NODE_CEILING is unchanged.
+    for (const u of releasedFreshMemberUrls) {
+      if (archiveGraceMemberUrls.size >= ARCHIVE_GRACE_MAX_URLS) break;
+      archiveGraceMemberUrls.add(u);
     }
 
     // Collapse the same ARTICLE to a single node. The curated store is a clone of

@@ -7009,9 +7009,14 @@ function CuratedEditControl({ story }: { story: CuratedStory }) {
 function EditPhotoControl({
   type,
   id,
+  clusterId,
 }: {
   type: CuratedStory["type"];
   id: string;
+  // When set, the override targets the whole CLUSTER (keyed `cluster:<id>` on
+  // the server) instead of the standalone item — photo-upload parity for
+  // multi-source stories.
+  clusterId?: string | null;
 }) {
   const { toast } = useToast();
   const [open, setOpen] = useState(false);
@@ -7043,7 +7048,7 @@ function EditPhotoControl({
         return {
           ...old,
           stories: old.stories.map((s: CuratedStory) =>
-            s.type === type && s.id === id
+            (clusterId ? s.clusterId === clusterId : s.type === type && s.id === id)
               ? { ...s, ogImageUrl: u, memberImages: u ? [u, ...(s.memberImages ?? []).filter((x) => x !== s.ogImageUrl)] : s.memberImages }
               : s,
           ),
@@ -7051,7 +7056,8 @@ function EditPhotoControl({
       },
     );
     try {
-      const res = await apiRequest("POST", "/api/curated/replace-image", { type, id, url: u });
+      const res = await apiRequest("POST", "/api/curated/replace-image",
+        clusterId ? { scope: "cluster", clusterId, url: u } : { type, id, url: u });
       await res.json();
       finish("Photo replaced");
     } catch {
@@ -7078,8 +7084,13 @@ function EditPhotoControl({
     try {
       const fd = new FormData();
       fd.append("image", blob, "pasted-image.png");
-      fd.append("type", type);
-      fd.append("id", id);
+      if (clusterId) {
+        fd.append("scope", "cluster");
+        fd.append("clusterId", clusterId);
+      } else {
+        fd.append("type", type);
+        fd.append("id", id);
+      }
       const res = await fetch("/api/curated/upload-image", {
         method: "POST",
         body: fd,
@@ -7474,7 +7485,11 @@ function StoryDetailDialog({
       <CuratedHideControl story={s} variant="icon" />
       <CuratedManualLinkControl story={s} />
       <CuratedPriorityBadge story={s} rankingCutoffs={rankingCutoffs} />
-      {s.sourceCount <= 1 && <EditPhotoControl type={s.type} id={s.id} />}
+      {s.sourceCount <= 1
+        ? <EditPhotoControl type={s.type} id={s.id} />
+        : s.clusterId
+          ? <EditPhotoControl type={s.type} id={s.id} clusterId={s.clusterId} />
+          : null}
     </>
   );
 

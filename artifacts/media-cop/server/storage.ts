@@ -549,6 +549,10 @@ export interface IStorage {
   getScrapeMetadata(): Promise<ScrapeMetadata | undefined>;
   updateScrapeMetadata(updates: Partial<InsertScrapeMetadata>): Promise<void>;
 
+  // Meltwater per-search run telemetry (read path used by Coverage + the
+  // Registry ingestion-health builder).
+  getMeltwaterTelemetries(): Promise<MeltwaterTelemetry[]>;
+
   // Durable relay heartbeat operations (Task #340) — one row per relay name
   // ('x' / 'truth-social'). Lets the in-memory relay heartbeat survive a
   // restart so MCOP stays in WATCHDOG mode across redeploys when the relay was

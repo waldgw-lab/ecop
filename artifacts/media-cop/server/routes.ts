@@ -26,6 +26,7 @@ import { getTruthRelayOutageReport } from './relayOutageMonitor';
 import { wouldMatch } from './enrichment/referenceAdapter';
 import { computeMeltwaterHealthMulti } from './meltwaterHealth';
 import { getFeedHealthReport } from './feedHealthTracker';
+import { buildOutletIngestionHealth } from './outletIngestionHealth';
 import { updateXPosts } from "./xScraper";
 import { updateRapidResponsePosts } from "./rapidResponseScraper";
 import { updateDOWResponsePosts } from "./dowResponseScraper";
@@ -3136,8 +3137,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
           summaryBullets: angleFallback
             ? (angleFallback.summaryBullets ?? base?.summaryBullets ?? null)
             : (base?.summaryBullets ?? null),
-          ogImageUrl,
-          memberImages,
+          // Editor PHOTO replacement (cluster parity): a display-only override
+          // keyed by `cluster:<id>` wins over the derived member-image selection.
+          // Member rows' ogImageUrl are never mutated; curated lane only.
+          ogImageUrl: imageReplacements.get(`cluster:${clusterId}`) ?? ogImageUrl,
+          memberImages: imageReplacements.has(`cluster:${clusterId}`)
+            ? [
+                imageReplacements.get(`cluster:${clusterId}`)!,
+                ...memberImages.filter((u) => u !== imageReplacements.get(`cluster:${clusterId}`)),
+              ]
+            : memberImages,
           // Editor PHOTO HIDE overlay (Task #380 expansion) — this cluster's
           // currently-hidden member photos, so an editor can UNHIDE them inline.
           // Curated-lane only; rendered solely to editors in the detail pop-out.
@@ -6474,9 +6483,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // public REST API (fail-closed lane isolation).
   app.post("/api/curated/replace-image", requireCuratedEditor, async (req: any, res) => {
     try {
-      const { type, id, url } = req.body ?? {};
-      const itemId = (id ?? '').toString().trim();
-      if (!itemId) return res.status(400).json({ error: 'id required' });
+      const { scope, type, id, clusterId, url } = req.body ?? {};
       const newUrl = (url ?? '').toString().trim();
       if (!newUrl) return res.status(400).json({ error: 'url required' });
 
@@ -6485,10 +6492,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: 'URL is not a valid, publicly fetchable address' });
       }
 
-      const prefix = type === 'curated' ? 'curated' : 'main';
-      const key = `${prefix}:${itemId}`;
+      // Cluster scope (photo-upload parity with single-source): the override is
+      // keyed by the cluster's stable `cluster:<id>` key and applied as a
+      // DISPLAY-only override on the cluster card + carousel. Member rows'
+      // ogImageUrl are never mutated.
+      let key: string;
+      let snapshot: Awaited<ReturnType<typeof resolveCuratedOverrideSnapshot>>;
       const updatedBy = req.user?.claims?.email || 'dev';
-      const snapshot = await resolveCuratedOverrideSnapshot({ scope: 'standalone', type, id: itemId });
+      if (scope === 'cluster') {
+        const cid = (clusterId ?? '').toString().trim();
+        if (!cid) return res.status(400).json({ error: 'clusterId required for cluster scope' });
+        key = `cluster:${cid}`;
+        snapshot = await resolveCuratedOverrideSnapshot({ scope: 'cluster', clusterId: cid });
+      } else {
+        const itemId = (id ?? '').toString().trim();
+        if (!itemId) return res.status(400).json({ error: 'id required' });
+        const prefix = type === 'curated' ? 'curated' : 'main';
+        key = `${prefix}:${itemId}`;
+        snapshot = await resolveCuratedOverrideSnapshot({ scope: 'standalone', type, id: itemId });
+      }
       await storage.setCuratedImageReplacement(key, newUrl, updatedBy);
       invalidateCuratedCache('top-stories');
       invalidateCuratedCache('cluster-members');
@@ -6526,17 +6548,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
   }, async (req: any, res) => {
     try {
       if (!req.file) return res.status(400).json({ error: 'No image file provided' });
-      const { type, id } = req.body ?? {};
-      const itemId = (id ?? '').toString().trim();
-      if (!itemId) return res.status(400).json({ error: 'id required' });
+      const { scope, type, id, clusterId } = req.body ?? {};
       const objectStorageService = new ObjectStorageService();
       const imagePath = await objectStorageService.uploadStreamImage(
         req.file.buffer, req.file.originalname || 'pasted-image', req.file.mimetype,
       );
-      const prefix = type === 'curated' ? 'curated' : 'main';
-      const key = `${prefix}:${itemId}`;
+      // Cluster scope: same display-only overlay, keyed by `cluster:<id>` —
+      // photo-upload parity with single-source items (member rows never mutated).
+      let key: string;
+      let snapshot: Awaited<ReturnType<typeof resolveCuratedOverrideSnapshot>>;
       const updatedBy = req.user?.claims?.email || 'dev';
-      const snapshot = await resolveCuratedOverrideSnapshot({ scope: 'standalone', type, id: itemId });
+      if (scope === 'cluster') {
+        const cid = (clusterId ?? '').toString().trim();
+        if (!cid) return res.status(400).json({ error: 'clusterId required for cluster scope' });
+        key = `cluster:${cid}`;
+        snapshot = await resolveCuratedOverrideSnapshot({ scope: 'cluster', clusterId: cid });
+      } else {
+        const itemId = (id ?? '').toString().trim();
+        if (!itemId) return res.status(400).json({ error: 'id required' });
+        const prefix = type === 'curated' ? 'curated' : 'main';
+        key = `${prefix}:${itemId}`;
+        snapshot = await resolveCuratedOverrideSnapshot({ scope: 'standalone', type, id: itemId });
+      }
       await storage.setCuratedImageReplacement(key, imagePath, updatedBy);
       invalidateCuratedCache('top-stories');
       invalidateCuratedCache('cluster-members');
@@ -14074,6 +14107,38 @@ Examples:
     } catch (error) {
       console.error('Error building outlet coverage report:', error);
       res.status(500).json({ error: 'Failed to build coverage report' });
+    }
+  });
+
+  // Read-only per-outlet INGESTION HEALTH (Registry tab). For every registry
+  // outlet key, describes HOW its content is ingested (primary + fallback
+  // source) and the live health of each pipeline, derived STRICTLY from existing
+  // signals: feedHealthTracker (RSS/scraper feed outcomes), the X + Truth Social
+  // relay heartbeats, and MELTWATER_API_KEY presence. Never mutates a registry
+  // row, never runs a scrape, never creates a table/tracker. Editor-gated the
+  // same way as the other registry endpoints; single-pass and cheap.
+  app.get("/api/team/outlet-registry/ingestion", requireTeamMember, async (_req: any, res) => {
+    try {
+      const registry = await storage.getOutletRegistry();
+      const items = await buildOutletIngestionHealth(registry, storage);
+      // Keyed map for O(1) client lookups, plus a flat array for convenience.
+      const byKey: Record<string, (typeof items)[number]> = {};
+      for (const it of items) byKey[it.key] = it;
+      res.json({
+        byKey,
+        items,
+        summary: {
+          total: items.length,
+          healthy: items.filter((i) => i.overall === "healthy").length,
+          degraded: items.filter((i) => i.overall === "degraded").length,
+          broken: items.filter((i) => i.overall === "broken").length,
+          unknown: items.filter((i) => i.overall === "unknown").length,
+          unused: items.filter((i) => i.overall === "unused").length,
+        },
+      });
+    } catch (error) {
+      console.error('Error building outlet ingestion health:', error);
+      res.status(500).json({ error: 'Failed to build outlet ingestion health' });
     }
   });
 

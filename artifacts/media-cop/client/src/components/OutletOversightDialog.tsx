@@ -531,6 +531,63 @@ interface CoverageReport {
   configuredCount: number;
 }
 
+// Per-outlet ingestion-health shape (Registry tab) returned by
+// GET /api/team/outlet-registry/ingestion. Read-only: describes HOW each outlet
+// is ingested (primary + fallback source) and the live health of each pipeline.
+type IngestionHealth = "healthy" | "degraded" | "broken" | "unknown" | "unused";
+interface IngestionSource {
+  kind: "rss" | "scraper" | "relay" | "api" | "none";
+  label: string;
+  url?: string;
+  health: IngestionHealth;
+  lastCheckedAt?: string | null;
+  note?: string;
+}
+interface OutletIngestion {
+  key: string;
+  canonicalName: string;
+  kind: "news" | "social";
+  primary: IngestionSource;
+  secondary?: IngestionSource;
+  overall: IngestionHealth;
+}
+interface OutletIngestionResponse {
+  byKey: Record<string, OutletIngestion>;
+  items: OutletIngestion[];
+  summary: { total: number; healthy: number; degraded: number; broken: number; unknown: number; unused: number };
+}
+
+// Colored status-dot classes for the collapsed registry row (mirrors
+// StatusIndicator.tsx — h-2 w-2 rounded-full). green = healthy, yellow =
+// degraded/stale, red = broken, hollow grey = status unknown (wired but no
+// telemetry), solid grey = not in use / no ingestion wired.
+const INGESTION_DOT_CLASSES: Record<IngestionHealth, string> = {
+  healthy: "bg-green-500",
+  degraded: "bg-yellow-500",
+  broken: "bg-red-500",
+  // Hollow ring distinguishes "unknown" (no telemetry) from the solid grey
+  // "unused" dot without adding a new color.
+  unknown: "bg-transparent border border-gray-400",
+  unused: "bg-gray-400",
+};
+const INGESTION_DOT_TITLES: Record<IngestionHealth, string> = {
+  healthy: "Ingestion healthy — the outlet's feed/relay is delivering.",
+  degraded: "Ingestion degraded/stale — the primary source is unhealthy; the fallback source is covering.",
+  broken: "Ingestion broken — no source is currently delivering for this outlet.",
+  unknown: "Status unknown — the pipeline is wired but there is no recent run/freshness telemetry to confirm it is delivering.",
+  unused: "Not in use — no automated ingestion is wired to this outlet (or the fallback is idle because the primary is healthy).",
+};
+// Text-color classes for the primary/secondary source lines in the expanded
+// detail, keyed by that source's own health. `unknown` and `unused` both read
+// muted; `unknown` is italicized in the line renderer to signal "no telemetry".
+const INGESTION_TEXT_CLASSES: Record<IngestionHealth, string> = {
+  healthy: "text-foreground",
+  degraded: "text-yellow-600 dark:text-yellow-400",
+  broken: "text-red-600 dark:text-red-400",
+  unknown: "text-muted-foreground italic",
+  unused: "text-muted-foreground/60",
+};
+
 // Display-only roster name (registry display names task). Handle-keyed rows
 // carry a seeded human-readable displayName; render it with the @handle
 // appended so "Osint613" reads "Open Source Intel (@Osint613)". Rows without a
@@ -570,7 +627,112 @@ function behaviorVariant(b: BehaviorResult): "default" | "secondary" | "destruct
   return "outline";
 }
 
-function OutletRow({ row, allRows }: { row: OutletRegistry; allRows: OutletRegistry[] }) {
+// Human "last checked" formatter for an ingestion source timestamp.
+function formatIngestionTime(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? null : d.toLocaleString();
+}
+
+// One primary/secondary source line, colored by its own health (spec #3).
+function IngestionSourceLine({ label, source }: { label: string; source?: IngestionSource }) {
+  if (!source) return null;
+  const lastChecked = formatIngestionTime(source.lastCheckedAt);
+  return (
+    <div className={`text-[11px] leading-relaxed ${INGESTION_TEXT_CLASSES[source.health]}`}>
+      <span className="font-medium">{label}:</span> {source.label}
+      {source.url ? (
+        <>
+          {" "}
+          <a
+            href={source.url}
+            target="_blank"
+            rel="noreferrer"
+            className="underline underline-offset-2 break-all"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {source.url}
+          </a>
+        </>
+      ) : null}
+      {source.note ? <span className="opacity-80"> — {source.note}</span> : null}
+      {lastChecked ? <span className="opacity-70"> · last checked {lastChecked}</span> : null}
+    </div>
+  );
+}
+
+// Read-only identity + ingestion detail block for the expanded registry row.
+function IngestionDetail({ row, ingestion }: { row: OutletRegistry; ingestion?: OutletIngestion }) {
+  const socialAccounts = findApprovedSocialAccountsForRegistryIdentity(
+    row.canonicalName,
+    (row.aliases ?? []) as string[],
+  );
+  const isSocial = socialAccounts.length > 0;
+  const domains = (row.domains ?? []) as string[];
+
+  // Handles to display for social outlets: prefer the approved catalog handles,
+  // then any @-prefixed aliases, then the canonical name.
+  const handles = isSocial
+    ? Array.from(
+        new Set(
+          socialAccounts
+            .map((a) => a.handle)
+            .concat((row.aliases ?? []).filter((a) => a.startsWith("@")))
+            .filter(Boolean),
+        ),
+      )
+    : [];
+
+  return (
+    <div className="rounded-md border p-3 space-y-2" data-testid={`ingestion-detail-${row.id}`}>
+      <div className="text-xs font-medium">{isSocial ? "Handles" : "URLs"}</div>
+      {isSocial ? (
+        handles.length > 0 ? (
+          <div className="flex flex-wrap gap-1.5" data-testid={`ingestion-handles-${row.id}`}>
+            {handles.map((h) => (
+              <Badge key={h} variant="outline" className="font-mono text-[11px]">
+                {h.startsWith("@") ? h : `@${h}`}
+              </Badge>
+            ))}
+          </div>
+        ) : (
+          <div className="text-[11px] text-muted-foreground">{row.canonicalName}</div>
+        )
+      ) : domains.length > 0 ? (
+        <div className="space-y-0.5" data-testid={`ingestion-urls-${row.id}`}>
+          {domains.map((d) => (
+            <a
+              key={d}
+              href={d.startsWith("http") ? d : `https://${d}`}
+              target="_blank"
+              rel="noreferrer"
+              className="block text-[11px] text-blue-600 dark:text-blue-400 underline underline-offset-2 break-all"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {d}
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div className="text-[11px] text-muted-foreground">No domains configured</div>
+      )}
+
+      <div className="pt-1 space-y-1">
+        <div className="text-xs font-medium">Ingestion</div>
+        {ingestion ? (
+          <>
+            <IngestionSourceLine label="Primary source" source={ingestion.primary} />
+            <IngestionSourceLine label="Secondary source" source={ingestion.secondary} />
+          </>
+        ) : (
+          <div className="text-[11px] text-muted-foreground">Ingestion status unavailable</div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function OutletRow({ row, allRows, ingestion }: { row: OutletRegistry; allRows: OutletRegistry[]; ingestion?: OutletIngestion }) {
   const { toast } = useToast();
   const [expanded, setExpanded] = useState(false);
   const [draft, setDraft] = useState<Record<string, unknown>>({});
@@ -754,18 +916,15 @@ function OutletRow({ row, allRows }: { row: OutletRegistry; allRows: OutletRegis
           </Badge>
         )}
         {ownership.includes("State-controlled") && <Badge variant="outline" className="shrink-0">State</Badge>}
-        <Badge
-          variant={confirmed ? "default" : "secondary"}
-          className="shrink-0"
-          data-testid={`badge-confirm-${row.id}`}
-          title={
-            confirmed
-              ? "Enrichment-confirmed: this outlet's registry metadata (origin, factuality, ownership) has been verified by an enrichment pass. Does not affect its admission role."
-              : "Not yet enrichment-confirmed: registry metadata is still seed/default and hasn't been verified by an enrichment pass. Does not affect its admission role."
-          }
-        >
-          {confirmed ? "Enrichment-confirmed" : "Enrichment-pending"}
-        </Badge>
+        {/* Collapsed ingestion-health indicator light (spec #2). Derived from the
+            per-outlet ingestion-health endpoint; grey while it loads / for
+            outlets with no wired pipeline. The "Enrichment-confirmed" badge now
+            lives in the expanded detail (spec #1). */}
+        <div
+          className={`h-2 w-2 rounded-full shrink-0 ${INGESTION_DOT_CLASSES[ingestion?.overall ?? "unused"]}`}
+          data-testid={`dot-ingestion-${row.id}`}
+          title={INGESTION_DOT_TITLES[ingestion?.overall ?? "unused"]}
+        />
       </div>
 
       {expanded && (
@@ -781,7 +940,28 @@ function OutletRow({ row, allRows }: { row: OutletRegistry; allRows: OutletRegis
             <div className="text-[11px] text-muted-foreground" data-testid={`text-derived-reason-${row.id}`}>
               {behavior.reason}
             </div>
+            {/* Enrichment-confirmed status badge — moved here from the collapsed
+                row (spec #1). Sits alongside the Derived role block. */}
+            <div className="pt-1">
+              <Badge
+                variant={confirmed ? "default" : "secondary"}
+                className="shrink-0"
+                data-testid={`badge-confirm-${row.id}`}
+                title={
+                  confirmed
+                    ? "Enrichment-confirmed: this outlet's registry metadata (origin, factuality, ownership) has been verified by an enrichment pass. Does not affect its admission role."
+                    : "Not yet enrichment-confirmed: registry metadata is still seed/default and hasn't been verified by an enrichment pass. Does not affect its admission role."
+                }
+              >
+                {confirmed ? "Enrichment-confirmed" : "Enrichment-pending"}
+              </Badge>
+            </div>
           </div>
+
+          {/* Identity + ingestion (read-only, spec #3). News outlets show their
+              URL(s)/domains; social outlets show their handle(s). Both show the
+              primary + secondary ingestion source with health-colored text. */}
+          <IngestionDetail row={row} ingestion={ingestion} />
 
           {/* Trust-engine labeling fields */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -1122,6 +1302,14 @@ export function OutletOversightDialog({
 
   const { data: registry, isLoading: registryLoading } = useQuery<OutletRegistry[]>({
     queryKey: ["/api/team/outlet-registry"],
+    enabled: open,
+  });
+
+  // Per-outlet ingestion health (Registry tab, read-only). Keyed by registry
+  // `key`; drives the collapsed status dot + the expanded primary/secondary
+  // source lines. Isolated failure: absence just greys the dots.
+  const { data: ingestionHealth } = useQuery<OutletIngestionResponse>({
+    queryKey: ["/api/team/outlet-registry/ingestion"],
     enabled: open,
   });
 
@@ -1738,7 +1926,7 @@ export function OutletOversightDialog({
                       </div>
                       <div className="space-y-2">
                         {groupedRegistry.news.map((row) => (
-                          <OutletRow key={row.id} row={row} allRows={registry ?? []} />
+                          <OutletRow key={row.id} row={row} allRows={registry ?? []} ingestion={ingestionHealth?.byKey[row.key]} />
                         ))}
                       </div>
                     </section>
@@ -1755,7 +1943,7 @@ export function OutletOversightDialog({
                       </p>
                       <div className="space-y-2">
                         {groupedRegistry.social.map((row) => (
-                          <OutletRow key={row.id} row={row} allRows={registry ?? []} />
+                          <OutletRow key={row.id} row={row} allRows={registry ?? []} ingestion={ingestionHealth?.byKey[row.key]} />
                         ))}
                       </div>
                     </section>

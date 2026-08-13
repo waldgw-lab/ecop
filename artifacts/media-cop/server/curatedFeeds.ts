@@ -246,6 +246,27 @@ const INTERNATIONAL_FEEDS: CuratedFeedConfig[] = [
   // it stays 403 even over Node fetch with a full browser User-Agent (the same
   // path that recovered Arab News), and the only feed host is the CF-fronted
   // /feed/. No reachable alternate. Do not blindly re-add.
+  //
+  // Expansion (2026-08-13) — seven English-language desks added as easy-win
+  // curated-only intake at operator request. ALL probed live from this infra
+  // same day: HTTP 200 + same-day items over the browser-UA fetch the curated
+  // lane uses. Each sourceName matches an Outlet Registry canonical (seeded in
+  // server/outletRegistrySeed.ts) so the contributing lane role resolves.
+  // Reuters and CNN were REQUESTED but NOT added: Reuters retired public RSS
+  // (401/HTML from this egress) and CNN's legacy feed serves recycled 2023
+  // items — both already documented in server/rssFeeds.ts. Do not re-add
+  // without a fresh live probe. LA Times / Euronews carry a heavy domestic /
+  // general-news mix, so expect the relevance gate to screen most items —
+  // low admission there is gate behavior, not a broken feed.
+  { sourceName: "The Independent", url: "https://www.independent.co.uk/news/world/rss" },
+  { sourceName: "Los Angeles Times", url: "https://www.latimes.com/world-nation/rss2.0.xml" },
+  { sourceName: "United Press International", url: "https://rss.upi.com/news/tn_int.rss" },
+  { sourceName: "Euronews", url: "https://www.euronews.com/rss" },
+  { sourceName: "Sky News", url: "https://feeds.skynews.com/feeds/rss/world.xml" },
+  // ANSA — the operator-supplied link (www.ansa.it/english/) is the HTML
+  // homepage; the working English RSS endpoint below was located by probe.
+  { sourceName: "ANSA", url: "https://www.ansa.it/english/english_rss.xml" },
+  { sourceName: "CBC News", url: "https://www.cbc.ca/webfeed/rss/rss-world" },
 ];
 
 // Opinion / partisan B-list (registry role: attach-only). Admissible to the lane

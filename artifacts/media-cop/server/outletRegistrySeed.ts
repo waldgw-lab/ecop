@@ -1691,6 +1691,83 @@ export const OUTLET_SEED: OutletSeed[] = [
     role: "attach-only",
     sourceIdentifier: "social-us-official",
   },
+
+  // ---------------------------------------------------------------------------
+  // Curated-lane RSS expansion (2026-08-13) — seven English-language desks added
+  // as easy-win curated-only intake (server/curatedFeeds.ts). All probed live
+  // from this infra same day: HTTP 200 + same-day items. Trusted news →
+  // contributing. UPI and LA Times are US outlets (news-us-domestic per operator
+  // direction); the rest are news-international.
+  // ---------------------------------------------------------------------------
+  {
+    canonicalName: "The Independent",
+    aliases: ["Independent", "The Independent UK"],
+    domains: ["independent.co.uk"],
+    originCountry: "United Kingdom",
+    originRegion: "Europe",
+    factuality: "high",
+    role: "contributing",
+    sourceIdentifier: "news-international",
+  },
+  {
+    canonicalName: "Los Angeles Times",
+    aliases: ["LA Times", "L.A. Times"],
+    domains: ["latimes.com"],
+    originCountry: "United States",
+    originRegion: "North America",
+    factuality: "high",
+    role: "contributing",
+    sourceIdentifier: "news-us-domestic",
+  },
+  {
+    canonicalName: "United Press International",
+    aliases: ["UPI"],
+    domains: ["upi.com"],
+    originCountry: "United States",
+    originRegion: "North America",
+    factuality: "high",
+    role: "contributing",
+    sourceIdentifier: "news-us-domestic",
+  },
+  {
+    canonicalName: "Euronews",
+    domains: ["euronews.com"],
+    originCountry: "France",
+    originRegion: "Europe",
+    factuality: "high",
+    role: "contributing",
+    sourceIdentifier: "news-international",
+  },
+  {
+    canonicalName: "Sky News",
+    aliases: ["Sky News UK"],
+    domains: ["news.sky.com", "skynews.com"],
+    originCountry: "United Kingdom",
+    originRegion: "Europe",
+    factuality: "high",
+    role: "contributing",
+    sourceIdentifier: "news-international",
+  },
+  {
+    canonicalName: "ANSA",
+    aliases: ["Agenzia Nazionale Stampa Associata", "ANSA English"],
+    domains: ["ansa.it"],
+    originCountry: "Italy",
+    originRegion: "Europe",
+    factuality: "high",
+    role: "contributing",
+    sourceIdentifier: "news-international",
+  },
+  {
+    canonicalName: "CBC News",
+    aliases: ["CBC"],
+    domains: ["cbc.ca"],
+    originCountry: "Canada",
+    originRegion: "North America",
+    factuality: "high",
+    role: "contributing",
+    sourceIdentifier: "news-international",
+  },
 ];
 
 /**

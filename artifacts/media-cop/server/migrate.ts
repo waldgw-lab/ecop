@@ -702,6 +702,7 @@ export async function ensureDatabaseSchema() {
         'michael.f.wolff2.mil@us.navy.mil',
         'emily.a.heddon.civ@mail.mil',
         'joshua.j.pena8.mil@mail.mil',
+        'joel.j.gill.civ@mail.mil',
       ];
       for (const email of teamRevokedEmails) {
         await db.execute(sql`
@@ -716,7 +717,7 @@ export async function ensureDatabaseSchema() {
       // revoke deletes but is filtered against the revoke list so revocation
       // always takes precedence if an email ever appears in both.
       const teamSeedEmails = [
-        'joel.j.gill.civ@mail.mil',
+        'chelsea.hall11@gmail.com',
         'kevin.r.princic.ctr@mail.mil',
         'peter.c.thomas20.ctr@mail.mil',
         'nahla.s.qader.ctr@mail.mil',
@@ -1659,7 +1660,7 @@ export async function ensureDatabaseSchema() {
         'waldgw@gmail.com',
         'joseph.r.holstead.civ@mail.mil',
         'william.j.dixon60.civ@mail.mil',
-        'joel.j.gill.civ@mail.mil',
+        'chelsea.hall11@gmail.com',
       ];
       for (const email of curatedSeedEmails) {
         await db.execute(sql`
@@ -1673,6 +1674,7 @@ export async function ensureDatabaseSchema() {
       // read-only to ad-hoc tooling, so this is the supported removal path).
       const curatedRevokedEmails = [
         '42bummy@gmail.com',
+        'joel.j.gill.civ@mail.mil',
       ];
       for (const email of curatedRevokedEmails) {
         await db.execute(sql`

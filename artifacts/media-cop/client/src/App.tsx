@@ -169,7 +169,7 @@ function App() {
   if (isPrivacyRoute || isTermsRoute) {
     return (
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
+        <ThemeProvider key="main-theme">
           <TooltipProvider>
             <Toaster />
             <Suspense fallback={<PageLoadingFallback />}>
@@ -185,7 +185,7 @@ function App() {
   if (isWarRoute) {
     return (
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
+        <ThemeProvider key="main-theme">
           <TooltipProvider>
             <Toaster />
             <Suspense fallback={<PageLoadingFallback />}>
@@ -204,7 +204,7 @@ function App() {
     else if (location === '/additional-mcops') page = <AdditionalMcops />;
     return (
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
+        <ThemeProvider key="main-theme">
           <TooltipProvider>
             <Toaster />
             <Suspense fallback={<PageLoadingFallback />}>
@@ -246,6 +246,7 @@ function App() {
     return (
       <QueryClientProvider client={queryClient}>
         <ThemeProvider
+          key="curated-theme"
           defaultTheme="dark"
           storageKey={CURATED_THEME_STORAGE_KEY}
           applyToDocument={false}
@@ -271,7 +272,7 @@ function App() {
     const isAdmin = location.endsWith('/admin');
     return (
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
+        <ThemeProvider key="main-theme">
           <TooltipProvider>
             <Toaster />
             <Suspense fallback={<PageLoadingFallback />}>
@@ -296,9 +297,17 @@ function App() {
   }
 
   if (!isAuthenticated) {
+    // Visitors headed to Curated get the curated theme (dark by default, same
+    // storage key) on the login screen so the gate matches the page behind it.
+    // Everyone else keeps the generic provider (light default, `theme` key).
     return (
       <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
+        <ThemeProvider
+          key={isCuratedRoute ? 'curated-theme' : 'main-theme'}
+          {...(isCuratedRoute
+            ? { defaultTheme: 'dark' as const, storageKey: CURATED_THEME_STORAGE_KEY }
+            : {})}
+        >
           <TooltipProvider>
             <Toaster />
             <Login onLoginSuccess={handleLoginSuccess} />
@@ -316,7 +325,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ThemeProvider>
+      <ThemeProvider key="main-theme">
         <TooltipProvider>
           <Toaster />
           <Suspense fallback={<PageLoadingFallback />}>

@@ -737,6 +737,18 @@ function canonicalizeEventVocabulary(lower: string): string {
   return s;
 }
 
+// Conservative singular/plural fold so "drones"/"drone", "strikes"/"strike",
+// "talks"/"talk" count as the SAME token across the recall nets (titles-highly-
+// similar, looksSameEvent, body-aware matching). Precision bars (min shared
+// tokens / overlap ratios) are UNCHANGED — this only stops legitimate same-event
+// pairs from missing them on trivial morphology. Deliberately narrow: only a
+// trailing "s" on tokens of >= 5 chars, and never after "s"/"u"/"i" (keeps
+// "mass", "crisis", "status", "news"(len 4) intact). Not a stemmer.
+function foldPluralToken(w: string): string {
+  if (w.length >= 5 && w.endsWith('s') && !/[sui]s$/.test(w)) return w.slice(0, -1);
+  return w;
+}
+
 // Significant lowercase tokens of a title (>= 3 chars, non-stopword). Used only
 // to decide whether an OVERFLOW node looks like the same event as something
 // already in the payload — a cheap recall gate, never a clustering decision.
@@ -746,7 +758,8 @@ export function significantTitleTokens(title: string | null | undefined): Set<st
     canonicalizeEventVocabulary(title.toLowerCase())
       .replace(/[^a-z0-9\s]+/g, ' ')
       .split(/\s+/)
-      .filter((w) => w.length >= 3 && !NODE_TITLE_STOPWORDS.has(w)),
+      .filter((w) => w.length >= 3 && !NODE_TITLE_STOPWORDS.has(w))
+      .map(foldPluralToken),
   );
 }
 
@@ -769,6 +782,7 @@ export function significantCandidateTokens(
       .replace(/[^a-z0-9\s]+/g, ' ')
       .split(/\s+/)
       .filter(w => w.length >= 3 && !NODE_TITLE_STOPWORDS.has(w))
+      .map(foldPluralToken)
       .slice(0, CANDIDATE_BODY_TOKENS_MAX),
   );
   return new Set([...title, ...body]);

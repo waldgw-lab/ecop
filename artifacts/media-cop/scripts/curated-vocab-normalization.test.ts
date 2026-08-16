@@ -19,7 +19,7 @@
  *
  * Usage:  tsx scripts/curated-vocab-normalization.test.ts
  */
-import { significantTitleTokens, looksSameEvent } from '../server/curatedCluster';
+import { significantTitleTokens, looksSameEvent, titlesHighlySimilar } from '../server/curatedCluster';
 
 let failures = 0;
 function check(name: string, ok: boolean, detail = '') {
@@ -428,9 +428,9 @@ function check(name: string, ok: boolean, detail = '') {
   // Non-impact magnitude words are left as ordinary tokens (no impact token).
   const protest = significantTitleTokens('Thousands protest in Paris over pension reform');
   check('(15) "thousands protest" is left untouched (no displacecount/casualtycount)',
-    protest.has('thousands') && !protest.has('displacecount') && !protest.has('casualtycount'));
+    (protest.has('thousands') || protest.has('thousand')) && !protest.has('displacecount') && !protest.has('casualtycount'));
   const lawmakers = significantTitleTokens('Dozens of lawmakers back the new spending measure');
-  check('(15) "dozens of lawmakers" is left untouched', lawmakers.has('dozens') && !lawmakers.has('casualtycount'));
+  check('(15) "dozens of lawmakers" is left untouched', (lawmakers.has('dozens') || lawmakers.has('dozen')) && !lawmakers.has('casualtycount'));
   const goals = significantTitleTokens('Striker scores twice as United beat rivals');
   check('(15) sports "scores" is left untouched (no casualtycount)', !goals.has('casualtycount'));
 
@@ -451,6 +451,22 @@ function check(name: string, ok: boolean, detail = '') {
   const displaceFrance = significantTitleTokens('Thousands evacuated in France');
   check('(15) word-count casualty + displacement sharing only a location do NOT looksSameEvent',
     looksSameEvent(casualtyFrance, displaceFrance) === false);
+}
+
+// ---------------------------------------------------------------------------
+// (16) Singular/plural fold — morphology must not block titlesHighlySimilar.
+// Pins the foldPluralToken behavior directly: plural/singular variants of the
+// same distinctive tokens count as shared, while pseudo-tokens survive intact.
+// ---------------------------------------------------------------------------
+{
+  const a = significantTitleTokens('Ukrainian drones strike Moscow region overnight');
+  const b = significantTitleTokens('Ukrainian drone strikes hit Moscow region');
+  check('(16) plural/singular variants cross titlesHighlySimilar', titlesHighlySimilar(a, b));
+  const c = significantTitleTokens('Dozens killed as strikes hit the capital');
+  check('(16) casualtycount pseudo-token survives the plural fold', c.has('casualtycount'));
+  const d = significantTitleTokens('Mass crisis talks over status of news outlets');
+  check('(16) ss/us/is endings and short words are never folded',
+    d.has('mass') && d.has('crisis') && d.has('status') && d.has('talk'));
 }
 
 if (failures > 0) {

@@ -296,8 +296,8 @@ export interface ScrapeResult {
   addedCount: number;    // New posts added to database
 }
 
-export async function updateDOWResponsePosts(storage: any): Promise<ScrapeResult> {
-  return withBrowserLock('updateDOWResponsePosts', () => updateDOWResponsePostsInner(storage));
+export async function updateDOWResponsePosts(storage: any, onLockAcquire?: () => void): Promise<ScrapeResult> {
+  return withBrowserLock('updateDOWResponsePosts', () => updateDOWResponsePostsInner(storage), { onAcquire: onLockAcquire });
 }
 async function updateDOWResponsePostsInner(storage: any): Promise<ScrapeResult> {
   let posts: InsertDOWResponsePost[] = [];

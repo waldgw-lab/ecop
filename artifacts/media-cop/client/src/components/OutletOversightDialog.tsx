@@ -413,6 +413,7 @@ interface PipelineVerdict {
   evidence: string[];
   operatorAlert?: {
     kind: "warning";
+    label?: string;
     message: string;
   };
   lastSuccessAt: string | null;
@@ -2252,7 +2253,7 @@ export function OutletOversightDialog({
                                       data-testid={`badge-pipeline-alert-${v.key}`}
                                     >
                                       <AlertTriangle className="w-3 h-3" />
-                                      Auth cookies expired
+                                      {v.operatorAlert.label ?? "Auth cookies expired"}
                                     </Badge>
                                   )}
                                 </div>

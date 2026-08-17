@@ -349,8 +349,8 @@ export interface ScrapeResult {
   addedCount: number;
 }
 
-export async function updateSentDefenderPosts(storage: any): Promise<ScrapeResult> {
-  return withBrowserLock('updateSentDefenderPosts', () => updateSentDefenderPostsInner(storage));
+export async function updateSentDefenderPosts(storage: any, onLockAcquire?: () => void): Promise<ScrapeResult> {
+  return withBrowserLock('updateSentDefenderPosts', () => updateSentDefenderPostsInner(storage), { onAcquire: onLockAcquire });
 }
 async function updateSentDefenderPostsInner(storage: any): Promise<ScrapeResult> {
   let posts: InsertSentDefenderPost[] = [];

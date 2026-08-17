@@ -79,9 +79,33 @@ export function getXRelayHeartbeat(): number {
   return lastXRelayReceivedAt;
 }
 
+// Exposed for the X-lane stall watchdog (Task #34) so it can compute when
+// PRIMARY mode began (heartbeat + this threshold) without duplicating the value.
+export function getXRelayStaleThresholdMs(): number {
+  return X_RELAY_STALE_THRESHOLD;
+}
+
 export function isXRelayHealthy(): boolean {
   if (lastXRelayReceivedAt === 0) return false;
   return (Date.now() - lastXRelayReceivedAt) < X_RELAY_STALE_THRESHOLD;
+}
+
+// Fallback PRIMARY-mode baseline for the X-lane stall watchdog (Task #34).
+// When the relay has NEVER heartbeated in this process (heartbeat = 0), there
+// is no "heartbeat + stale threshold" moment to anchor lane expectations to —
+// yet the Playwright lanes ARE expected to run. Without a baseline, a lane
+// with a null stamp could never be flagged overdue (a lane that never starts
+// is exactly a silent stall). We record the first moment the relay was
+// observed stale and use that as the PRIMARY-mode start; it resets whenever
+// the relay is healthy so a later transition gets a fresh grace window.
+let firstStaleObservedAtMs: number | null = null;
+export function getXRelayFallbackPrimarySinceMs(): number | null {
+  if (isXRelayHealthy()) {
+    firstStaleObservedAtMs = null;
+    return null;
+  }
+  if (firstStaleObservedAtMs === null) firstStaleObservedAtMs = Date.now();
+  return firstStaleObservedAtMs;
 }
 
 export function getXRelayMode(): 'WATCHDOG' | 'PRIMARY' {

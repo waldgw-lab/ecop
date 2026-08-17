@@ -441,8 +441,8 @@ export interface ScrapeResult {
   addedCount: number;    // New posts added to database
 }
 
-export async function updateXPosts(storage: any, deadlineMs?: number): Promise<ScrapeResult> {
-  return withBrowserLock('updateXPosts', () => updateXPostsInner(storage, deadlineMs));
+export async function updateXPosts(storage: any, deadlineMs?: number, onLockAcquire?: () => void): Promise<ScrapeResult> {
+  return withBrowserLock('updateXPosts', () => updateXPostsInner(storage, deadlineMs), { onAcquire: onLockAcquire });
 }
 async function updateXPostsInner(storage: any, deadlineMs?: number): Promise<ScrapeResult> {
   return withXScrapeLock('updateXPosts', async () => {

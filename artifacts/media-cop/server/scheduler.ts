@@ -9,7 +9,9 @@ import { updateRapidResponsePosts } from './rapidResponseScraper';
 import { updateDOWResponsePosts } from './dowResponseScraper';
 import { updateSentDefenderPosts } from './sentDefenderScraper';
 import { updateOsintPosts, updateJournalistPosts } from './osintScraper';
-import { getXRelayHeartbeat, isXRelayHealthy } from './xRelayService';
+import { getXRelayHeartbeat, isXRelayHealthy, getXRelayStaleThresholdMs, getXRelayFallbackPrimarySinceMs } from './xRelayService';
+import { getBrowserLockHolder } from './browserLock';
+import { computeXLaneStallReport, isStallAlert, type LaneStallReport } from './xLaneStallWatchdog';
 import { updateFirstAlerts } from './firstAlertScraper';
 import { clusterTopStories } from './headlineCluster';
 import { clusterAllActiveTopics } from './teamSubmissionCluster';
@@ -41,6 +43,24 @@ let lastRunEndedAt: Date | null = null;
 // Tracks the last time the watchdog force-cleared the guard so runFullScrape
 // can log a recovery notice before it stamps scrapeStatus:'running'.
 let lastWatchdogClearAt: Date | null = null;
+
+// Cooperative-cancellation generation (Task #34). Promise.race can't cancel a
+// timed-out doScrape() — it kept running as a background "zombie", acquiring
+// the process-wide browser lock lane-by-lane (plus 45s cooldowns) for many more
+// minutes. Every later cycle's X lanes and the OSINT cron queued behind that
+// lock, burned their own 14-min budgets waiting, and timed out before stamping
+// — the Aug 17 2026 ~50-min X blackout. Each run captures the current
+// generation at start; the timeout catch and both watchdog force-clear paths
+// bump it, and the body checks at every lane boundary/cooldown so a superseded
+// run stops BEFORE taking the browser lock again instead of draining all lanes.
+let scrapeGeneration = 0;
+
+class ScrapeCancelledError extends Error {
+  constructor(at: string) {
+    super(`Scrape run cancelled (superseded by timeout/watchdog) before ${at}`);
+    this.name = 'ScrapeCancelledError';
+  }
+}
 
 // Self-healing watchdog state
 let lastAutoHealTime: Date | null = null;
@@ -122,6 +142,26 @@ function forceKillAllBrowsers(): void {
   }
 }
 
+// Centralized holder-aware force-kill policy (Task #34). forceKillAllBrowsers
+// pkills EVERY headless Chromium on the box — including the live browser of a
+// sibling scraper family (OSINT/Journalist/Influencer) that happens to hold the
+// process-wide browser lock right now. Killing an innocent holder mid-scrape
+// causes empty results and retry churn (observed in the Aug 17 2026 stall), so
+// every recovery path must consult the holder first: kill only when the lock is
+// free or held by one of the main chain's own lanes (the wedged work we are
+// trying to contain). Returns true when browsers were killed.
+const CHAIN_OWN_LANES = new Set(['updateXPosts', 'updateRapidResponsePosts', 'updateDOWResponsePosts', 'updateSentDefenderPosts']);
+function forceKillBrowsersRespectingHolder(context: string): boolean {
+  const holder = getBrowserLockHolder();
+  if (!holder || CHAIN_OWN_LANES.has(holder.label)) {
+    console.warn(`[Scheduler] ${context} — force-killing browsers${holder ? ` (lock held by own lane ${holder.label})` : ' (browser lock free)'}`);
+    forceKillAllBrowsers();
+    return true;
+  }
+  console.warn(`[Scheduler] ${context} — skipping browser force-kill (lock held by sibling ${holder.label} for ${Math.round(holder.heldForMs / 1000)}s); relying on cooperative cancellation instead`);
+  return false;
+}
+
 // Race a promise against a hard timeout. Promise.race semantics: the underlying
 // work is NOT cancelled (JS can't cancel an in-flight await) — it settles in the
 // background; this only releases OUR await so the caller can stamp status and
@@ -147,6 +187,9 @@ async function runFullScrape(source: string): Promise<boolean> {
     const elapsedMs = Date.now() - lastRunStartedAt.getTime();
     if (elapsedMs > MAX_SCRAPE_DURATION_MS) {
       console.warn(`⚠️ WATCHDOG: Previous scrape has been running for ${Math.round(elapsedMs / 1000 / 60)} minutes - force-clearing guard`);
+      // Revoke the wedged run's authority so it stops at its next lane
+      // boundary instead of continuing to hold/queue the browser lock (Task #34).
+      scrapeGeneration++;
       isScrapingInProgress = false;
       consecutiveSkips = 0;
       lastWatchdogClearAt = new Date();
@@ -172,6 +215,15 @@ async function runFullScrape(source: string): Promise<boolean> {
   consecutiveSkips = 0;
   lastRunStartedAt = new Date();
 
+  // Cooperative-cancellation seam (Task #34): capture this run's generation.
+  // If the timeout catch or a watchdog force-clear bumps scrapeGeneration, this
+  // run is superseded and must stop at the next lane boundary instead of
+  // continuing as a lock-hogging zombie.
+  const myGeneration = ++scrapeGeneration;
+  const checkNotCancelled = (at: string): void => {
+    if (myGeneration !== scrapeGeneration) throw new ScrapeCancelledError(at);
+  };
+
   // The entire scrape chain runs inside this inner function so it can be raced
   // against the hard SCRAPE_BODY_TIMEOUT_MS below. A normal pass settles well
   // within budget; a hung await (stalled scraper, AI rate-limit storm, slow DB
@@ -195,6 +247,8 @@ async function runFullScrape(source: string): Promise<boolean> {
         return;
       }
       await new Promise(resolve => setTimeout(resolve, ms));
+      // A cancelled run must not proceed to the next lane after sleeping.
+      checkNotCancelled('post-cooldown lane start');
     };
     
     // Belt-and-suspenders: if the watchdog force-cleared the guard right before
@@ -217,6 +271,7 @@ async function runFullScrape(source: string): Promise<boolean> {
     let newCount = 0;
     
     // Also scrape Truth Social posts
+    checkNotCancelled('Truth Social lane');
     console.log('Scraping Truth Social posts...');
     const truthSocialCount = await scrapeAllTruthSocial(storage);
     console.log(`Truth Social scrape complete: ${truthSocialCount} new posts added`);
@@ -257,33 +312,37 @@ async function runFullScrape(source: string): Promise<boolean> {
         // min with their 60s zero-post retry cooldowns) always ran on an already
         // spent budget and pushed the body past the 14-min hard bound anyway.
         // Accounts not reached this cycle are covered by the relay or next cycle.
+        checkNotCancelled('@SecWar lane');
         console.log('Scraping @SecWar...');
         const xLaneDeadline = Math.min(backfillDeadline, Date.now() + 5 * 60 * 1000);
-        xResult = await updateXPosts(storage, xLaneDeadline);
+        xResult = await updateXPosts(storage, xLaneDeadline, () => checkNotCancelled('@SecWar lock acquisition'));
         console.log(`@SecWar scrape complete: ${xResult.addedCount} new posts added (${xResult.scrapedCount} scraped)`);
 
         console.log('Waiting 45 seconds before next X scraper to allow resource cleanup...');
         await backfillCooldown(45000);
 
         // @Rapidresponse47
+        checkNotCancelled('@Rapidresponse47 lane');
         console.log('Scraping @Rapidresponse47...');
-        rapidResponseResult = await updateRapidResponsePosts(storage);
+        rapidResponseResult = await updateRapidResponsePosts(storage, () => checkNotCancelled('@Rapidresponse47 lock acquisition'));
         console.log(`@Rapidresponse47 scrape complete: ${rapidResponseResult.addedCount} new posts added (${rapidResponseResult.scrapedCount} scraped)`);
 
         console.log('Waiting 45 seconds before next X scraper to allow resource cleanup...');
         await backfillCooldown(45000);
 
         // @DOWResponse
+        checkNotCancelled('@DOWResponse lane');
         console.log('Scraping @DOWResponse...');
-        dowResponseResult = await updateDOWResponsePosts(storage);
+        dowResponseResult = await updateDOWResponsePosts(storage, () => checkNotCancelled('@DOWResponse lock acquisition'));
         console.log(`@DOWResponse scrape complete: ${dowResponseResult.addedCount} new posts added (${dowResponseResult.scrapedCount} scraped)`);
 
         console.log('Waiting 45 seconds before next X scraper to allow resource cleanup...');
         await backfillCooldown(45000);
 
         // @sentdefender
+        checkNotCancelled('@sentdefender lane');
         console.log('Scraping @sentdefender...');
-        sentDefenderResult = await updateSentDefenderPosts(storage);
+        sentDefenderResult = await updateSentDefenderPosts(storage, () => checkNotCancelled('@sentdefender lock acquisition'));
         console.log(`@sentdefender scrape complete: ${sentDefenderResult.addedCount} new posts added (${sentDefenderResult.scrapedCount} scraped)`);
       }
     }
@@ -320,6 +379,7 @@ async function runFullScrape(source: string): Promise<boolean> {
     // on its own dedicated cron (see "Main-feed headline clustering" below), fully
     // decoupled from the scrape lock so a wedged scrape can no longer starve it.
 
+    checkNotCancelled('team submission clustering');
     const { isTopicClusteringEnabled } = await import('./clusterConfig');
     if (isTopicClusteringEnabled()) {
       console.log('Running team submission clustering...');
@@ -371,6 +431,9 @@ async function runFullScrape(source: string): Promise<boolean> {
     // de-collided cron (see "Custom-MCOP scoring" schedule below) to cut its AI
     // load and keep it off the heaviest AI minute.
     
+    // A superseded run must never write the batch lane stamps below — its
+    // results are from a cancelled cycle and stamping would mask a real stall.
+    checkNotCancelled('final metadata stamp');
     // Get current metadata to track consecutive empty results
     const currentMetadata = await storage.getScrapeMetadata();
     
@@ -460,16 +523,29 @@ async function runFullScrape(source: string): Promise<boolean> {
     // stamps a truthful status + advances the timestamps, then the finally
     // releases the guard — so a wedged run can no longer stay stuck on "running"
     // past the watchdog or chronically trigger "another scrape active" skips.
-    await withScrapeTimeout(doScrape(), SCRAPE_BODY_TIMEOUT_MS, 'runFullScrape');
+    const body = doScrape();
+    // The raced body can outlive the timeout below; when cancellation stops it
+    // at the next lane boundary, log it distinctly instead of surfacing an
+    // unhandled-looking error (the race already rejected for the caller).
+    body.catch((e) => {
+      if (e instanceof ScrapeCancelledError) {
+        console.warn(`[Scheduler] 🛑 Background scrape run stopped cooperatively: ${e.message}`);
+      }
+    });
+    await withScrapeTimeout(body, SCRAPE_BODY_TIMEOUT_MS, 'runFullScrape');
   } catch (error) {
     console.error('Error in scrape:', error);
     timedOut = error instanceof Error && error.name === 'ScrapeTimeoutError';
     if (timedOut) {
-      // The hung doScrape() is still executing. Force-kill any Chromium it's
-      // holding so its background browser work can't keep contending for memory
-      // after we release the guard (it can't be cooperatively cancelled).
-      console.warn('[Scheduler] runFullScrape exceeded its hard bound — force-killing browsers to contain the background run');
-      forceKillAllBrowsers();
+      // Revoke the zombie's authority FIRST: bumping the generation makes the
+      // still-running doScrape() bail at its next lane boundary/cooldown, so it
+      // can no longer keep acquiring the process-wide browser lock and starve
+      // the next cycle's lanes + the OSINT cron (the Aug 17 2026 stall).
+      scrapeGeneration++;
+      // Holder-aware kill: never pkill a sibling family's live browser; the
+      // generation bump above already contains our zombie (it also aborts at
+      // browser-lock acquisition, so a queued cancelled lane cannot run).
+      forceKillBrowsersRespectingHolder('runFullScrape exceeded its hard bound');
     }
     // Resilient stamp: advance last_scrape_time / headlines_last_scrape_time and
     // reset scrape_status even when a sub-step errors OR the whole run times out,
@@ -509,8 +585,11 @@ async function runSelfHealingCheck(): Promise<void> {
     if (lastRunStartedAt) {
       const elapsedMs = Date.now() - lastRunStartedAt.getTime();
       if (elapsedMs > MAX_SCRAPE_DURATION_MS) {
-        console.warn(`\n⚠️ WATCHDOG: Scrape has been running for ${Math.round(elapsedMs / 1000 / 60)} minutes - force-clearing guard and killing browsers`);
-        forceKillAllBrowsers();
+        console.warn(`\n⚠️ WATCHDOG: Scrape has been running for ${Math.round(elapsedMs / 1000 / 60)} minutes - force-clearing guard`);
+        // Cancel the wedged run cooperatively, then only kill browsers if a
+        // sibling family doesn't currently hold the browser lock (Task #34).
+        scrapeGeneration++;
+        forceKillBrowsersRespectingHolder('Self-heal watchdog force-clear');
         isScrapingInProgress = false;
         consecutiveSkips = 0;
         lastWatchdogClearAt = new Date();
@@ -664,8 +743,8 @@ async function runSelfHealingCheck(): Promise<void> {
       
       console.log('🔧 AUTO-HEAL: Initiating recovery sequence...');
       
-      // Step 1: Force kill all browsers (clears any stuck sessions)
-      forceKillAllBrowsers();
+      // Step 1: Kill stuck browsers — but never a sibling family's live one.
+      forceKillBrowsersRespectingHolder('Auto-heal staleness/blocking recovery');
       
       // Step 2: Reset the scraping guard
       if (!isScrapingInProgress) {
@@ -717,8 +796,8 @@ async function runSelfHealingCheck(): Promise<void> {
 
       console.log('🔧 AUTO-HEAL: Initiating Influencer X recovery sequence...');
 
-      // Step 1: Force kill all browsers (clears any stuck Playwright sessions)
-      forceKillAllBrowsers();
+      // Step 1: Kill stuck browsers — but never a sibling family's live one.
+      forceKillBrowsersRespectingHolder('Auto-heal Influencer X recovery');
 
       // Step 2: Wait longer if blocked so X rate limits can cool down
       const influencerWaitMs = influencerXBlocked ? 10000 : 2000;
@@ -1367,6 +1446,37 @@ export function startScheduledScraping() {
     }
   };
   cron.schedule('25,55 * * * *', () => runOsintScrape('OSINT X scrape'));
+
+  // X-lane stall watchdog (Task #34) — a lightweight, read-only check every
+  // 5 min that compares each X lane's scrape-metadata stamp against its
+  // expected cadence and logs a DISTINCT, greppable line the moment any lane
+  // goes overdue by more than one cron cycle, classifying the failure mode
+  // ("scheduler not ticking" vs "X lanes stalled" vs "scrapes running but
+  // empty"). The same pure classifier feeds the Coverage/oversight pipeline
+  // panel via pipelineHealth.ts, so operators see the alert within one cycle
+  // instead of hours later via a stale Coverage banner. Minute class :03/:08
+  // etc. — a single DB read, safe to overlap anything.
+  cron.schedule('3,8,13,18,23,28,33,38,43,48,53,58 * * * *', async () => {
+    try {
+      const meta = await storage.getScrapeMetadata();
+      const report = computeXLaneStallReport(meta ?? undefined, {
+        nowMs: Date.now(),
+        relayHealthy: isXRelayHealthy(),
+        relayHeartbeatMs: getXRelayHeartbeat(),
+        relayStaleThresholdMs: getXRelayStaleThresholdMs(),
+        fallbackPrimarySinceMs: getXRelayFallbackPrimarySinceMs(),
+      });
+      lastLaneStallReport = report;
+      if (isStallAlert(report)) {
+        console.warn(`[X-Lane-Watchdog] 🚨 ${report.mode.toUpperCase()}: ${report.summary}`);
+        for (const lane of report.lanes.filter((l) => l.overdue)) {
+          console.warn(`[X-Lane-Watchdog]   ↳ ${lane.label} last stamped ${lane.lastStampAt ?? 'never'} (${lane.effectiveAgeMs !== null ? Math.round(lane.effectiveAgeMs / 60000) : '?'}m overdue vs ${Math.round(lane.cadenceMs / 60000)}m cadence)`);
+        }
+      }
+    } catch (error) {
+      console.error('[X-Lane-Watchdog] check failed:', error);
+    }
+  });
 
   // Run an initial OSINT scrape after startup so the OSINT X column fills
   // without waiting up to 30 min for the next cron tick. Deliberately delayed
@@ -2114,6 +2224,12 @@ export function startScheduledScraping() {
   console.log('Orphaned object-storage image sweep scheduled (daily at 04:30, deletion in deployment only)');
 }
 
+// Last X-lane stall watchdog report (Task #34), for status/debug surfaces.
+let lastLaneStallReport: LaneStallReport | null = null;
+export function getLastLaneStallReport(): LaneStallReport | null {
+  return lastLaneStallReport;
+}
+
 // Export status for debugging/monitoring
 export function getScraperStatus() {
   return {
@@ -2142,4 +2258,13 @@ export const __schedulerWatchdogTestHooks = {
   },
   runSelfHealingCheck,
   MAX_SCRAPE_DURATION_MS,
+  // Task #34 cancellation seam: lets the wedge-recovery gate assert that the
+  // watchdog paths revoke a zombie run's generation (the mechanism that stops
+  // a timed-out doScrape from continuing to take the browser lock).
+  getScrapeGeneration(): number {
+    return scrapeGeneration;
+  },
+  // Exposes the centralized holder-aware kill policy so the gate can prove a
+  // sibling-held browser lock suppresses the pkill.
+  forceKillBrowsersRespectingHolder,
 };

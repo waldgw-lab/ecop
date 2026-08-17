@@ -14,7 +14,8 @@ import {
   type ScrapeMetadata,
 } from "@shared/schema";
 import { getRelayHeartbeat, isRelayHealthy } from "./truthSocialService";
-import { getXRelayHeartbeat, isXRelayHealthy } from "./xRelayService";
+import { getXRelayHeartbeat, isXRelayHealthy, getXRelayStaleThresholdMs, getXRelayFallbackPrimarySinceMs } from "./xRelayService";
+import { computeXLaneStallReport, isStallAlert } from "./xLaneStallWatchdog";
 import { getXCookieExpiredFlag } from "./xScraper";
 
 // ============================================================================
@@ -58,6 +59,9 @@ export interface PipelineVerdict {
   // supporting evidence is collapsed.
   operatorAlert?: {
     kind: "warning";
+    // Short badge label shown next to the status badge (falls back to a
+    // generic label in older clients).
+    label?: string;
     message: string;
   };
   // Best-known last success time across the corroborating signals (ISO).
@@ -280,6 +284,18 @@ async function xRelayVerdict(meta?: ScrapeMetadata): Promise<PipelineVerdict> {
   ] as const;
   const blocking = emptyCounters.filter(([, n]) => (n as number) >= 2);
 
+  // Per-lane stall watchdog (Task #34) — classifies "scheduler not ticking" vs
+  // "X lanes stalled behind a wedged lock" vs "scrapes running but empty",
+  // gated on relay health (lanes intentionally idle in WATCHDOG mode).
+  const stallReport = computeXLaneStallReport(meta, {
+    nowMs: Date.now(),
+    relayHealthy,
+    relayHeartbeatMs: heartbeat,
+    relayStaleThresholdMs: getXRelayStaleThresholdMs(),
+    fallbackPrimarySinceMs: getXRelayFallbackPrimarySinceMs(),
+  });
+  const stallAlert = isStallAlert(stallReport);
+
   const xCookiesExpired = getXCookieExpiredFlag();
   const evidence: string[] = [];
   evidence.push(`Relay heartbeat: ${fmtAge(hbAge)} (${relayHealthy ? "WATCHDOG mode — relay healthy, X Playwright scrapers skipped" : "PRIMARY mode — relay stale/absent, scrapers covering"}).`);
@@ -290,6 +306,12 @@ async function xRelayVerdict(meta?: ScrapeMetadata): Promise<PipelineVerdict> {
   }
   if (blocking.length > 0) {
     evidence.push(`Suspected blocking (≥2 consecutive empty scrapes): ${blocking.map(([n, c]) => `${n} (${c})`).join(", ")}.`);
+  }
+  if (stallAlert) {
+    evidence.push(`🚨 X-lane stall watchdog [${stallReport.mode}]: ${stallReport.summary}`);
+    for (const lane of stallReport.lanes.filter((l) => l.overdue)) {
+      evidence.push(`  ↳ ${lane.label}: last stamp ${lane.lastStampAt ?? "never"} (cadence ${Math.round(lane.cadenceMs / MINUTE)}m).`);
+    }
   }
 
   const scraperFresh = scraperAge !== null && scraperAge < 25 * MINUTE;
@@ -332,6 +354,13 @@ async function xRelayVerdict(meta?: ScrapeMetadata): Promise<PipelineVerdict> {
     summary = `Relay stale (${fmtAge(hbAge)}) and scraper fallback overdue (${fmtAge(scraperAge)}); no posts in 3h.`;
   }
 
+  // Lane-stall escalation (Task #34): a positive stall classification overrides
+  // the softer heuristics above — operators must see it within one cycle.
+  if (stallAlert) {
+    status = dataFlowing && stallReport.mode === "scrapes-empty" ? "degraded" : "broken";
+    summary = stallReport.summary;
+  }
+
   return {
     key: "x-twitter-relay",
     name: "X / Twitter relay",
@@ -343,9 +372,19 @@ async function xRelayVerdict(meta?: ScrapeMetadata): Promise<PipelineVerdict> {
     runtimeSignal: `heartbeat ${fmtAge(hbAge)}${relayHealthy ? " (healthy)" : " (stale)"}, scraper ${fmtAge(scraperAge)}${!relayHealthy && blocking.length ? `, ${blocking.length} lane(s) blocking` : ""}`,
     tableSignal: `newest post ${fmtAge(tableAge)}, ${recentTotal}/3h`,
     evidence,
-    operatorAlert: xCookiesExpired
+    operatorAlert: stallAlert
       ? {
           kind: "warning",
+          label:
+            stallReport.mode === "scheduler-stalled" ? "Scheduler not ticking"
+            : stallReport.mode === "lanes-stalled" ? "X lanes stalled"
+            : "Scrapes returning nothing",
+          message: stallReport.summary,
+        }
+      : xCookiesExpired
+      ? {
+          kind: "warning",
+          label: "Auth cookies expired",
           message: "X auth cookies expired. Refresh X_AUTH_TOKEN and X_CT0 to restore scraper fallback coverage.",
         }
       : undefined,

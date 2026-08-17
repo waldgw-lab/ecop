@@ -94,6 +94,11 @@ export interface AttachCandidate {
   bodyTokens?: Set<string>; // significantCandidateTokens — title+body union (Task #747)
   publishedAt: Date | null;
   category: string | null; // classification overlay category, else item category
+  // Controlled-vocabulary primary_topic from the classification overlay (e.g.
+  // "Force Posture & Deployments"), when stored. Drives the related-topic
+  // compatibility carve-out of the category veto; null/undefined falls back to
+  // the free-form category label check.
+  primaryTopic?: string | null;
 }
 
 /** One contributing member of a formed cluster, reduced to match inputs. */
@@ -108,6 +113,10 @@ export interface AttachClusterInfo {
   repTokens: Set<string>;
   repPublishedAt: Date | null;
   category: string | null;
+  // Dominant KNOWN controlled primary_topic among members (resolved from the
+  // classification overlay by URL), else null. Used ONLY by the related-topic
+  // compatibility carve-out; a null never vetoes and never widens.
+  primaryTopic: string | null;
   contributing: AttachClusterMember[];
   contributingCount: number;
 }
@@ -122,6 +131,101 @@ function isKnownCategory(c: string | null | undefined): boolean {
   return v !== '' && v !== 'general' && v !== 'other' && v !== 'other / emerging';
 }
 
+// --- Related-category compatibility (decision-execution split fix) -----------
+// Sharper taxonomy labels now put ONE concrete event's coverage under different
+// but closely related labels: a drills-downsizing ORDER can land under "Defense
+// Policy" or "Diplomacy" while the drills' on-ground EXECUTION lands under
+// "Force Posture" or "Military Ops". The hard equality veto then blocks the
+// deterministic repair nets (this bridge + the read-only radar classify) even
+// when token-overlap evidence is overwhelming, so a same-event card sits split
+// until an editor merges by hand.
+//
+// Fix: the compatibility decision keys on the CONTROLLED primary_topic (the
+// classification overlay's controlled-vocabulary field), NOT the free-form
+// category text — a SMALL, EXPLICIT set of related controlled topics is
+// treated as mutually compatible, so the veto is skipped for such pairs. The
+// existing high-precision token gates (looksSameEvent vs the representative OR
+// >= 2 distinct contributing members, inside the same-event window, plus the
+// exactly-one-cluster ambiguity fail-close) remain the ONLY way the item can
+// attach. Nothing about those gates, the unknown/generic handling, or the
+// budgets changes. A topic pair outside this set keeps today's hard
+// fail-closed veto, so genuinely different-topic stories still never attach.
+//
+// Legacy fallback: rows written before primary_topic was stored (or whose
+// classification never resolved) carry only the free-form category phrase. For
+// those — and ONLY when a controlled topic is missing on either side — the
+// same four families are recognized by explicit label terms in the free-form
+// category text. A row with neither signal keeps the hard veto (fail closed).
+const RELATED_PRIMARY_TOPICS: ReadonlySet<string> = new Set([
+  'force posture & deployments',
+  'military operations & armed conflict',
+  'defense policy & military readiness',
+  'foreign policy & diplomacy',
+  // Short display labels, accepted defensively in case a stored row carries
+  // the short form rather than the full controlled topic.
+  'force posture',
+  'military ops',
+  'defense policy',
+  'diplomacy',
+]);
+
+/** True when a stored controlled primary_topic is inside the related set. */
+export function isRelatedPrimaryTopic(topic: string | null | undefined): boolean {
+  if (!topic) return false;
+  return RELATED_PRIMARY_TOPICS.has(topic.trim().toLowerCase());
+}
+
+// Legacy free-form fallback (see block comment above) — explicit label terms
+// only, so a generic word can never sweep an unrelated category into the set.
+const RELATED_CATEGORY_FAMILIES: ReadonlyArray<{ family: string; re: RegExp }> = [
+  { family: 'force-posture', re: /\bforce posture\b|\bdeployments?\b|\bmilitary (?:drills?|exercises?)\b|\bjoint (?:drills?|exercises?)\b/ },
+  { family: 'military-ops', re: /\bmilitary op(?:eration)?s?\b|\barmed conflict\b/ },
+  { family: 'defense-policy', re: /\bdefen[cs]e policy\b|\bmilitary readiness\b/ },
+  { family: 'diplomacy', re: /\bdiplomacy\b|\bforeign policy\b/ },
+];
+
+/** Family id when a FREE-FORM category label carries an explicit related-family term, else null. */
+export function relatedCategoryFamily(category: string | null | undefined): string | null {
+  if (!category) return null;
+  const c = category.trim().toLowerCase();
+  if (!c) return null;
+  for (const f of RELATED_CATEGORY_FAMILIES) {
+    if (f.re.test(c)) return f.family;
+  }
+  return null;
+}
+
+/**
+ * True when the candidate/cluster classification pair should NOT veto a token
+ * match:
+ *   - either free-form category unknown/generic       -> compatible (existing behavior);
+ *   - free-form categories equal                      -> compatible (existing behavior);
+ *   - BOTH controlled primary_topics in the related set -> compatible (new carve-out);
+ *   - controlled topic missing on either side           -> legacy fallback: BOTH
+ *     free-form categories carry an explicit related-family term;
+ *   - anything else                                     -> veto (fail closed, unchanged).
+ * Pure + exported for the regression test.
+ */
+export function categoriesCompatible(
+  cand: { category: string | null | undefined; primaryTopic?: string | null },
+  cluster: { category: string | null | undefined; primaryTopic?: string | null },
+): boolean {
+  if (!isKnownCategory(cand.category) || !isKnownCategory(cluster.category)) return true;
+  const ka = cand.category!.trim().toLowerCase();
+  const kb = cluster.category!.trim().toLowerCase();
+  if (ka === kb) return true;
+  const ta = cand.primaryTopic ?? null;
+  const tb = cluster.primaryTopic ?? null;
+  if (ta && tb) {
+    // Both sides carry a controlled topic — it is authoritative. Compatible
+    // only when BOTH are inside the explicit related set (same-topic pairs
+    // outside the set keep today's category-equality veto semantics).
+    return isRelatedPrimaryTopic(ta) && isRelatedPrimaryTopic(tb);
+  }
+  // Legacy fallback for rows without a stored controlled topic.
+  return relatedCategoryFamily(ka) !== null && relatedCategoryFamily(kb) !== null;
+}
+
 /** Returns the only widened target, otherwise null. This preserves ambiguity. */
 export function selectManualLinkWidenedClusterId(
   cand: AttachCandidate,
@@ -133,8 +237,7 @@ export function selectManualLinkWidenedClusterId(
   const hits = new Set<string>();
   for (const [clusterId, members] of widened) {
     const cluster = eligible.get(clusterId);
-    if (!cluster || (isKnownCategory(cand.category) && isKnownCategory(cluster.category) &&
-      cand.category!.trim().toLowerCase() !== cluster.category!.trim().toLowerCase())) continue;
+    if (!cluster || !categoriesCompatible(cand, cluster)) continue;
     const candidateSets = [cand.tokens, ...(cand.bodyTokens && cand.bodyTokens.size > cand.tokens.size ? [cand.bodyTokens] : [])];
     if (candidateSets.some(tokens => members.some(m => withinSameEventWindow(cand.publishedAt, m.publishedAt) && looksSameEvent(tokens, m.tokens)))) hits.add(clusterId);
   }
@@ -157,12 +260,10 @@ export function selectAttachClusterId(
   const matches: string[] = [];
   for (const k of clusters) {
     if (k.contributingCount < MIN_CONTRIBUTING_PUBLISHERS) continue;
-    // Category veto — both known and different => not the same story.
-    if (
-      isKnownCategory(cand.category) &&
-      isKnownCategory(k.category) &&
-      cand.category!.trim().toLowerCase() !== k.category!.trim().toLowerCase()
-    ) {
+    // Category veto — both known and different => not the same story, UNLESS
+    // both controlled topics sit in the explicit related set (categoriesCompatible);
+    // the token/time gates below still fully decide such a match.
+    if (!categoriesCompatible(cand, k)) {
       continue;
     }
     let matched = false;
@@ -252,11 +353,7 @@ export function classifyAttachCandidate(
   const matches: string[] = [];
   for (const k of clusters) {
     if (k.contributingCount < MIN_CONTRIBUTING_PUBLISHERS) continue;
-    if (
-      isKnownCategory(cand.category) &&
-      isKnownCategory(k.category) &&
-      cand.category!.trim().toLowerCase() !== k.category!.trim().toLowerCase()
-    ) {
+    if (!categoriesCompatible(cand, k)) {
       continue;
     }
     let matched = false;
@@ -312,7 +409,14 @@ export function classifyAttachCandidate(
  * an item can only ever fold into an already-formed multi-source story.
  */
 export function buildAttachClusters(
-  members: Array<Pick<CuratedClusterMember, 'clusterId' | 'behaviorClass' | 'title' | 'category' | 'publishedAt' | 'isRepresentative'>>,
+  members: Array<
+    Pick<CuratedClusterMember, 'clusterId' | 'behaviorClass' | 'title' | 'category' | 'publishedAt' | 'isRepresentative'> &
+    { url?: string | null }
+  >,
+  // Controlled primary_topic per member URL, resolved from the classification
+  // overlay by the caller. Optional: when absent (legacy callers/tests) the
+  // cluster carries primaryTopic null and the veto uses the legacy fallback.
+  topicByUrl?: Map<string, string | null>,
 ): AttachClusterInfo[] {
   const byId = new Map<string, typeof members>();
   for (const m of members) {
@@ -341,11 +445,32 @@ export function buildAttachClusters(
         category = k;
       }
     }
+    // Dominant KNOWN controlled primary_topic among members (overlay by URL),
+    // else null — a missing topic never vetoes and never widens.
+    let primaryTopic: string | null = null;
+    if (topicByUrl) {
+      const topicCounts = new Map<string, number>();
+      for (const m of ms) {
+        const t = m.url ? topicByUrl.get(m.url) : null;
+        if (!t) continue;
+        const key = t.trim().toLowerCase();
+        if (!key || key === 'other / emerging') continue;
+        topicCounts.set(key, (topicCounts.get(key) ?? 0) + 1);
+      }
+      let bestT = 0;
+      for (const [k, n] of Array.from(topicCounts.entries())) {
+        if (n > bestT) {
+          bestT = n;
+          primaryTopic = k;
+        }
+      }
+    }
     out.push({
       clusterId,
       repTokens: significantTitleTokens(rep.title),
       repPublishedAt: rep.publishedAt ?? null,
       category,
+      primaryTopic,
       contributing: contributing.map((m) => ({
         tokens: significantTitleTokens(m.title),
         publishedAt: m.publishedAt ?? null,
@@ -400,7 +525,23 @@ export async function runCuratedIncrementalAttach(): Promise<IncrementalAttachRe
     ]);
     if (members.length === 0) return { attached: 0, candidates: 0, clusters: 0 };
 
-    const clusters = buildAttachClusters(members);
+    // Resolve member controlled primary_topics (classification overlay by URL)
+    // so formed clusters carry the topic the related-topic carve-out keys on.
+    // Non-fatal: on failure the clusters carry null topics and the veto keeps
+    // its legacy free-form fallback (fail closed for unrelated labels).
+    let memberTopicByUrl: Map<string, string | null> | undefined;
+    try {
+      const memberClsMap = await storage.getCuratedClassificationsByUrls(
+        Array.from(new Set(members.map((m) => m.url).filter(Boolean))),
+      );
+      memberTopicByUrl = new Map(
+        Array.from(memberClsMap.entries()).map(([url, cls]) => [url, cls.primaryTopic ?? null]),
+      );
+    } catch (e) {
+      console.warn('[CuratedIncrementalAttach] member classification lookup failed (continuing without topics):', e);
+    }
+
+    const clusters = buildAttachClusters(members, memberTopicByUrl);
     if (clusters.length === 0) {
       return { attached: 0, candidates: 0, clusters: 0 };
     }
@@ -610,6 +751,7 @@ export async function runCuratedIncrementalAttach(): Promise<IncrementalAttachRe
         bodyTokens: combinedToks.size > titleToks.size ? combinedToks : undefined,
         publishedAt: raw.publishedAt,
         category: classMap.get(raw.url)?.category ?? raw.category ?? null,
+        primaryTopic: classMap.get(raw.url)?.primaryTopic ?? null,
       };
       const strictTarget = selectAttachClusterId(cand, clusters);
       // Manual-link cluster widened match (Task #1027, Step 5): if the standard

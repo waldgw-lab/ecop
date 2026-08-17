@@ -4438,7 +4438,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // DB query — only clusters with ≥2 contributing publishers are included,
       // exactly as the bridge gate requires.
       radarBuildDiag.stage = 'bridge-cluster-build';
-      const attachClusters = buildAttachClusters(rawMembers);
+      // Resolve controlled primary_topics (classification overlay by URL) for
+      // cluster members AND radar candidates, so the bridge-faithful category
+      // veto applies the same related-topic carve-out as the live bridge.
+      // Non-fatal: on failure the veto keeps its legacy free-form fallback.
+      let bridgeClsMap = new Map<string, { category: string | null; primaryTopic: string | null }>();
+      try {
+        const raw = await storage.getCuratedClassificationsByUrls(
+          Array.from(new Set(
+            [...rawMembers.map((m) => m.url), ...candidates.map((c) => c.url)].filter(Boolean),
+          )),
+        );
+        bridgeClsMap = new Map(
+          Array.from(raw.entries()).map(([url, cls]) => [
+            url,
+            { category: cls.category ?? null, primaryTopic: cls.primaryTopic ?? null },
+          ]),
+        );
+      } catch (err) {
+        console.error('[curated/scoring-radar] bridge classification lookup failed (non-fatal):', err);
+      }
+      const bridgeTopicByUrl = new Map(
+        Array.from(bridgeClsMap.entries()).map(([url, cls]) => [url, cls.primaryTopic]),
+      );
+      const attachClusters = buildAttachClusters(rawMembers, bridgeTopicByUrl);
 
       const radarItems: RadarItem[] = [];
       const telemetryByKey = new Map<string, RadarTelemetry>();
@@ -4515,6 +4538,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 bodyTokens: combinedToks.size > titleToks.size ? combinedToks : undefined,
                 publishedAt: c.publishedAt,
                 category:   c.category,
+                primaryTopic: bridgeClsMap.get(c.url)?.primaryTopic ?? null,
               },
               attachClusters,
             );

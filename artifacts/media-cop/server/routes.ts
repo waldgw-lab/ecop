@@ -3716,8 +3716,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         // from the Top Narratives left column too — an adversary outlet must never
         // become a headline narrative on its own. A formed cluster always has >=2
         // corroborating members, so it keeps narrative representation via one of
-        // those instead. Derived LIVE from the registry (label === 'contrast').
-        if (behaviorFor(item.source, item.url).label === 'contrast') continue;
+        // those instead. Derived LIVE from the registry. Attach-class outlets
+        // (low-factuality news, aggregators, opinion/other) are also barred:
+        // the attach contract says they may only ride along inside a formed
+        // story ("Additional coverage"), never headline anything on their own.
+        {
+          const b = behaviorFor(item.source, item.url);
+          if (b.label === 'contrast' || b.cls === 'attach') continue;
+        }
         // Non-news items are never Top Narratives. isEffectivelyReportedArticle
         // combines: (1) the per-URL content kind — an /opinion/ column or a
         // /video/ clip (commentary or non-reporting, even from a credible

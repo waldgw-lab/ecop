@@ -1990,7 +1990,7 @@ export function OutletOversightDialog({
               <div>
                 <p className="text-xs font-medium mb-1">Held from main feed</p>
                 <p className="text-xs text-muted-foreground mb-2">
-                  Items from low-credibility sources are held out of the main feed. They are rerouted into the Curated View as attach-only — shown for contrast, never able to seed a story.
+                  Items from low-credibility sources are held out of the main feed. They are rerouted into the Curated View as attach-only — shown under Additional Coverage (or, for designated state media, the contrast section), never able to seed a story.
                 </p>
                 {quarantineLoading ? (
                   <div className="flex items-center justify-center py-8 text-muted-foreground">

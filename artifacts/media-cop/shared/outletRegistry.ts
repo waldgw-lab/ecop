@@ -118,9 +118,11 @@ export function findOutlet(
 //   - ATTACH        : may only JOIN an already-formed story; never anchors, never
 //                     facts (video / podcast / unofficial social / opinion / …).
 //
-// Factuality is the master switch: any News/Social/Release that is CPC-aligned
-// OR <= "mixed" factuality is forced to ANCHOR-ONLY/contrast even if otherwise
-// trusted. Blocked is a hard, everywhere exclusion handled by callers.
+// CPC/SWL/EPC alignment forces ANCHOR-ONLY/contrast (the red section). Any
+// other News/Social/Release with <= "mixed" factuality is demoted to ATTACH
+// ("Additional coverage") — it never informs facts, but it is NOT shown in the
+// contrast section, which is reserved for designated adversary state media.
+// Blocked is a hard, everywhere exclusion handled by callers.
 // =============================================================================
 
 export const SOURCE_IDENTIFIERS = [
@@ -307,13 +309,18 @@ export function deriveBehavior(o: BehaviorInput): BehaviorResult {
       reason: "CPC/SWL/EPC designation — shown for contrast; never informs facts.",
     };
   }
+  // Low factuality WITHOUT CPC/SWL/EPC designation => attach-only ("Additional
+  // coverage"). Editorial rule: the red contrast section is reserved for
+  // designated adversary state media; grouping ordinary low-factuality outlets
+  // there would wrongly imply they are adversary-controlled. They still never
+  // anchor, never inform facts, and carry no formation weight.
   if (lowFactuality) {
     return {
-      cls: "anchor-only",
-      label: "contrast",
-      role: "anchor-only",
+      cls: "attach",
+      label: null,
+      role: "attach-only",
       blocked: false,
-      reason: `Factuality "${o.factuality}" — shown for contrast; never informs facts.`,
+      reason: `Factuality "${o.factuality}" — may join a story as additional coverage but never anchors or informs facts.`,
     };
   }
 

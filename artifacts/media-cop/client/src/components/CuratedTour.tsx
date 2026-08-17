@@ -255,7 +255,7 @@ const DETAIL_SECTIONS: DetailSection[] = [
   {
     kicker: "Spot the spin",
     title: "Bias, framing & alignment",
-    body: "Opinion, social, and lower-factuality sources are shown separately — attached for context and contrast, each with a rough percentage for how much its coverage lines up with the corroborated reporting.",
+    body: "Designated state-controlled media are shown separately for contrast — never informing the facts — while opinion, social, and lower-factuality sources appear under Additional Coverage, each with a rough percentage for how much its coverage lines up with the corroborated reporting.",
     selectors: [
       '[data-testid="list-detail-contrast"]',
       '[data-testid="banner-flagged-sources"]',

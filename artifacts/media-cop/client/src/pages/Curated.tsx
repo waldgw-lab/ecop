@@ -8250,11 +8250,12 @@ function StoryDetailDialog({
                             onNavigate={goToMethodology}
                             testId="info-flagged-sources"
                           >
-                            Outlets with mixed or lower factuality, biased or
-                            state ownership, or opinion and social formats. They are
-                            shown attached to the story — never as contributing
-                            sources — so you can see how it is being spun, and they
-                            never alter the corroborated facts. Official releases are
+                            Outlets designated as CPC/SWL/EPC-controlled state
+                            media. They are shown attached to the story — never as
+                            contributing sources — so you can see how it is being
+                            spun, and they never alter the corroborated facts. Other
+                            low-factuality or non-news outlets appear under
+                            Additional Coverage instead. Official releases are
                             a special case: as the origin of the news they can anchor
                             a story, but like other attached sources they never
                             inform the corroborated facts.

@@ -111,11 +111,13 @@ const MAIN_SECTIONS: Section[] = [
         </p>
         <p className="mt-2">
           Different outlets often describe the same facts in different ways.
-          Sources with mixed or lower factuality, biased or state ownership, or
-          opinion and social formats can still appear on a story —{" "}
-          <span className="font-medium text-foreground">attached</span>, for
-          context and contrast — but they never alter the corroborated facts and
-          never form a cluster on their own.
+          Designated state-controlled media (CPC/SWL/EPC) appear on a story in a
+          flagged <span className="font-medium text-foreground">contrast</span>{" "}
+          section so you can see how it is being spun. Sources with mixed or
+          lower factuality, or opinion and social formats, appear under{" "}
+          <span className="font-medium text-foreground">Additional Coverage</span>{" "}
+          instead. Neither group ever alters the corroborated facts or forms a
+          cluster on its own.
         </p>
         <p className="mt-2">
           For less-established or state-controlled outlets, the story also

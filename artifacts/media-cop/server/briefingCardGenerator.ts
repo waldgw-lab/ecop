@@ -657,8 +657,10 @@ async function buildTopNarratives(
     if (!item.title) continue;
     const o = findOutlet(outletIndex, item.source, item.url);
     const behavior = o ? deriveOutletBehavior(o) : deriveBehavior({ factuality: null });
-    // Exclude adversary media and social-only outlets from Top Narratives
-    if (behavior.label === 'contrast') continue;
+    // Exclude adversary media, attach-class outlets (low-factuality news,
+    // aggregators, opinion/other — may only ride along inside a formed story,
+    // never headline) and social-only outlets from Top Narratives
+    if (behavior.label === 'contrast' || behavior.cls === 'attach') continue;
     if (o && isSocialFlashOutlet(o)) continue;
 
     const norm = normalizeIdentityUrl(item.url);

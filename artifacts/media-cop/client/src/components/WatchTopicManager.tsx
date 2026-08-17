@@ -392,7 +392,9 @@ export function WatchTopicDetailDialog({
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="__none__">None</SelectItem>
-                  {[...PRIMARY_TOPICS, OTHER_EMERGING].map(t => (
+                  {/* Alphabetical for scan-ability in the manual picker (vocab
+                      PRIMARY_TOPICS order elsewhere is untouched). */}
+                  {[...PRIMARY_TOPICS, OTHER_EMERGING].sort((a, b) => a.localeCompare(b)).map(t => (
                     <SelectItem key={t} value={t}>{t}</SelectItem>
                   ))}
                 </SelectContent>

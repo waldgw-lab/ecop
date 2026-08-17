@@ -1,17 +1,19 @@
 // Gate: curated region-field hygiene (coerceRegionField).
 //
 // Guards the write-time region validation applied in
-// storage.upsertCuratedClassifications: the model sometimes duplicates the
-// COUNTRY into the region field (region="United Kingdom", country="United
-// Kingdom"), corrupting region's area-of-impact semantics. The coercion must:
+// storage.upsertCuratedClassifications. Since Task #25 this is a STRICT
+// allowlist gate: the Focus filters fragmented on off-list model regions
+// ("Asia" vs "Indo-Pacific"), so the coercion must:
 //   1. canonicalize case-variant vocab spellings,
-//   2. null the region==country corruption class (non-vocab only),
-//   3. PRESERVE off-list broad labels ("Asia") that readers tolerate,
+//   2. snap known off-list aliases ("Asia", "Oceania", "South America", …)
+//      onto their canonical operating environment via REGION_ALIASES,
+//   3. null EVERYTHING else off-list (including the region==country
+//      corruption class) — an off-list value is never persisted,
 //   4. never invent a replacement region.
 //
 // Pure-function gate — no DB, no network. Exit 0 = pass, 1 = fail.
 
-import { coerceRegionField, REGIONS } from "../shared/classificationVocab";
+import { coerceRegionField, REGIONS, REGION_ALIASES } from "../shared/classificationVocab";
 
 let checks = 0;
 let failures = 0;
@@ -34,38 +36,49 @@ expect('canonicalize "NORTH AMERICA"', coerceRegionField("NORTH AMERICA", "Unite
 expect('canonicalize "indo-pacific"', coerceRegionField("indo-pacific", "China"), "Indo-Pacific");
 expect('canonicalize with whitespace "  Middle East  "', coerceRegionField("  Middle East  ", null), "Middle East");
 
-// 3. The corruption class: country duplicated into region → null.
+// 3. Every registered alias snaps to its canonical target (and the target is
+//    itself on the canonical list).
+for (const [alias, target] of Object.entries(REGION_ALIASES)) {
+  expect(`alias "${alias}" → "${target}"`, coerceRegionField(alias, null), target);
+  if (!(REGIONS as readonly string[]).includes(target)) {
+    failures++;
+    console.log(`FAIL: alias target "${target}" is not a canonical region`);
+  }
+}
+
+// 4. Alias matching is case/spacing-insensitive.
+expect('alias "asia" (lowercase)', coerceRegionField("asia", "China"), "Indo-Pacific");
+expect('alias "SOUTH AMERICA"', coerceRegionField("SOUTH AMERICA", "Brazil"), "Latin America");
+expect('alias "  Oceania  "', coerceRegionField("  Oceania  ", "Australia"), "Indo-Pacific");
+
+// 5. The corruption class: country duplicated into region → null (unless the
+//    value is itself canonical/aliased — "Australia" now aliases to
+//    Indo-Pacific by design).
 expect('corruption "United Kingdom"=="United Kingdom"', coerceRegionField("United Kingdom", "United Kingdom"), null);
 expect('corruption "United States"=="United States"', coerceRegionField("United States", "United States"), null);
-expect('corruption "Australia"=="Australia"', coerceRegionField("Australia", "Australia"), null);
 expect('corruption "China"=="China"', coerceRegionField("China", "China"), null);
-expect('corruption is case-insensitive "china"=="China"', coerceRegionField("china", "China"), null);
+expect('"Australia" aliases even when country matches', coerceRegionField("Australia", "Australia"), "Indo-Pacific");
 
-// 4. Off-list broad labels that do NOT duplicate the country are preserved
-//    verbatim (prod has thousands of tolerated "Asia"/"South Asia" rows —
-//    nulling them would silently degrade Top Narratives geo bucketing).
-expect('preserve off-list "Asia" (country China)', coerceRegionField("Asia", "China"), "Asia");
-expect('preserve off-list "South Asia" (country India)', coerceRegionField("South Asia", "India"), "South Asia");
-expect('preserve off-list "Oceania" (country Australia)', coerceRegionField("Oceania", "Australia"), "Oceania");
-expect('preserve off-list "Caribbean" (no country)', coerceRegionField("Caribbean", null), "Caribbean");
+// 6. TRUE off-list values are nulled — never persisted verbatim.
+expect('off-list "Central Asia" → null', coerceRegionField("Central Asia", "Kazakhstan"), null);
+expect('off-list "Antarctica" → null', coerceRegionField("Antarctica", null), null);
+expect('off-list "United Kingdom" (no country) → null', coerceRegionField("United Kingdom", null), null);
+expect('off-list "Narnia" → null', coerceRegionField("Narnia", null), null);
 
-// 5. Empty / null handling.
+// 7. Empty / null handling.
 expect("null region", coerceRegionField(null, "Iran"), null);
 expect("undefined region", coerceRegionField(undefined, "Iran"), null);
 expect('empty region ""', coerceRegionField("", "Iran"), null);
 expect('whitespace region "   "', coerceRegionField("   ", "Iran"), null);
 
-// 6. A vocab region is NEVER nulled even in the (theoretical) case a country
-//    field carries the same string — the vocab match wins before the dup check.
+// 8. A vocab region is NEVER nulled even when the country carries the same
+//    string — the vocab match wins.
 expect('vocab wins over dup check', coerceRegionField("Global", "Global"), "Global");
-
-// 7. Missing/empty country → dup check can't fire; off-list value preserved.
-expect('off-list preserved when country empty', coerceRegionField("United Kingdom", ""), "United Kingdom");
-expect('off-list preserved when country null', coerceRegionField("United Kingdom", null), "United Kingdom");
 
 // Completion sentinel — guard against a vacuous pass (harness-reliability
 // convention): every check above must actually have run.
-const EXPECTED_CHECKS = 12 + 4 + 5 + 4 + 4 + 1 + 2;
+const EXPECTED_CHECKS =
+  REGIONS.length + 4 + Object.keys(REGION_ALIASES).length + 3 + 4 + 4 + 4 + 1;
 if (checks !== EXPECTED_CHECKS) {
   console.error(`GATE FAIL: expected ${EXPECTED_CHECKS} checks, ran ${checks} — harness incomplete`);
   process.exit(1);

@@ -10,6 +10,7 @@ import {
   coerceConflictTrack,
   coerceScope,
   coerceCountryPair,
+  coerceRegionField,
   inferConflictTrack,
   remapLegacyCategory,
   OTHER_EMERGING,
@@ -37,6 +38,10 @@ interface AnalysisResult {
 export interface CuratedAnalysisResult extends AnalysisResult {
   category: string;
   region: string | null;
+  // Raw off-list region the model emitted when `region` was nulled by the
+  // strict canonicalization (Task #25) — kept ONLY for the audit/proposals log,
+  // never persisted to the overlay row.
+  rawRegion?: string | null;
   country: string | null;
   primaryTopic: PrimaryTopic;
   scope: Scope | null;
@@ -804,10 +809,17 @@ async function analyzeCuratedChunk(titles: string[]): Promise<CuratedAnalysisRes
       const title = result.title || '';
       const category = typeof result.category === 'string' && result.category.trim()
         ? result.category.trim() : 'general';
-      const region = typeof result.region === 'string' && result.region.trim()
-        ? result.region.trim() : null;
       const country = typeof result.country === 'string' && result.country.trim()
         ? result.country.trim() : null;
+      // ---- Task #25: STRICT region canonicalization ----
+      // The model's region must land on the canonical allowlist (aliases like
+      // "Asia" snap to "Indo-Pacific"); a genuinely off-list value is nulled
+      // (read side falls back to country/heuristics) and the raw value is kept
+      // for the audit/proposals log — never persisted.
+      const modelRegion = typeof result.region === 'string' && result.region.trim()
+        ? result.region.trim() : null;
+      const region = coerceRegionField(modelRegion, country);
+      const rawRegion = modelRegion && region === null ? modelRegion : null;
       // ---- Task #336: enforce the controlled vocabulary in code ----
       // Coerce the model's primary_topic to a canonical enum value; an off-list
       // value falls back to the catch-all and surfaces a proposal.
@@ -858,6 +870,7 @@ async function analyzeCuratedChunk(titles: string[]): Promise<CuratedAnalysisRes
         priority_score: resolveAiScore(result.priority_score, 50),
         category,
         region,
+        rawRegion,
         country,
         primaryTopic,
         scope,

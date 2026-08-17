@@ -291,6 +291,12 @@ export async function classifyCuratedUrls(
       if (a.proposedTopic) {
         proposals.push({ kind: 'primary_topic', proposedLabel: a.proposedTopic, sampleTitle: title });
       }
+      // Task #25 — audit trail for off-list regions: the strict canonicalization
+      // nulled the model's region; keep the raw value in the proposals log so a
+      // recurring off-list label can be promoted to a REGION_ALIASES entry.
+      if (a.rawRegion) {
+        proposals.push({ kind: 'region', proposedLabel: a.rawRegion, sampleTitle: title });
+      }
     });
     if (rows.length) {
       await storage.upsertCuratedClassifications(rows, { onlyIfAi: opts.onlyIfAi });

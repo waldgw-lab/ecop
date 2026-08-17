@@ -6843,7 +6843,9 @@ function CuratedEditControl({ story }: { story: CuratedStory }) {
                       <span className="truncate">{topic || "Select topic"}</span>
                     </SelectTrigger>
                     <SelectContent>
-                      {PRIMARY_TOPICS.map((t) => (
+                      {/* Alphabetical for scan-ability in the manual picker (vocab
+                          PRIMARY_TOPICS order elsewhere is untouched). */}
+                      {[...PRIMARY_TOPICS].sort((a, b) => a.localeCompare(b)).map((t) => (
                         <SelectItem key={t} value={t}>{t}</SelectItem>
                       ))}
                     </SelectContent>

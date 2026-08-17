@@ -2185,6 +2185,62 @@ export async function ensureDatabaseSchema() {
       } catch (err) {
         console.error('[Migrate] Disaster/Health catch-all correction failed (non-fatal):', err);
       }
+      // ── Region canonicalization remap (Task #25; idempotent) ────────────────
+      // The Focus filters fragmented on off-list model regions ("Asia" ≈ 743
+      // rows, "South America", "Oceania", …). Remap every stored off-list region
+      // onto the canonical allowlist via the SHARED alias table (no parallel
+      // mapping); anything with no unambiguous alias is NULLED so the read side
+      // falls back to country/heuristics instead of surfacing a fragment. This
+      // is a meaning-preserving geographic normalization (not a label-judgment
+      // change), so it applies regardless of provenance. The off-list values
+      // being dropped are logged first for audit. No-op once converged.
+      try {
+        const { REGIONS, REGION_ALIASES } = await import('@shared/classificationVocab');
+        let remapped = 0;
+        for (const [alias, target] of Object.entries(REGION_ALIASES)) {
+          const r = await db.execute(sql`
+            UPDATE curated_classifications
+            SET region = ${target}
+            WHERE region IS NOT NULL AND lower(trim(region)) = ${alias.toLowerCase()}
+          `);
+          remapped += (r as any).rowCount ?? 0;
+        }
+        // Fix casing drift on canonical values, then null true off-list leftovers.
+        for (const canon of REGIONS) {
+          await db.execute(sql`
+            UPDATE curated_classifications
+            SET region = ${canon}
+            WHERE region IS NOT NULL AND region <> ${canon}
+              AND lower(trim(region)) = ${canon.toLowerCase()}
+          `);
+        }
+        // NOTE: drizzle expands a JS array param into a tuple, which cannot be
+        // cast to text[] — build the array literal from individual params.
+        const canonicalArr = sql`ARRAY[${sql.join(REGIONS.map((r) => sql`${r.toLowerCase()}`), sql`, `)}]::text[]`;
+        const leftovers = await db.execute(sql`
+          SELECT region, count(*)::int AS n FROM curated_classifications
+          WHERE region IS NOT NULL
+            AND lower(trim(region)) <> ALL(${canonicalArr})
+          GROUP BY region ORDER BY n DESC
+        `);
+        let nulled = 0;
+        if ((leftovers.rows as any[]).length > 0) {
+          console.log('[Migrate] Off-list curated regions being nulled (audit):',
+            (leftovers.rows as any[]).map((r) => `${r.region}=${r.n}`).join(', '));
+          const r = await db.execute(sql`
+            UPDATE curated_classifications
+            SET region = NULL
+            WHERE region IS NOT NULL
+              AND lower(trim(region)) <> ALL(${canonicalArr})
+          `);
+          nulled = (r as any).rowCount ?? 0;
+        }
+        if (remapped > 0 || nulled > 0) {
+          console.log(`[Migrate] Region canonicalization: remapped ${remapped} row(s) onto the allowlist, nulled ${nulled} off-list row(s) (Task #25)`);
+        }
+      } catch (err) {
+        console.error('[Migrate] Region canonicalization remap failed (non-fatal):', err);
+      }
       // ── Briefing-preamble heal (idempotent; write-only-if-changed) ──────────
       // Several news bots summarized articles with a prompt that named the
       // audience ("...for the Chairman of the Joint Chiefs of Staff"). The model

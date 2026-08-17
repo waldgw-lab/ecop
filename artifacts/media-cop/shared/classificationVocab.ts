@@ -17,7 +17,7 @@
 // =============================================================================
 
 // -----------------------------------------------------------------------------
-// primary_topic — geography-agnostic; exactly one per item. 20 topics + catch-all.
+// primary_topic — geography-agnostic; exactly one per item. 21 topics + catch-all.
 // -----------------------------------------------------------------------------
 export const PRIMARY_TOPICS = [
   "Military Operations & Armed Conflict",
@@ -40,6 +40,10 @@ export const PRIMARY_TOPICS = [
   "Law, Courts & International Norms",
   "Public Health, Disaster & Environmental Security",
   "Global Markets & Strategic Economics",
+  // Task #25 — AI/ML/autonomy split out of Cyber, Space & Emerging Technology.
+  // Defense-specific capabilities (military drones, defense-industry AI
+  // programs) stay in Weapons, Procurement & Defense Industry.
+  "AI, Machine Learning & Autonomous Systems",
 ] as const;
 
 export const OTHER_EMERGING = "Other / Emerging" as const;
@@ -77,6 +81,7 @@ export const PRIMARY_TOPIC_SHORT_LABELS: Record<RealPrimaryTopic, string> = {
   "Law, Courts & International Norms": "Legal & Norms",
   "Public Health, Disaster & Environmental Security": "Disaster & Health",
   "Global Markets & Strategic Economics": "Strategic Markets",
+  "AI, Machine Learning & Autonomous Systems": "AI",
 };
 
 /**
@@ -231,6 +236,12 @@ export const PRIMARY_TOPIC_ALIASES: Record<string, RealPrimaryTopic> = {
   "Security, Espionage & Security Services": "Intelligence, Espionage & Security Services",
   "Terrorism, Insinsurgency & Non-State Armed Groups": "Terrorism, Insurgency & Non-State Armed Groups",
   "Terrorism, Insservency & Non-State Armed Groups": "Terrorism, Insurgency & Non-State Armed Groups",
+  // Near-miss phrasings for the AI topic (Task #25).
+  "Artificial Intelligence": "AI, Machine Learning & Autonomous Systems",
+  "AI & Autonomous Systems": "AI, Machine Learning & Autonomous Systems",
+  "AI & Machine Learning": "AI, Machine Learning & Autonomous Systems",
+  "Artificial Intelligence & Machine Learning": "AI, Machine Learning & Autonomous Systems",
+  "AI & Emerging Technology": "AI, Machine Learning & Autonomous Systems",
 };
 for (const [alias, target] of Object.entries(PRIMARY_TOPIC_ALIASES)) {
   PRIMARY_BY_NORM.set(normKey(alias), target);
@@ -377,36 +388,93 @@ export type Region = (typeof REGIONS)[number];
 const REGION_BY_NORM = new Map<string, Region>();
 for (const r of REGIONS) REGION_BY_NORM.set(normKey(r), r);
 
+// -----------------------------------------------------------------------------
+// REGION ALIASES (Task #25 — Focus canonicalization). Off-list broad labels the
+// model actually emits in production ("Asia" 743 rows, "South America",
+// "Oceania", "Pacific", etc.) that unambiguously map onto ONE canonical
+// operating environment. Same governance as topic aliases: aliases map ONLY to
+// existing REGIONS, and a genuinely ambiguous label stays UNALIASED (it coerces
+// to null and the read side falls back to country/heuristics — e.g. "Central
+// Asia" is derived client-side from the country, and "Antarctica" has no
+// canonical theater). Keys are stored through normKey.
+// -----------------------------------------------------------------------------
+export const REGION_ALIASES: Record<string, Region> = {
+  // Asia-family → Indo-Pacific (the canonical theater for the whole region).
+  "Asia": "Indo-Pacific",
+  "East Asia": "Indo-Pacific",
+  "Southeast Asia": "Indo-Pacific",
+  "South Asia": "Indo-Pacific",
+  "Asia-Pacific": "Indo-Pacific",
+  "Asia Pacific": "Indo-Pacific",
+  "Pacific": "Indo-Pacific",
+  "Western Pacific": "Indo-Pacific",
+  "Oceania": "Indo-Pacific",
+  "Australia": "Indo-Pacific",
+  // Americas.
+  "South America": "Latin America",
+  "Central America": "Latin America",
+  "Caribbean": "Latin America",
+  "Americas": "Latin America",
+  // Gulf / Red Sea family.
+  "Gulf": "Persian Gulf",
+  "The Gulf": "Persian Gulf",
+  "Arabian Gulf": "Persian Gulf",
+  "Gulf of Aden": "Red Sea",
+  // Africa sub-regions.
+  "North Africa": "Africa",
+  "Sub-Saharan Africa": "Africa",
+  "West Africa": "Africa",
+  "East Africa": "Africa",
+  "Horn of Africa": "Africa",
+  "Sahel": "Africa",
+  // Middle East family.
+  "Levant": "Middle East",
+  "MENA": "Middle East",
+  "Middle East & North Africa": "Middle East",
+  "Eastern Mediterranean": "Middle East",
+  // Europe family.
+  "Eurasia": "Europe",
+  "Western Europe": "Europe",
+  "Eastern Europe": "Europe",
+  "Caucasus": "Europe",
+  "South Caucasus": "Europe",
+  "Balkans": "Europe",
+  "Mediterranean": "Europe",
+  "Baltic": "Europe",
+  "Baltics": "Europe",
+  "Scandinavia": "Europe",
+  "Nordic": "Europe",
+  // Global family.
+  "Worldwide": "Global",
+  "International": "Global",
+  "World": "Global",
+};
+for (const [alias, target] of Object.entries(REGION_ALIASES)) {
+  REGION_BY_NORM.set(normKey(alias), target);
+}
+
 /**
  * Clean a raw model `region` value before it is persisted.
  *
- * Deliberately NARROW — this is NOT a strict enum gate. Production data shows
- * the model regularly emits reasonable off-list broad labels ("Asia", "South
- * Asia", "Oceania") that every reader tolerates and that still carry real
- * area-of-impact signal; nulling those would silently degrade Top Narratives
- * geo bucketing across thousands of rows. The one PROVEN corruption class is
- * the model duplicating the COUNTRY into the region field (region="United
- * Kingdom", country="United Kingdom"), which breaks region's area-of-impact
- * semantics. So:
- *   1. empty/null            → null
- *   2. canonical vocab match → canonical spelling (case-insensitive)
- *   3. region === country (and not a vocab region) → null  ← corruption class
- *   4. anything else         → preserved as-is (trimmed)
+ * STRICT enum gate (Task #25) — the Focus filter fragmented on off-list labels
+ * ("Asia" vs "Indo-Pacific"), so an off-list value is now either aliased onto
+ * the canonical allowlist (REGION_ALIASES) or dropped to null; it is NEVER
+ * persisted as-is. The caller keeps the raw value for audit (proposals log).
+ *   1. empty/null              → null
+ *   2. canonical/alias match   → canonical spelling (case-insensitive)
+ *   3. anything else (incl. the country-duplication corruption class,
+ *      region === country) → null
  * Never guesses a replacement region — fail-safe null lets the read side fall
  * back to country/heuristics.
  */
 export function coerceRegionField(
   rawRegion: string | null | undefined,
-  rawCountry: string | null | undefined,
-): string | null {
+  _rawCountry?: string | null | undefined,
+): Region | null {
   if (rawRegion == null) return null;
   const region = String(rawRegion).trim();
   if (!region) return null;
-  const canonical = REGION_BY_NORM.get(normKey(region));
-  if (canonical) return canonical;
-  const country = rawCountry == null ? "" : String(rawCountry).trim();
-  if (country && normKey(region) === normKey(country)) return null;
-  return region;
+  return REGION_BY_NORM.get(normKey(region)) ?? null;
 }
 
 // =============================================================================
@@ -466,6 +534,14 @@ function inferPrimaryTopicWithOptions(
   // 2) Cyber / space / emerging technology.
   if (has(/\bcyber-?attacks?\b|\bransomware\b|\bmalware\b|\bdata breach\b|\bhack(ed|ing|ers?)\b|\bsatellites?\b|\bspace force\b/))
     return "Cyber, Space & Emerging Technology";
+
+  // 2a) AI / machine learning / autonomous systems (Task #25). Conservative,
+  //     unambiguous AI terms only — deliberately NO "drone"/"autonomous weapon"
+  //     keys, so defense-specific capability stories keep routing to the
+  //     Weapons/Defense-Industry and Military-Ops rules (the defense-industry
+  //     carve-out lives in the prompt for the AI generator).
+  if (has(/\bartificial intelligence\b|\bmachine learning\b|\bgenerative ai\b|\blarge language models?\b|\bllms?\b|\bopenai\b|\banthropic\b|\bchatgpt\b|\bdeepseek\b|\bai (model|models|chatbots?|race|arms race|regulation|safety|labs?|startups?|boom|chips?)\b|\bself-driving\b|\bautonomous (vehicles?|robots?|systems?)\b/))
+    return "AI, Machine Learning & Autonomous Systems";
 
   // 2b) Intelligence / espionage. Keep this to unmistakable service/operation
   //     language so a generic "secret" or "probe" cannot hijack another topic.
@@ -716,8 +792,15 @@ function buildRemap(): Map<string, RemapEntry> {
     { topic: "Maritime Security & Chokepoints" });
   add(["Defense Procurement", "Defense Technology"],
     { topic: "Weapons, Procurement & Defense Industry" });
-  add(["Military Technology", "Space Industry", "Space Technology", "Space Tech", "AI Technology", "Cyber Espionage", "Cybersecurity"],
+  add(["Military Technology", "Space Industry", "Space Technology", "Space Tech", "Cyber Espionage", "Cybersecurity"],
     { topic: "Cyber, Space & Emerging Technology" });
+  // Task #25 — AI/ML/autonomy labels route to the dedicated AI topic (was
+  // Cyber, Space & Emerging Technology). Defense-specific programs stay in
+  // Weapons, Procurement & Defense Industry via their own labels.
+  add(["AI Technology", "Artificial Intelligence", "Machine Learning", "AI Policy",
+    "AI Regulation", "AI Safety", "AI Race", "AI Development", "Autonomous Systems",
+    "Autonomous Vehicles", "Generative AI"],
+    { topic: "AI, Machine Learning & Autonomous Systems" });
   add(["Sanctions Diplomacy", "Economic Diplomacy"],
     { topic: "Economic Statecraft & Sanctions" });
   add(["Economic Policy", "Trade Policy", "Russian Economy"],

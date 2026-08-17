@@ -7409,6 +7409,99 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Topic/region distribution report (Task #25) — per-topic and per-region
+  // share over a selectable recent window so overbroad/underused focus areas
+  // can be reviewed with real data before any future taxonomy change.
+  app.get("/api/admin/curated/topic-distribution", requireAdmin, async (req, res) => {
+    try {
+      const rawHours = Number(req.query?.hours);
+      const hours = Number.isFinite(rawHours) && rawHours > 0 ? Math.min(rawHours, 24 * 90) : 24 * 7;
+      const topics = await db.execute(sql`
+        SELECT COALESCE(primary_topic, '(unclassified)') AS topic, count(*)::int AS n
+        FROM curated_classifications
+        WHERE classified_at > now() - make_interval(hours => ${hours})
+        GROUP BY 1 ORDER BY n DESC`);
+      const regions = await db.execute(sql`
+        SELECT COALESCE(region, '(none)') AS region, count(*)::int AS n
+        FROM curated_classifications
+        WHERE classified_at > now() - make_interval(hours => ${hours})
+        GROUP BY 1 ORDER BY n DESC`);
+      const total = (topics.rows as any[]).reduce((s, r) => s + (r.n ?? 0), 0);
+      const withShare = (rows: any[], key: string) => rows.map((r) => ({
+        [key]: r[key], count: r.n,
+        sharePct: total ? Math.round((r.n / total) * 1000) / 10 : null,
+      }));
+      res.json({
+        windowHours: hours,
+        total,
+        topics: withShare(topics.rows as any[], 'topic'),
+        regions: withShare(regions.rows as any[], 'region'),
+      });
+    } catch (error) {
+      console.error('[Admin] topic-distribution failed:', error);
+      res.status(500).json({ error: (error as Error).message });
+    }
+  });
+
+  // Bounded reclassification backfill (Task #25) — mark AI-labeled rows inside
+  // the LIVE curated candidate window whose topic is one of the historically
+  // over-assigned buckets (Military Ops, Diplomacy, Cyber/Emerging Tech) or the
+  // catch-all as reclassify-eligible (primary_topic → NULL, cooldown aged out),
+  // so the normal classifier cron re-labels them under the sharpened prompt and
+  // new AI topic. Human-provenance rows are NEVER touched, and nothing outside
+  // the visible window is reprocessed.
+  app.post("/api/admin/curated/reclassify-topics", requireAdmin, async (req, res) => {
+    try {
+      const rawMax = Number(req.body?.maxItems);
+      const maxItems = Number.isFinite(rawMax) && rawMax > 0 ? Math.min(rawMax, 500) : 200;
+      const dryRun = req.body?.dryRun === true;
+      const TARGET_TOPICS = [
+        'Military Operations & Armed Conflict',
+        'Foreign Policy & Diplomacy',
+        'Cyber, Space & Emerging Technology',
+        'Other / Emerging',
+      ];
+      const { buildCuratedCandidateWindow, scheduleCuratedClassificationBackfill } = await import('./curatedClassify');
+      const { normalizeIdentityUrl } = await import('./urlIdentity');
+      const { candidates } = await buildCuratedCandidateWindow();
+      const urlSet = new Set<string>();
+      for (const c of candidates) {
+        urlSet.add(c.url);
+        const canon = normalizeIdentityUrl(c.url);
+        if (canon) urlSet.add(canon);
+      }
+      const urls = Array.from(urlSet);
+      if (urls.length === 0) return res.json({ eligible: 0, cleared: 0, dryRun });
+      // drizzle expands a JS array param into a tuple (cannot cast to text[]);
+      // build the array literals from individual params instead.
+      const sqlTextArray = (vals: string[]) =>
+        sql`ARRAY[${sql.join(vals.map((v) => sql`${v}`), sql`, `)}]::text[]`;
+      const eligibleRows = await db.execute(sql`
+        SELECT url, primary_topic FROM curated_classifications
+        WHERE url = ANY(${sqlTextArray(urls)})
+          AND provenance = 'ai'
+          AND primary_topic = ANY(${sqlTextArray(TARGET_TOPICS)})
+        LIMIT ${maxItems}`);
+      const targets = (eligibleRows.rows as any[]).map((r) => r.url as string);
+      let cleared = 0;
+      if (!dryRun && targets.length > 0) {
+        const r = await db.execute(sql`
+          UPDATE curated_classifications
+          SET primary_topic = NULL,
+              proposed_topic = NULL,
+              classified_at = now() - interval '7 days'
+          WHERE url = ANY(${sqlTextArray(targets)})
+            AND provenance = 'ai'`);
+        cleared = (r as any).rowCount ?? targets.length;
+        scheduleCuratedClassificationBackfill(2_000);
+      }
+      res.json({ candidateWindow: candidates.length, eligible: targets.length, cleared, dryRun, maxItems });
+    } catch (error) {
+      console.error('[Admin] reclassify-topics failed:', error);
+      res.status(500).json({ error: (error as Error).message });
+    }
+  });
+
   app.post("/api/admin/curated/orphan-image-sweep", requireAdmin, async (req, res) => {
     try {
       const isDeployment = process.env.REPLIT_DEPLOYMENT === '1' || process.env.NODE_ENV === 'production';

@@ -1626,12 +1626,12 @@ export class DatabaseStorage implements IStorage {
       if (canonicalUrl && canonicalUrl !== row.url) {
         row = { ...row, url: canonicalUrl };
       }
-      // Region hygiene (write-time chokepoint): the model sometimes duplicates
-      // the COUNTRY into the region field (region="United Kingdom",
-      // country="United Kingdom"), corrupting region's area-of-impact
-      // semantics. coerceRegionField canonicalizes vocab spellings and nulls
-      // that corruption class ONLY — off-list broad labels ("Asia") are
-      // preserved. Never touches a human-authored row (generate-once lock).
+      // Region hygiene (write-time chokepoint): coerceRegionField is a STRICT
+      // allowlist gate (Task #25) — canonical spellings pass, known aliases
+      // ("Asia" → "Indo-Pacific") snap to canonical, and anything else
+      // (including the country-duplication corruption class) is nulled so an
+      // off-list region can never fragment the Focus filters. Never touches a
+      // human-authored row (generate-once lock).
       if (row.provenance !== 'human') {
         const cleanedRegion = coerceRegionField(row.region ?? null, row.country ?? null);
         if (cleanedRegion !== (row.region ?? null)) {

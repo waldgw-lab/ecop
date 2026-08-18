@@ -30,6 +30,13 @@ export interface DominantAngleMember {
   behaviorClass: string | null | undefined;
   /** ISO date / Date; older wins ties (the underlying event is reported first). */
   publishedAt?: string | Date | null;
+  /**
+   * False for members whose title should never become the displayed fallback
+   * headline (video clips, podcasts, opinion pieces — often show-branded titles
+   * like "… | Daybreak Europe 8/18/2026"). They still VOTE (their vocabulary
+   * counts toward peers' overlap scores) but cannot WIN. Default: true.
+   */
+  eligibleToWin?: boolean;
 }
 
 // Minimal stopword set: strip glue words so overlap measures shared SUBJECT
@@ -90,14 +97,17 @@ export function pickDominantAngleMember(
     .filter((x) => x.tokens.size >= 3); // too-short titles neither vote nor win
   if (scorable.length < 2) return null;
 
-  const scored = scorable.map((x) => {
-    let sum = 0;
-    for (const other of scorable) {
-      if (other === x) continue;
-      sum += jaccard(x.tokens, other.tokens);
-    }
-    return { key: x.m.key, publishedAt: x.m.publishedAt, score: sum / (scorable.length - 1) };
-  });
+  const scored = scorable
+    .filter((x) => x.m.eligibleToWin !== false) // ineligible members vote but never win
+    .map((x) => {
+      let sum = 0;
+      for (const other of scorable) {
+        if (other === x) continue;
+        sum += jaccard(x.tokens, other.tokens);
+      }
+      return { key: x.m.key, publishedAt: x.m.publishedAt, score: sum / (scorable.length - 1) };
+    });
+  if (scored.length === 0) return null;
 
   scored.sort((a, b) => {
     if (b.score !== a.score) return b.score - a.score;

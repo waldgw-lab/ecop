@@ -3020,6 +3020,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
               title: m.title,
               behaviorClass: m.behaviorClass,
               publishedAt: m.publishedAt,
+              // Video/podcast/opinion members (show-branded titles like
+              // "… | Daybreak Europe 8/18/2026") may vote but never supply the
+              // displayed fallback headline.
+              eligibleToWin: isEffectivelyReportedArticle(
+                m.url, asStoredContentKind(m.contentKind), m.title,
+              ),
             })),
           );
           if (pick) {

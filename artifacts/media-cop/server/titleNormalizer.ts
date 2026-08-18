@@ -133,6 +133,38 @@ export function cleanDisplayTitle(title: string): string {
     }
   }
 
+  // (d) Trailing show/brand suffix: "… | Daybreak Europe 8/18/2026",
+  // "… | CNN Politics", "… | Fox News". Strip the LAST pipe-delimited segment
+  // ONLY on a positive branding signal — a date (a show-episode tell) or a
+  // known outlet/show word — and only while the remaining headline stays
+  // substantial (>= 4 words). Ambiguous pipes (quoted titles, film names,
+  // "… | The Ugly") are left intact: no signal, no strip.
+  const BRAND_SUFFIX_WORD =
+    /\b(?:news|politics|tonight|today|morning|evening|daybreak|newshour|newsnight|podcast|radio|tv|network|channel|live|video|watch|cnn|bbc|nbc|msnbc|abc|cbs|npr|pbs|fox|sky|cnbc|bloomberg|reuters|afp|wion|dw|rfi|euronews|newsweek|axios|politico|semafor|al\s*jazeera|straits\s*times|the\s*hill|washington\s*post|new\s*york\s*times|wall\s*street\s*journal|usa\s*today|ap)\b/i;
+  const DATED_SUFFIX = /\b\d{1,2}[/.-]\d{1,2}[/.-]\d{2,4}\b|\b(?:19|20)\d{2}\b/;
+  for (;;) {
+    const m = result.match(/^(.*\S)\s*\|\s*([^|]+)$/);
+    if (!m) break;
+    const remaining = m[1].trim();
+    const suffix = m[2].trim();
+    const suffixWords = suffix.split(/\s+/).length;
+    const remainingWords = remaining.split(/\s+/).length;
+    // Never strip across a quote pair spanning the pipe (the pipe is inside a
+    // quoted title: `… 'War | Peace' still matters`). Only blocks when the
+    // remaining side has an UNBALANCED quote AND the suffix carries the same
+    // quote char — a plain possessive ("Trump's …") never blocks.
+    const spansQuote = (counter: RegExp, probe: RegExp): boolean =>
+      ((remaining.match(counter)?.length ?? 0) % 2 === 1) && probe.test(suffix);
+    const balancedQuotes =
+      !spansQuote(/"/g, /"/) && !spansQuote(/['’‘]/g, /['’‘]/);
+    const brandLike = DATED_SUFFIX.test(suffix) || BRAND_SUFFIX_WORD.test(suffix);
+    if (suffixWords <= 8 && remainingWords >= 4 && brandLike && balancedQuotes) {
+      result = remaining;
+    } else {
+      break;
+    }
+  }
+
   result = result.replace(/\s+/g, ' ').trim();
   // Safety: never return an empty headline.
   return result.length ? result : title.trim();

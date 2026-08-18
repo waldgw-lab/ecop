@@ -76,6 +76,32 @@ const saudi = [
     !!pick && (pick.key === 'c1' || pick.key === 'c2'), `picked ${pick?.key}`);
 }
 
+// --- eligibleToWin: video/podcast/opinion members vote but never win ---------
+{
+  const pick = pickDominantAngleMember([
+    // Show-branded video title that overlaps everyone best — must NOT win.
+    { key: 'video', behaviorClass: 'corroborating', eligibleToWin: false,
+      publishedAt: '2026-08-18T06:00:00Z',
+      title: 'Trump Threatens Oman, Rejects Iran Truce Extension | Daybreak Europe 8/18/2026' },
+    { key: 'npr', behaviorClass: 'corroborating', publishedAt: '2026-08-18T07:00:00Z',
+      title: 'Trump threatens Oman amid talks over control of the Strait of Hormuz' },
+    { key: 'jt', behaviorClass: 'corroborating', publishedAt: '2026-08-17T22:00:00Z',
+      title: 'U.S.-Iran peace prospects dim as Trump rejects truce extension' },
+  ]);
+  check('ineligible (video) member votes but never wins',
+    !!pick && pick.key !== 'video', `picked ${pick?.key}`);
+}
+{
+  const pick = pickDominantAngleMember([
+    { key: 'v1', behaviorClass: 'corroborating', eligibleToWin: false,
+      title: 'US Signs Nuclear Cooperation Deal With Saudi Arabia' },
+    { key: 'v2', behaviorClass: 'corroborating', eligibleToWin: false,
+      title: 'Saudi Arabia and US Sign Nuclear Cooperation Agreement' },
+  ]);
+  check('fail-open (null) when every scorable member is ineligible', pick === null,
+    `picked ${pick?.key}`);
+}
+
 // --- Tie-break: older publishedAt wins (event precedes reaction) -------------
 {
   const pick = pickDominantAngleMember([

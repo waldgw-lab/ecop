@@ -167,6 +167,19 @@ const cases: Array<{ input: string; expected: string; why: string }> = [
   { input: "(Lead poisoning) cases rise in region", expected: "(Lead poisoning) cases rise in region", why: "leading '(Lead poisoning)' is not a LEAD marker" },
   { input: "(Urgent care) clinic opens in Seoul", expected: "(Urgent care) clinic opens in Seoul", why: "'(Urgent care)' is not an URGENT marker" },
   { input: "Hospital adds (URGENT) triage lane", expected: "Hospital adds (URGENT) triage lane", why: "mid-title (URGENT) is not stripped" },
+  // (d) Trailing show/brand pipe suffix stripped.
+  { input: "Trump Threatens Oman, Rejects Iran Truce Extension | Daybreak Europe 8/18/2026", expected: "Trump Threatens Oman, Rejects Iran Truce Extension", why: "trailing '| Show Name date' suffix stripped" },
+  { input: "Senate passes defense spending bill | CNN Politics", expected: "Senate passes defense spending bill", why: "trailing '| CNN Politics' brand suffix stripped" },
+  { input: "Markets rally on rate news | Bloomberg | Daybreak Asia", expected: "Markets rally on rate news", why: "multiple trailing pipe segments stripped" },
+  // Safe: short remaining title keeps its pipe suffix (never strip below 4 words).
+  { input: "Iran truce ends | Analysis", expected: "Iran truce ends | Analysis", why: "remaining title under 4 words → pipe suffix kept" },
+  // Safe: no positive brand/date signal → ambiguous pipe kept.
+  { input: "Review: The Good, the Bad | The Ugly", expected: "Review: The Good, the Bad | The Ugly", why: "no brand/date signal → film-title pipe kept" },
+  { input: "Analysis of the band Love | Hate and their new album", expected: "Analysis of the band Love | Hate and their new album", why: "no brand/date signal → band-name pipe kept" },
+  // Safe: quote pair spanning the pipe blocks the strip even with a signal word.
+  { input: "Explainer: Why the film 'War | Peace' matters on TV today", expected: "Explainer: Why the film 'War | Peace' matters on TV today", why: "quoted title spans the pipe → kept" },
+  // Possessive apostrophe on the left does NOT block a genuine brand strip.
+  { input: "Trump's Oman threat rattles Gulf markets | CNN Politics", expected: "Trump's Oman threat rattles Gulf markets", why: "possessive apostrophe does not block brand strip" },
 ];
 
 let failures = 0;

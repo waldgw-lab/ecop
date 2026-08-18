@@ -13,6 +13,7 @@ export const CURATED_SYNC_KEYS = [
   "curatedLayoutConfig",
   "curatedBoardLayoutV2",
   "curatedColumnWeightsV1",
+  "curatedSocialRowHeightV1",
   "selectedUsXFeedAccounts:v3",
   "curatedSocialLayout",
   "selectedOsintXFeedAccounts:v2",

@@ -20,6 +20,15 @@ import { useCallback, useEffect, useRef, useState, type RefObject } from "react"
 
 export const COLUMN_WEIGHTS_KEY = "curatedColumnWeightsV1";
 
+// Row-height resize for the Curated social bloc (Task #43). Persisted to
+// localStorage under this key and synced to server prefs like the column
+// weights above. `null` state = factory default (the max-h-[480px] class).
+export const SOCIAL_ROW_HEIGHT_KEY = "curatedSocialRowHeightV1";
+export const SOCIAL_ROW_MIN_PX = 280;
+export const SOCIAL_ROW_MAX_PX = 1600;
+export const SOCIAL_ROW_DEFAULT_PX = 480;
+const ROW_KEY_STEP_PX = 24; // arrow-key nudge per press
+
 // Bounds that keep the adjustment "slight" and safe.
 const MIN_WEIGHT = 0.45; // an fr weight can never drop below this
 const MAX_DELTA = 0.6; // a single divider can shift at most this many fr
@@ -358,5 +367,85 @@ export function ColumnResizeHandles({
         );
       })}
     </>
+  );
+}
+
+interface RowResizeHandleProps {
+  // Current custom height in px, or null when the factory default applies.
+  value: number | null;
+  onChange: (v: number | null) => void;
+  testid?: string;
+}
+
+/**
+ * Horizontal drag handle under the Curated social bloc (Task #43). Pull down to
+ * grow the social scroll panes' max height, pull up to shrink, within
+ * [SOCIAL_ROW_MIN_PX, SOCIAL_ROW_MAX_PX]. Keyboard parity with the column
+ * handles: role=separator, ArrowUp/ArrowDown nudge, Home/Enter reset to the
+ * default (null). Shown at lg+ only, matching the column handles.
+ */
+export function RowResizeHandle({ value, onChange, testid = "social-row-resizer" }: RowResizeHandleProps) {
+  const dragRef = useRef<{ startY: number; startValue: number } | null>(null);
+
+  const effective = value ?? SOCIAL_ROW_DEFAULT_PX;
+
+  const apply = (px: number) => {
+    const clamped = Math.round(clamp(px, SOCIAL_ROW_MIN_PX, SOCIAL_ROW_MAX_PX));
+    onChange(clamped === SOCIAL_ROW_DEFAULT_PX ? null : clamped);
+  };
+
+  const onPointerMove = (e: PointerEvent) => {
+    const d = dragRef.current;
+    if (!d) return;
+    apply(d.startValue + (e.clientY - d.startY));
+  };
+
+  const endDrag = () => {
+    dragRef.current = null;
+    window.removeEventListener("pointermove", onPointerMove);
+    window.removeEventListener("pointerup", endDrag);
+    document.body.style.userSelect = "";
+    document.body.style.cursor = "";
+  };
+
+  return (
+    <div
+      role="separator"
+      aria-orientation="horizontal"
+      aria-label="Resize social feed height — drag, or use the up and down arrow keys"
+      aria-valuemin={SOCIAL_ROW_MIN_PX}
+      aria-valuemax={SOCIAL_ROW_MAX_PX}
+      aria-valuenow={effective}
+      tabIndex={0}
+      data-testid={testid}
+      className="group relative z-20 hidden lg:block h-4 -my-1 w-full cursor-row-resize touch-none focus:outline-none"
+      onPointerDown={(e) => {
+        e.preventDefault();
+        dragRef.current = { startY: e.clientY, startValue: effective };
+        document.body.style.userSelect = "none";
+        document.body.style.cursor = "row-resize";
+        window.addEventListener("pointermove", onPointerMove);
+        window.addEventListener("pointerup", endDrag);
+      }}
+      onDoubleClick={() => onChange(null)}
+      onKeyDown={(e) => {
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          apply(effective + ROW_KEY_STEP_PX);
+        } else if (e.key === "ArrowUp") {
+          e.preventDefault();
+          apply(effective - ROW_KEY_STEP_PX);
+        } else if (e.key === "Home" || e.key === "Enter") {
+          e.preventDefault();
+          onChange(null);
+        }
+      }}
+    >
+      {/* Visible hairline — subtle until hover/focus, mirroring the column handles. */}
+      <span
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-1/2 -translate-y-1/2 h-px bg-transparent transition-colors group-hover:bg-[#5FA8C4] group-focus-visible:bg-[#5FA8C4] group-focus-visible:h-0.5"
+      />
+    </div>
   );
 }

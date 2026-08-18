@@ -84,7 +84,11 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import type { CuratedFeedScale } from "@/lib/curatedFeedScale";
+import {
+  bumpCuratedScale,
+  nextWidthTier,
+  type CuratedFeedScale,
+} from "@/lib/curatedFeedScale";
 import {
   Tooltip,
   TooltipContent,
@@ -144,6 +148,10 @@ import {
   computeColumnTemplate,
   useColumnWidthObserver,
   ColumnResizeHandles,
+  RowResizeHandle,
+  SOCIAL_ROW_HEIGHT_KEY,
+  SOCIAL_ROW_MIN_PX,
+  SOCIAL_ROW_MAX_PX,
 } from "@/components/CuratedColumnResizer";
 import CopyShareButton from "@/components/CopyShareButton";
 import OverflowHeadlineTooltip from "@/components/OverflowHeadlineTooltip";
@@ -1017,6 +1025,7 @@ function RotatingSocialColumn({
   trailingControl,
   sectionTestId = "section-osint",
   fill = false,
+  paneMaxHeight = null,
 }: {
   // One or more feed panes the column rotates through. With a single pane the
   // dots/rotation collapse to a static column.
@@ -1028,6 +1037,10 @@ function RotatingSocialColumn({
   // When true (no standalone sections sit below the R1 bloc), the column grows
   // to fill the right column's full height at lg+ instead of capping at 480px.
   fill?: boolean;
+  // Custom pane max height (px) from the row-height drag handle under the
+  // social bloc (Task #43). null = factory default (480px cap / fill mode).
+  // Applied inline so it also overrides fill mode's uncapped lg height.
+  paneMaxHeight?: number | null;
 }) {
   const [activeIndex, setActiveIndex] = useState(0);
   // Hover and scroll pause are tracked independently so a scroll's resume timer
@@ -1122,9 +1135,12 @@ function RotatingSocialColumn({
               <div
                 className={`curated-scroll overflow-y-auto overflow-x-hidden pr-2 min-h-[240px] ${
                   fill
-                    ? "max-h-[480px] lg:max-h-none lg:flex-1 lg:min-h-0"
-                    : "max-h-[480px]"
+                    ? `lg:flex-1 lg:min-h-0${paneMaxHeight == null ? " max-h-[480px] lg:max-h-none" : ""}`
+                    : paneMaxHeight == null
+                      ? "max-h-[480px]"
+                      : ""
                 }`}
+                style={paneMaxHeight != null ? { maxHeight: paneMaxHeight } : undefined}
                 onScroll={handleScroll}
                 data-testid={`scroll-social-${p.key}`}
               >
@@ -8738,6 +8754,9 @@ export default function Curated() {
     // Discard any per-divider drag-resize nudges so "Reset to Default" restores
     // the standard column widths, not just the section placements/visibility.
     clearColumnWeights();
+    // Restore the social bloc's default pane height (Task #43). The width-driven
+    // text-scale tiers reset on their own once the column widths return to base.
+    setSocialRowHeight(null);
   };
 
   // Persist the entire layout config whenever any piece changes.
@@ -8822,6 +8841,30 @@ export default function Curated() {
     }
   }, [socialLayout]);
 
+  // Custom max height (px) for the social bloc's scroll panes, adjusted by the
+  // horizontal drag handle under the bloc (Task #43). `null` = factory default
+  // (the max-h-[480px] class / fill-column behaviour). Persisted + synced like
+  // the column weights; only an explicit null clears the synced pref.
+  const [socialRowHeight, setSocialRowHeight] = useState<number | null>(() => {
+    try {
+      const raw = localStorage.getItem(SOCIAL_ROW_HEIGHT_KEY);
+      const n = raw ? parseInt(raw, 10) : NaN;
+      return Number.isFinite(n)
+        ? Math.min(SOCIAL_ROW_MAX_PX, Math.max(SOCIAL_ROW_MIN_PX, n))
+        : null;
+    } catch {
+      return null;
+    }
+  });
+  useEffect(() => {
+    try {
+      if (socialRowHeight == null) localStorage.removeItem(SOCIAL_ROW_HEIGHT_KEY);
+      else localStorage.setItem(SOCIAL_ROW_HEIGHT_KEY, String(socialRowHeight));
+    } catch {
+      /* private mode / quota — height just won't persist this session */
+    }
+  }, [socialRowHeight]);
+
   // The Configure Layout board's R1 lanes drive the live social bloc (Task #322
   // follow-up). Re-read whenever the board persists a change (same-tab custom
   // event) or another tab edits the saved layout (native storage event).
@@ -8851,8 +8894,26 @@ export default function Curated() {
   // the right column appears or disappears (layout-mode switches, hasRightContent
   // toggling) — a plain useRef + useEffect([ref]) misses late mounts.
   const [rightColCallbackRef, rightColWidth] = useColumnWidthObserver();
-  // Tracks the current "stepped-up" state across renders for hysteresis.
-  const rightSteppedUpRef = useRef(false);
+  // Width-driven text-scale tiers (Task #43). Each resizable column that renders
+  // scaled social feeds derives a step-up tier (0/+1/+2 scale notches) from its
+  // own measured width vs its expected base width, with hysteresis (see
+  // nextWidthTier). The expected base px for each column is computed in the
+  // render path (where the active fr weights are known) and stashed in a ref;
+  // the effects below re-derive the tier whenever the measured width changes —
+  // the setState re-render then feeds the new tier into the feed renderers.
+  const [rightScaleTier, setRightScaleTier] = useState(0);
+  const [leftScaleTier, setLeftScaleTier] = useState(0);
+  const colBasePxRef = useRef<{ left: number; right: number }>({ left: 0, right: 0 });
+  // Width observer for the LEFT column (three-column mode's left rail, or the
+  // two-column mode's left pane) so social feeds placed there step their text
+  // up when the viewer drags the column wider — parity with the right column.
+  const [leftColCallbackRef, leftColWidth] = useColumnWidthObserver();
+  useEffect(() => {
+    setRightScaleTier((t) => nextWidthTier(t, rightColWidth, colBasePxRef.current.right));
+  }, [rightColWidth]);
+  useEffect(() => {
+    setLeftScaleTier((t) => nextWidthTier(t, leftColWidth, colBasePxRef.current.left));
+  }, [leftColWidth]);
   // Same callback-ref + hysteresis pair for the MIDDLE (Top Stories) grid cell,
   // so its reading text steps up one notch when the viewer drags it wider — the
   // right column already does this; this brings the centre column to parity.
@@ -9246,6 +9307,18 @@ export default function Curated() {
       }
     } catch { setAllColumnWeights({}); }
 
+    // Social bloc pane height (row-height drag handle — Task #43). Absent or
+    // invalid → default (null), mirroring the explicit-null-clears rule.
+    try {
+      const raw = localStorage.getItem(SOCIAL_ROW_HEIGHT_KEY);
+      const n = raw ? parseInt(raw, 10) : NaN;
+      setSocialRowHeight(
+        Number.isFinite(n)
+          ? Math.min(SOCIAL_ROW_MAX_PX, Math.max(SOCIAL_ROW_MIN_PX, n))
+          : null,
+      );
+    } catch { setSocialRowHeight(null); }
+
     // Social bloc column count (3 / 2 / 1)
     try {
       const saved = localStorage.getItem(SOCIAL_LAYOUT_STORAGE_KEY);
@@ -9323,7 +9396,7 @@ export default function Curated() {
     storiesFeedCount, truthPlacement, secwarPlacement, osintPlacement,
     pressPlacement, customFeedPlacement, firstAlertPlacement,
     boardLayout, columnWeights,
-    socialLayout,
+    socialLayout, socialRowHeight,
     selectedUsXFeed, selectedOsintFeed, selectedPressFeed,
     hideRepostsUsXFeed, hideRepostsOsintFeed, hideRepostsPressFeed,
     customFeedSel, customFeedViews, customFeedKeywords,
@@ -10354,15 +10427,18 @@ export default function Curated() {
     </section>
   );
 
-  // Render a single movable feed for the LEFT column (social feeds at "sm"
-  // scale; custom feed and DataMinr as their full sections).
+  // Render a single movable feed for the LEFT column (social feeds start at
+  // "sm" scale and step up when the viewer drags the left column wider — the
+  // width-tier effect near the column observers; custom feed and DataMinr as
+  // their full sections).
+  const leftSocialScale = bumpCuratedScale("sm", leftScaleTier);
   const renderMovableFeedLeft = (key: MovableFeedKey): React.ReactNode => {
     switch (key) {
       case "truth":
         return renderLeftSocialSection(
           "section-truth-social",
           "Truth Social",
-          renderTruthNode("sm"),
+          renderTruthNode(leftSocialScale),
           undefined,
           <SectionMethodologyTooltip
             section="truth-social"
@@ -10378,7 +10454,7 @@ export default function Curated() {
         return renderLeftSocialSection(
           "section-secwar",
           "U.S. X Feed",
-          renderUsXNode("sm"),
+          renderUsXNode(leftSocialScale),
           usXFeedDropdown,
           <SectionMethodologyTooltip
             section="x-feed"
@@ -10393,7 +10469,7 @@ export default function Curated() {
         return renderLeftSocialSection(
           "section-osint",
           "OSINT X Feed",
-          renderOsintNode("sm"),
+          renderOsintNode(leftSocialScale),
           osintFeedDropdown,
           <SectionMethodologyTooltip
             section="x-feed"
@@ -10408,7 +10484,7 @@ export default function Curated() {
         return renderLeftSocialSection(
           "section-press",
           "Press X Feed",
-          renderPressNode("sm"),
+          renderPressNode(leftSocialScale),
           pressFeedDropdown,
           <SectionMethodologyTooltip
             section="x-feed"
@@ -11767,11 +11843,11 @@ export default function Curated() {
                               {/* Clustered stories headline = the short synthesized
                                   generalized headline (no single source's framing).
                                   Single-source rows keep the article's own title. */}
-                              <h3 className={`${tsScale.heroHeadline} font-bold leading-tight mb-2 text-slate-900 dark:text-white max-w-2xl`} data-testid={`text-hero-headline-${hero.id}`}>
+                              <h3 className={`${tsScale.heroHeadline} font-bold leading-tight mb-2 text-slate-900 dark:text-white ${enlarged ? "max-w-3xl" : "max-w-2xl"}`} data-testid={`text-hero-headline-${hero.id}`}>
                                 {hero.headline || hero.displayTitle || hero.title}
                               </h3>
                               {heroBullets.length > 0 ? (
-                                <ul className="space-y-1 max-w-2xl">
+                                <ul className={`space-y-1 ${enlarged ? "max-w-3xl" : "max-w-2xl"}`}>
                                   {heroBullets.map((b, i) => (
                                     <li
                                       key={i}
@@ -11783,7 +11859,7 @@ export default function Curated() {
                                   ))}
                                 </ul>
                               ) : (
-                                <p className={`${tsScale.heroBody} text-slate-800 dark:text-white/85 max-w-2xl`}>{hero.summary}</p>
+                                <p className={`${tsScale.heroBody} text-slate-800 dark:text-white/85 ${enlarged ? "max-w-3xl" : "max-w-2xl"}`}>{hero.summary}</p>
                               )}
                             </div>
                           </button>
@@ -11819,7 +11895,11 @@ export default function Curated() {
                     <div
                       ref={topStoriesScrollRef}
                       style={feedMaxH.topStories ? { maxHeight: `${feedMaxH.topStories}px` } : undefined}
-                      className="curated-story-list max-w-3xl mx-auto max-h-[calc(100vh-8rem)] overflow-y-auto pr-1"
+                      // Story rows always use the full column width — no centred
+                      // max-w cap. The column's own width (divider drags) is the
+                      // single source of truth for how wide rows are, so there are
+                      // never dead gutters beside the list.
+                      className="curated-story-list max-h-[calc(100vh-8rem)] overflow-y-auto pr-1"
                     >
                       {/* Editor view modes (Task #834 rework) — swap ONLY the
                           list body inside this scroll container. The hero
@@ -12103,16 +12183,23 @@ export default function Curated() {
   // the bloc grows to fill the column height (see the R1 region comment).
   const rightBelowBloc = renderColumnSlots(["r2"]);
   const r1FillColumn = rightBelowBloc.length === 0;
+  // Fill mode and an explicit custom row height are mutually exclusive: the
+  // fill layout absolutely positions the bloc (removing it from intrinsic
+  // sizing), so an inline max-height there could never actually grow the
+  // section or keep the drag handle under the panes. When the viewer sets a
+  // custom height (Task #43), the bloc returns to normal flow and the height
+  // takes effect directly; clearing the height restores fill behaviour.
+  const r1FillActive = r1FillColumn && socialRowHeight == null;
   // LEFT column nodes computed once so the empty-column collapse logic can
   // decide whether to skip rendering the left div and its gutter border.
   const leftColNodes = renderColumnSlots(["l1", "l2"]);
   const hasLeftContent = leftColNodes.length > 0;
   // Right column is non-empty when any R1 social feed is active (placed in r1
   // lanes and not "off") or something below the bloc (r2) rendered.
-  const hasRightContent =
-    r1Lanes.some((lane) =>
-      lane.some((k) => movableFeedPlacements[k as MovableFeedKey] !== "off"),
-    ) || rightBelowBloc.length > 0;
+  const hasR1Social = r1Lanes.some((lane) =>
+    lane.some((k) => movableFeedPlacements[k as MovableFeedKey] !== "off"),
+  );
+  const hasRightContent = hasR1Social || rightBelowBloc.length > 0;
   // Two-column mode left pane — computed once so the outer grid can collapse
   // the left div (and its gutter/border) when every section in l1/l2/r1/r2 is
   // hidden or moved to the tray. renderTwoColLeft returns null when plan===0.
@@ -12165,34 +12252,6 @@ export default function Curated() {
           ? [0, 0]
           : undefined;
 
-  // Width-responsive font step-up — derived from the ResizeObserver-reported
-  // pixel width of the right column (rightColRef / rightColWidth, initialised
-  // near mainGridRef above).
-  //
-  // We compare the measured width against the right column's EXPECTED width at
-  // its base fr weight (no drag): baseRightPx = containerWidth × (rightFr / Σfr).
-  // Container width comes from mainGridRef at render time (reading offsetWidth in
-  // the render path is safe because it only updates display-side derived state).
-  //
-  // Hysteresis band (prevents jitter at the drag boundary):
-  //   step UP   when rightColWidth ≥ baseRightPx × 1.15  (+15% above base)
-  //   step DOWN when rightColWidth < baseRightPx × 1.10  (<+10% above base)
-  //   hold the current state in the 10–15% band
-  //
-  // Only active in three-column mode with the "sm" base scale; two-column and
-  // single-column modes are unaffected.
-  (() => {
-    if (!threeColBase || boardLayout.pageMode !== "three" || rightColWidth === 0) return;
-    const containerWidth = mainGridRef.current?.offsetWidth ?? 0;
-    if (containerWidth === 0) return;
-    const totalFr = threeColBase.reduce((a, b) => a + b, 0);
-    const baseRightPx = containerWidth * (threeColBase[threeColBase.length - 1] / totalFr);
-    if (rightColWidth >= baseRightPx * 1.15) rightSteppedUpRef.current = true;
-    else if (rightColWidth < baseRightPx * 1.10) rightSteppedUpRef.current = false;
-    // Between 1.10× and 1.15×: hold existing state (hysteresis).
-  })();
-  const rightSteppedUp = rightSteppedUpRef.current;
-
   const twoColBase = hasTwoColLeft ? [1, 1.2] : null;
   const twoColSig = twoColBase ? twoColBase.join(",") : "";
   const twoColDeltas = (twoColBase && columnWeights[twoColSig]) || [];
@@ -12205,6 +12264,34 @@ export default function Curated() {
   // the Top Stories / Custom Feed pane. 0 = the right pane is uncapped so it can
   // grow when dragged, which is what drives its width-responsive font step-up.
   const twoColMaxPx = twoColBase ? [1100, 0] : undefined;
+
+  // Width-responsive font step-up (Task #43) — stash each social-feed column's
+  // EXPECTED width at its base fr weight (no drag): basePx = containerWidth ×
+  // (fr / Σfr). Container width comes from mainGridRef at render time (reading
+  // offsetWidth in the render path is safe because it only feeds display-side
+  // derived state). The effects near the width observers turn measured-width
+  // changes into hysteresis scale tiers via nextWidthTier — step UP at ≥1.15×
+  // base (≥1.45× for a second notch), step DOWN below 1.10× (1.40×), hold in
+  // between. Because total fr weight is conserved by the divider drag, a tier
+  // change in one column can never move its neighbours — only the text inside
+  // the dragged column re-scales.
+  (() => {
+    const containerWidth = mainGridRef.current?.offsetWidth ?? 0;
+    let left = 0;
+    let right = 0;
+    if (containerWidth > 0) {
+      if (boardLayout.pageMode === "three" && threeColBase) {
+        const totalFr = threeColBase.reduce((a, b) => a + b, 0);
+        if (hasLeftContent) left = containerWidth * (threeColBase[0] / totalFr);
+        if (hasRightContent)
+          right = containerWidth * (threeColBase[threeColBase.length - 1] / totalFr);
+      } else if (boardLayout.pageMode === "two" && twoColBase) {
+        const totalFr = twoColBase.reduce((a, b) => a + b, 0);
+        left = containerWidth * (twoColBase[0] / totalFr);
+      }
+    }
+    colBasePxRef.current = { left, right };
+  })();
 
   // Width-responsive font step-up for the MIDDLE / Top Stories column. Works in
   // BOTH page modes — whichever cell currently holds Top Stories is measured by
@@ -12311,7 +12398,7 @@ export default function Curated() {
               />
             )}
             {hasTwoColLeft && (
-              <div className="lg:pr-5">{twoColLeft}</div>
+              <div ref={leftColCallbackRef} className="lg:pr-5">{twoColLeft}</div>
             )}
             <div
               ref={middleColCallbackRef}
@@ -12352,7 +12439,7 @@ export default function Curated() {
               gutter behind. Board position is the authority; visibility stays on
               each section's own on/off gate. */}
           {hasLeftContent && (
-          <div className="space-y-5 lg:pr-5">
+          <div ref={leftColCallbackRef} className="space-y-5 lg:pr-5">
             {leftColNodes}
           </div>
           )}
@@ -12381,10 +12468,10 @@ export default function Curated() {
               below), or scrolls normally otherwise. Abspos trick (see original
               comment) removes the bloc from intrinsic-sizing so the shared grid
               row is sized by left/middle only. */}
-          {hasRightContent && <div ref={rightColCallbackRef} className={r1FillColumn ? "lg:relative" : "lg:pl-5"}>
+          {hasRightContent && <div ref={rightColCallbackRef} className={r1FillActive ? "lg:relative" : "lg:pl-5"}>
             <div
               className={
-                r1FillColumn
+                r1FillActive
                   ? "lg:absolute lg:inset-0 lg:pl-5 lg:flex lg:flex-col"
                   : undefined
               }
@@ -12396,11 +12483,13 @@ export default function Curated() {
               // showSecwar / showOsint / showPress). The 3/2/1 picker and every
               // feed toggle now live inside that one modal (Task #258 follow-up).
               const baseScale = SOCIAL_LAYOUT_SCALE[socialLayout];
-              // Step up one level when the right column has been dragged wider
-              // past the hysteresis threshold (three-column mode only).
+              // Step the text tier up when the right column has been dragged
+              // wider past the hysteresis thresholds (three-column mode only —
+              // the right column doesn't exist in the other modes). Works from
+              // any base scale, so a 2-column "md" bloc can reach "lg" too.
               const scale: CuratedFeedScale =
-                boardLayout.pageMode === "three" && rightSteppedUp && baseScale === "sm"
-                  ? "md"
+                boardLayout.pageMode === "three"
+                  ? bumpCuratedScale(baseScale, rightScaleTier)
                   : baseScale;
 
               // The R1 social bloc is driven by the Configure Layout board's R1
@@ -12559,7 +12648,7 @@ export default function Curated() {
               return (
                 <div
                   className={`grid grid-cols-1 ${gridColsClass} gap-x-2 gap-y-6 ${
-                    r1FillColumn
+                    r1FillActive
                       ? "items-start lg:items-stretch lg:grid-rows-1 lg:flex-1 lg:min-h-0"
                       : "items-start"
                   }`}
@@ -12571,7 +12660,7 @@ export default function Curated() {
                           key={col.pane.key}
                           data-testid={col.testid}
                           className={
-                            r1FillColumn ? "lg:h-full lg:flex lg:flex-col" : undefined
+                            r1FillActive ? "lg:h-full lg:flex lg:flex-col" : undefined
                           }
                         >
                           <SectionHeading
@@ -12581,10 +12670,20 @@ export default function Curated() {
                           />
                           <div
                             className={`curated-scroll overflow-y-auto overflow-x-hidden pr-2 min-h-[240px] ${
-                              r1FillColumn
-                                ? "max-h-[480px] lg:max-h-none lg:flex-1 lg:min-h-0"
-                                : "max-h-[480px]"
+                              r1FillActive
+                                ? "lg:flex-1 lg:min-h-0 max-h-[480px] lg:max-h-none"
+                                : socialRowHeight == null
+                                  ? "max-h-[480px]"
+                                  : ""
                             }`}
+                            // Custom row height from the drag handle below the
+                            // bloc (Task #43). Inline style so it also overrides
+                            // fill-column mode's uncapped lg height.
+                            style={
+                              socialRowHeight != null
+                                ? { maxHeight: socialRowHeight }
+                                : undefined
+                            }
                           >
                             {col.pane.node}
                           </div>
@@ -12596,13 +12695,23 @@ export default function Curated() {
                         key={col.sectionTestId}
                         panes={col.panes}
                         sectionTestId={col.sectionTestId}
-                        fill={r1FillColumn}
+                        fill={r1FillActive}
+                        paneMaxHeight={socialRowHeight}
                       />
                     );
                   })}
                 </div>
               );
             })()}
+            {/* Row-height drag handle under the social bloc (Task #43): pull
+                down to give the social scroll panes more vertical space, pull
+                up to shrink back; Home/Enter/double-click resets to default. */}
+            {hasR1Social && (
+              <RowResizeHandle
+                value={socialRowHeight}
+                onChange={setSocialRowHeight}
+              />
+            )}
             {/* Board-driven content below the R1 social bloc (R2 slot). Same
                 builders as the left column; POSITION from the board, VISIBILITY
                 from each feed's on/off gate. */}

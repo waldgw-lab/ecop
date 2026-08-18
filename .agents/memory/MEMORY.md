@@ -7,4 +7,5 @@
 - [Media COP scrape budgets](media-cop-scrape-budgets.md) — chain lanes need sub-budgets; heavy X scrapers go on dedicated crons, never the chain tail; 0-tweet+rendered-profile = rate limit, not bad cookies.
 - [Curated taxonomy & regions](curated-taxonomy-regions.md) — region is a strict allowlist at every write path; topic additions touch vocab+prompt+inference; drizzle turns JS-array params into tuples, build ARRAY[...] via sql.join.
 - [Curated cluster fragmentation](curated-cluster-fragmentation.md) — missed merges = over-applied prompt rules or token morphology; fix prompts/recall, never precision bars.
+- [Curated fill vs custom size](curated-fill-vs-custom-size.md) — user-set pane heights must exit the social bloc's abspos fill layout; inner max-height alone can't grow the section.
 - [Media COP deployment target](media-cop-deployment.md) — prod must be single-instance Reserved VM; autoscale suspends crons → "stale after first hour" feeds; X relay never heartbeats in prod.

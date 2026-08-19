@@ -677,30 +677,69 @@ export function evalCuratedAnalysisOpinionCap(
 
 // ---- Direct U.S.-implication tie-break (curated-lane ONLY) ------------------
 // This is deliberately narrower than "mentions the U.S.": it recognizes
-// Russia–Ukraine conflict coverage only when the headline/known synopsis names a
-// concrete U.S. security, force-posture, alliance, economic-statecraft, homeland
-// security, or material exposure consequence. It runs after relevance acceptance
-// and deterministic caps, never admits a rejected candidate, and only nudges an
-// already machine-derived curated score relative to comparable reporting.
+// Russia–Ukraine OR Israel–Gaza conflict coverage only when the headline/known
+// synopsis names a concrete U.S. security, force-posture, alliance,
+// economic-statecraft, diplomatic, homeland-security, or material-exposure
+// consequence. It runs after relevance acceptance and deterministic caps, never
+// admits a rejected candidate, and only nudges an already machine-derived
+// curated score relative to comparable reporting.
 export const CURATED_US_IMPLICATION_TIE_BREAK = 3;
-const RUSSIA_UKRAINE_CONFLICT = /\b(russia|russian|kremlin|moscow|ukraine|ukrainian|kyiv|kiev|zelensky|putin)\b/i;
-const US_ACTOR = /\b(?:u\.?s\.?|united states|washington|pentagon|defense department|department of defense|dod|white house|state department|treasury|congress|nato)\b/i;
-const MATERIAL_US_CONNECTION = /\b(?:troops?|forces?|deployment|force posture|air defense|missiles?|weapons?|munitions?|security assistance|aid package|military aid|arms package|defense commitment|article 5|alliance commitment|sanctions?|export controls?|asset seizure|frozen assets?|tariffs?|homeland security|border security|cyber(?:attack|security)?|critical infrastructure|intelligence sharing|u\.?s\.? (?:personnel|citizens|bases?|assets?))\b/i;
-const INCIDENTAL_US_MENTION = /\b(?:u\.?s\.?|united states|american)\s+(?:media|outlet|journalists?|officials?\s+said|commentators?)\b/i;
+const RUSSIA_UKRAINE_CONFLICT = /\b(?:russia|russian|kremlin|moscow|ukraine|ukrainian|kyiv|kiev|zelensky|putin|kherson|kharkiv|zaporizh\w*|donbas|donetsk|luhansk|crimea|odesa|dnipro|pokrovsk)\b/i;
+const ISRAEL_GAZA_CONFLICT = /\b(?:gaza|hamas|rafah|khan younis|deir al-balah|jabalia|hind rajab)\b/i;
+const US_ACTOR_FRAGMENT = String.raw`(?:u\.?s\.?|united states|american|washington|pentagon|defense department|department of defense|dod|white house|state department|treasury|congress|nato|trump(?: administration)?|biden(?: administration)?)`;
+const MATERIAL_US_FRAGMENT = String.raw`(?:troops?|forces?|deployment|force posture|air defense|missiles?|weapons?|arms?|munitions?|security assistance|aid(?: package)?|military aid|arms package|defense commitment|article 5|alliance commitment|sanctions?|export controls?|asset seizure|frozen assets?|tariffs?|homeland security|border security|cyber(?:attack|security)?|critical infrastructure|intelligence sharing|ceasefire|truce|peace plan|mediat(?:e|es|ed|ion)|diploma(?:cy|tic)|negotiations?|talks|hostages?|personnel|citizens?|bases?|assets?)`;
+const DIRECT_US_ACTION_FRAGMENT = String.raw`(?:announc\w*|approv\w*|authoriz\w*|block\w*|suspend\w*|halt\w*|provid\w*|send\w*|deliver\w*|transfer\w*|deploy\w*|withdraw\w*|fund\w*|sanction\w*|impos\w*|lift\w*|seiz\w*|freez\w*|mediat\w*|broker\w*|negotiat\w*|defend\w*|intercept\w*|evacuat\w*|rescu\w*)`;
+const INCIDENTAL_US_MENTION = new RegExp(
+  String.raw`\b${US_ACTOR_FRAGMENT}\s+(?:media|outlets?|journalists?|reporters?|commentators?|analysts?|officials?\s+(?:said|say|told|commented))\b`,
+  'i',
+);
+// A concrete relationship, not loose co-occurrence. These patterns require the
+// U.S. actor to own/perform a material action, the material action to be
+// explicitly by/from the U.S., or U.S. people/assets to be directly affected.
+const DIRECT_US_RELATION_PATTERNS = [
+  new RegExp(
+    String.raw`\b${US_ACTOR_FRAGMENT}\b.{0,55}\b${DIRECT_US_ACTION_FRAGMENT}\b.{0,55}\b${MATERIAL_US_FRAGMENT}\b`,
+    'i',
+  ),
+  new RegExp(
+    String.raw`\b${US_ACTOR_FRAGMENT}\s+(?:new\s+|military\s+|security\s+|defense\s+)?${MATERIAL_US_FRAGMENT}\b`,
+    'i',
+  ),
+  new RegExp(
+    String.raw`\b${MATERIAL_US_FRAGMENT}\b.{0,30}\b(?:by|from|of|with|under)\s+(?:the\s+)?${US_ACTOR_FRAGMENT}\b`,
+    'i',
+  ),
+  new RegExp(
+    String.raw`\b(?:kill\w*|injur\w*|wound\w*|threaten\w*|detain\w*|captur\w*|kidnap\w*|hold\w*)\b.{0,35}\b(?:u\.?s\.?|american)\s+(?:personnel|citizens?|troops?|forces?|hostages?|assets?)\b`,
+    'i',
+  ),
+];
+
+export function hasDirectUsConflictImplication(
+  title: string,
+  summary: string | null | undefined,
+  conflictTrack?: string | null,
+): boolean {
+  const text = `${title || ''} ${summary || ''}`.trim();
+  const targetTrack =
+    conflictTrack === 'Russia-Ukraine War' ||
+    conflictTrack === 'Israel-Hamas / Gaza';
+  return !!(
+    text &&
+    (targetTrack ||
+      RUSSIA_UKRAINE_CONFLICT.test(text) ||
+      ISRAEL_GAZA_CONFLICT.test(text)) &&
+    !INCIDENTAL_US_MENTION.test(text) &&
+    DIRECT_US_RELATION_PATTERNS.some((pattern) => pattern.test(text))
+  );
+}
 
 export function evalCuratedDirectUsImplicationTieBreak(
   title: string,
   summary: string | null | undefined,
   score: number,
 ): { score: number; applied: boolean; reason: string | null } {
-  const text = `${title || ''} ${summary || ''}`.trim();
-  if (
-    !text ||
-    !RUSSIA_UKRAINE_CONFLICT.test(text) ||
-    !US_ACTOR.test(text) ||
-    !MATERIAL_US_CONNECTION.test(text) ||
-    INCIDENTAL_US_MENTION.test(text)
-  ) {
+  if (!hasDirectUsConflictImplication(title, summary)) {
     return { score, applied: false, reason: null };
   }
   return {

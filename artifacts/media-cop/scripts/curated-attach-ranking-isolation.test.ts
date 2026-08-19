@@ -10,6 +10,7 @@ import {
   freshestRankingMemberAt,
   type MemberScoreInput,
 } from '../server/curatedClusterScore';
+import { computeCuratedTopStoryBlendScore } from '../server/curatedTopStoryRanking';
 import { deriveBehavior } from '../shared/outletRegistry';
 
 let failures = 0;
@@ -102,9 +103,13 @@ check(
 );
 check(
   'ranking boost uses corroborating count instead of visible total',
-  routes.includes(
-    '(s.corroboratingSourceCount ?? s.sourceCount ?? 1) - 1',
-  ),
+  computeCuratedTopStoryBlendScore({
+    priorityScore: 50,
+    sourceCount: 10,
+    corroboratingSourceCount: 2,
+    title: 'Pentagon budget bill advances in Congress',
+  }) === 57 &&
+    routes.includes('computeCuratedTopStoryBlendScore(s)'),
 );
 check(
   'all-non-corroborating force-merge cannot use an attached timestamp or priority pin',

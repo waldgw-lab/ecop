@@ -72,6 +72,10 @@ import {
 import { pickDominantAngleMember } from "./curatedDominantAngle";
 import { buildAttachClusters, classifyAttachCandidate, isAdversaryNewsContrast, type AttachRecommendation } from "./curatedIncrementalAttach";
 import { computeClusterPriorityScore, freshestRankingMemberAt } from "./curatedClusterScore";
+import {
+  calibrateCuratedTopStoryPriority,
+  computeCuratedTopStoryBlendScore,
+} from "./curatedTopStoryRanking";
 import { isEligibleCuratedStoryImageCandidate, selectCuratedStoryImages } from "./curatedStoryImages";
 import { isAttachmentOnlySocialContent } from "./socialPostText";
 import { buildOutletIndex, findOutlet, deriveOutletBehavior, deriveBehavior, normalizeOutletName, extractOutletDomain, SOURCE_IDENTIFIERS, OTHER_SOURCE_TYPES, OWNERSHIP_CATEGORIES, ADVERSARY_COUNTRIES, isSocialFlashOutlet } from "@shared/outletRegistry";
@@ -3427,28 +3431,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Blend ranking (user-tuned): order by importance/freshness (the
-      // depreciated priority) but give corroborated, multi-source stories a
-      // BOUNDED boost so big clusters surface near the top — WITHOUT burying
-      // high-priority single-source items, which must keep rotating through the
-      // hero until clustering is fully dialed in. Boost grows per extra source
-      // and is capped so one huge cluster can't dominate the whole feed.
-      // Sized against the steep age-depreciation (10 pts/hr after 2h): a heavily
-      // corroborated story that is several hours old must still out-rank fresh
-      // single-source items, while a lightly-corroborated (2-3 source) story only
-      // gets a gentle nudge so fresh, high-importance singles keep rotating in.
-      const CORROBORATION_PER_SOURCE = 7; // points per source beyond the first
-      const CORROBORATION_MAX_BOOST = 50; // ceiling on the corroboration boost
-      const blendScore = (s: any): number => {
-        const base = s.priorityScore ?? 0;
-        // Visible sourceCount includes attached coverage; only corroborating
-        // members earn the multi-source ranking boost.
-        const extra = Math.max(
-          0,
-          (s.corroboratingSourceCount ?? s.sourceCount ?? 1) - 1,
-        );
-        return base + Math.min(CORROBORATION_MAX_BOOST, extra * CORROBORATION_PER_SOURCE);
-      };
+      // Existing Top Stories importance/corroboration blend, with two narrow
+      // calibrations applied in the SAME ranking step (no new pipeline stage):
+      // (1) unpinned Russia–Ukraine / Israel–Gaza local incidents without a
+      // concrete U.S. implication remain MODERATE (P69 max), and (2) an editor
+      // pin is the complete final rank so new corroborating members cannot lift
+      // the story back above the editor's setting. Keep the stored/display
+      // priority untouched through same-outlet de-duplication; the calibrated
+      // value is emitted only after selection so this ranking rule cannot change
+      // which duplicate article survives.
+      const blendScore = (s: any): number =>
+        computeCuratedTopStoryBlendScore(s);
       // Defense-in-depth: never emit two stories with the same id. A duplicate id
       // collides as a React key on the client and the view silently drops one of
       // the rows (which can hide a real cluster). Clustering already dedups items
@@ -3980,7 +3973,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       const outStories = diversified
         .slice(0, limit)
-        .map((s) => ({ ...s, rankingScore: effectiveScore(s) }));
+        .map((s) => ({
+          ...s,
+          priorityScore: calibrateCuratedTopStoryPriority(s),
+          rankingScore: effectiveScore(s),
+        }));
 
       const topPayload = {
         stories: outStories,

@@ -1388,10 +1388,12 @@ export interface CuratedStory {
   // Curated lane (Task #171) — allowlist-gated manual Priority override. When set
   // it is the pinned RAW P score; the server decays it by article age on the same
   // curve as every other curated row (NOT decay-exempt) before it reaches the
-  // ranking and `priorityScore`. Applied in the Curated view ONLY. `rankingScore`
-  // is the blend score (importance + corroboration boost) that actually orders the
-  // feed — surfaced for the P-badge tooltip so allowlisted users can see this
-  // story vs. the top-5/top-30 bars.
+  // ranking and `priorityScore`. Applied in the Curated view ONLY. For unpinned
+  // rows, `rankingScore` is the blend score (importance + corroboration boost)
+  // that actually orders the feed. For a pinned row, the decayed pinned score is
+  // authoritative and receives no later corroboration lift. Surfaced for the
+  // P-badge tooltip so allowlisted users can see this story vs. the top-5/top-30
+  // bars.
   priorityOverride?: number | null;
   rankingScore?: number;
   scrapedAt: string;

@@ -35,7 +35,7 @@ import { PRIMARY_TOPICS, OTHER_EMERGING, CONFLICT_TRACKS } from "@shared/classif
  * analyzer prompts restores the previous behavior.
  */
 export const LOCAL_CONFLICT_IMPORTANCE_CALIBRATION =
-  "A local, domestic, routine-continuation, or incremental conflict story may remain relevant, but keep it below HIGH importance unless the headline itself reports a material new consequence: direct U.S. or allied consequence, cross-border escalation, force-posture change, concrete diplomatic or sanctions action, strategic-infrastructure impact, major civilian harm, or a genuinely new conflict phase. Apply this by consequence and novelty only—never by country, publisher, outlet geography, or outlet role.";
+  "A local, domestic, routine-continuation, or incremental conflict story may remain relevant, but keep it below HIGH importance unless the headline itself reports a material new consequence for U.S. leadership: direct U.S. personnel, force-posture, alliance, diplomatic, sanctions, homeland, or strategic-infrastructure implications. Locally contained casualty reports, an isolated strike or attack, a battlefield update, a transport-vehicle attack, or an investigation into troop conduct remain MODERATE even when several outlets cover them; coverage volume is not consequence. Apply this by consequence and novelty only—never by country, publisher, outlet geography, or outlet role.";
 
 // =============================================================================
 // MAIN-FEED AUTO-PROMOTION BAR (Task #522 — relevance/P-score funnel tuning)

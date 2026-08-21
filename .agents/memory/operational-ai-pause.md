@@ -14,3 +14,9 @@ When the operator wants a public phase-out banner but no backend activity at all
 **Why:** A UI-only pause previously left the production Node process active, so DataMinr, Playwright X, Truth Social, media jobs, and inbound APIs continued even though the page looked phased out.
 
 **How to apply:** Keep the development server available, but configure production to serve only the built static directory with no production run command. Ensure the paused entry does not eagerly load the application bundle or third-party fonts, then verify its actual browser request list contains only local static assets.
+
+For artifact-managed static production, `publicDir` resolves from the workspace root, not from the artifact directory.
+
+**Why:** An artifact-relative `dist/...` value passed configuration validation but published without a static handler, causing every route—including `/`—to return an internal server error.
+
+**How to apply:** Use the workspace-relative path to the artifact's built public directory and verify that `index.html` exists at that exact path before republishing. Remove production sections from sibling API artifacts when the deployment must contain no backend service.

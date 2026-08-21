@@ -16,7 +16,7 @@ run = "pnpm --filter @workspace/media-cop run dev"
 
 [services.production]
 serve = "static"
-publicDir = "dist/public"
+publicDir = "artifacts/media-cop/dist/public"
 
 [services.production.build]
 args = [ "pnpm", "--filter", "@workspace/media-cop", "run", "build" ]

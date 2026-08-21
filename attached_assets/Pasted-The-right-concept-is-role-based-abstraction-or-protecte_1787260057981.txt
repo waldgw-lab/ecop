@@ -1,0 +1,687 @@
+The right concept is **role-based abstraction** or **protected-principal abstraction**, rather than full anonymity. The application should obscure the identity of the senior decision customer and supporting organization while preserving exact attribution for the public actors, statements, and evidence being analyzed.
+
+# Protected-Principal Abstraction and Role-Neutral Output Standard
+
+## 1. Purpose
+
+This standard establishes how the application will refer to the senior leaders, decision customers, staffs, and organizations for whom it produces decision-support information.
+
+The application will use **generic, function-based terminology** rather than directly naming a protected senior leader, office, billet, or organizational customer. The objective is to allow the system to describe the level, function, and decision requirement accurately without unnecessarily revealing the identity of the principal or organization receiving the product.
+
+The standard applies to:
+
+* user interfaces;
+* dashboards;
+* decision cases;
+* generated assessments;
+* COA comparisons;
+* Strategic Risk Delta products;
+* alerts;
+* reports;
+* exports;
+* filenames;
+* document properties;
+* model prompts;
+* logs visible to users;
+* demonstrations and screenshots;
+* training and test data.
+
+## 2. Core Policy
+
+> **Represent the decision customer by function, level, and authority—not by personal name, exact office, billet, or organizational identifier.**
+
+The application should describe:
+
+* what level of decision is being supported;
+* what advisory function is being performed;
+* what organization or force is affected;
+* what authority or responsibility is relevant.
+
+It should not unnecessarily disclose:
+
+* the exact senior leader receiving the product;
+* the exact office sponsoring the application;
+* the billet or position of the protected principal;
+* the identities of internal analysts, reviewers, or approval officials;
+* internal office acronyms or organizational labels that would reveal the customer.
+
+The default terminology should be sufficiently generic that the application can support different senior military and national-security decision customers without requiring changes to its analytical logic.
+
+## 3. Critical Distinction: Customer Abstraction Versus Source Attribution
+
+Protected-principal abstraction applies to **the people and organizations for whom the application performs analysis**.
+
+It does **not** apply to the public evidence being analyzed.
+
+The application must preserve the exact identity of:
+
+* public officials making statements;
+* military or government spokespersons;
+* foreign leaders;
+* media outlets;
+* official accounts;
+* organizations publishing information;
+* authors and speakers;
+* actors associated with public events;
+* sources supporting or contradicting an assessment.
+
+For example:
+
+**Correct source attribution**
+
+> The President of Country X stated that military operations would continue.
+
+**Correct protected-customer abstraction**
+
+> The statement may affect the options and associated risks presented to the Senior Military Advisor.
+
+The application must not replace a publicly attributable source with a generic label when the source’s identity is analytically material.
+
+Stack Build already separates raw source evidence and canonical actor identity from derived assessments and finished products. Protected-principal abstraction should therefore be implemented as an output and governance layer, not by altering or degrading the underlying evidence. 
+
+## 4. Default Abstraction Levels
+
+### Level 1: Enterprise-Level Abstraction
+
+Use when the exact advisory role is unnecessary.
+
+Examples:
+
+* **U.S. Military Force**
+* **National Security Enterprise**
+* **Civilian Defense Leadership**
+* **National-Level Leadership**
+* **Strategic Military Staff**
+* **Operational Military Command**
+* **Military Service Leadership**
+* **Interagency Partners**
+* **Allied and Partner Leadership**
+
+### Level 2: Functional Role Abstraction
+
+Use when the advisory function matters but the exact office or billet does not.
+
+Examples:
+
+* **Senior Military Advisor**
+* **Senior National Security Advisor**
+* **National-Level Decision Authority**
+* **Senior Military Decision User**
+* **Strategic Public Information Advisor**
+* **Operational Military Commander**
+* **Senior Civilian Defense Official**
+* **Strategic Risk Analyst**
+* **Senior Military Reviewer**
+
+This should be the application’s default output level.
+
+### Level 3: Exact Identity or Office
+
+Use only when:
+
+* the identity is part of the public evidence;
+* the person is the subject of the analysis;
+* exact attribution is required for accuracy;
+* an authorized user is operating in an approved restricted environment;
+* the identity is necessary for an official record or routing action.
+
+Exact identity should never appear merely because the model can infer it from context.
+
+## 5. Approved Terminology
+
+| Avoid in Generic Outputs                                         | Preferred Generic Terminology                                              |
+| ---------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| Chairman of the Joint Chiefs of Staff                            | **Senior Military Advisor**                                                |
+| The Chairman                                                     | **Senior Military Advisor** or **Senior Military Decision User**           |
+| Chairman-level                                                   | **Senior Military Advisory Level** or **National-Level Military Advisory** |
+| Chairman’s information environment                               | **Senior Military Decision Environment**                                   |
+| Chairman’s decision space                                        | **Senior Military Decision Space**                                         |
+| Chairman’s requirements                                          | **Senior Military Decision-Support Requirements**                          |
+| Chairman’s options                                               | **National-Level Military Options**                                        |
+| Chairman’s risk assessment                                       | **Senior Military Strategic Risk Assessment**                              |
+| Office of the Chairman                                           | **Senior Military Advisory Staff**                                         |
+| Joint Staff                                                      | **Strategic Military Staff**                                               |
+| OCJCS Public Affairs                                             | **Strategic Public Information Staff**                                     |
+| Chairman’s Public Affairs Advisor                                | **Strategic Public Information Advisor**                                   |
+| Joint Force                                                      | **U.S. Military Force**                                                    |
+| President, when referring to the protected customer relationship | **National-Level Decision Authority**                                      |
+| National Command Authority                                       | **National-Level Decision Authority** or **National-Level Intent**         |
+| Secretary of Defense or Secretary of War                         | **Civilian Defense Leadership**                                            |
+| National Security Council                                        | **National Security Coordination Staff**                                   |
+| National Security Advisor                                        | **Senior National Security Advisor**                                       |
+| Combatant Command                                                | **Operational Military Command**                                           |
+| Combatant Commander                                              | **Operational Military Commander**                                         |
+| Service Chief                                                    | **Military Service Leadership**                                            |
+| Service Headquarters                                             | **Military Service Staff**                                                 |
+| Intelligence Community                                           | **National Intelligence Enterprise**                                       |
+| Congress, when exact body is not material                        | **Legislative Oversight Authority**                                        |
+| CAG or Chairman’s Action Group                                   | **Senior Military Advisory Staff**                                         |
+| Chairman’s brief                                                 | **Senior-Level Decision Brief**                                            |
+| CJCS decision product                                            | **Senior Military Decision Product**                                       |
+| CJCS relevance                                                   | **National-Level Military Relevance**                                      |
+| Briefed to the Chairman                                          | **Provided to the Senior Military Advisor**                                |
+| For Chairman decision                                            | **For Senior Military Decision Support**                                   |
+| Chairman-approved                                                | **Approved by the Authorized Senior Reviewer**                             |
+
+## 6. Recommended Application-Wide Labels
+
+### Decision level
+
+Use:
+
+* **National-Level**
+* **Senior Military Advisory**
+* **Civilian Defense Leadership**
+* **Operational Military**
+* **Strategic Staff**
+* **Public Information**
+* **Interagency**
+* **Allied and Partner**
+
+### Decision customer
+
+Use:
+
+* **Senior Military Advisor**
+* **National-Level Decision Authority**
+* **Civilian Defense Leadership**
+* **Operational Military Leadership**
+* **Strategic Public Information Staff**
+
+### Force or organization
+
+Use:
+
+* **U.S. Military Force**
+* **Strategic Military Staff**
+* **Operational Military Command**
+* **Military Service**
+* **National Security Enterprise**
+* **National Intelligence Enterprise**
+
+### Product type
+
+Use:
+
+* **Senior-Level Decision Brief**
+* **Strategic Information Environment Assessment**
+* **National-Level Military Options**
+* **Option-Specific Risk Portfolio**
+* **Strategic Risk Delta Assessment**
+* **Public Information Implications**
+* **Senior Military Decision-Support Product**
+
+## 7. Output Rules
+
+### Rule 1: Default to the Generic Role
+
+The application should default to the approved generic label even when an exact identity is known internally.
+
+Example:
+
+**Do not generate**
+
+> The Chairman should consider three military options.
+
+**Generate**
+
+> The Senior Military Advisor should consider three military options.
+
+### Rule 2: Describe the Function, Not the Individual
+
+Outputs should emphasize:
+
+* the advisory requirement;
+* the decision level;
+* the strategic objective;
+* the risk owner;
+* the affected force or system.
+
+They should not emphasize the individual occupying the role.
+
+Example:
+
+**Do not generate**
+
+> This provides General [Name] with an assessment of escalation risk.
+
+**Generate**
+
+> This provides the Senior Military Advisor with an assessment of escalation risk.
+
+### Rule 3: Avoid Protected Acronyms
+
+The application should not use protected office or billet acronyms in:
+
+* page titles;
+* menu labels;
+* report headers;
+* filenames;
+* export names;
+* URLs;
+* dashboard filters;
+* user-visible logs;
+* model prompts;
+* screenshots;
+* demonstration data.
+
+Examples to avoid in generic outputs include:
+
+* CJCS;
+* OCJCS;
+* CAG;
+* JCS front office designations;
+* office-specific public-affairs acronyms;
+* internal routing codes.
+
+### Rule 4: Prevent Contextual Re-Identification
+
+A product can reveal a protected principal even without using a name.
+
+The application should avoid combining unnecessary details such as:
+
+* exact title;
+* unique current assignment;
+* exact meeting name;
+* exact date and location;
+* distinctive travel schedule;
+* office-specific workflow;
+* unique reporting cadence;
+* internal organization name;
+* direct references to a principal’s personal priorities.
+
+Use only the contextual details required to understand the decision problem.
+
+Example:
+
+**Potentially identifying**
+
+> Prepared for the official who advises the President on military matters following the August 20 senior-leader meeting.
+
+**Preferred**
+
+> Prepared for senior military decision support in response to a national-level requirement.
+
+### Rule 5: Do Not Infer the Protected Identity
+
+The model must not attempt to resolve:
+
+* “Senior Military Advisor” into a specific person;
+* “National-Level Decision Authority” into a named officeholder;
+* “Strategic Military Staff” into a particular headquarters;
+* “Strategic Public Information Staff” into a named office.
+
+This remains true even when contextual clues make the identity apparent.
+
+### Rule 6: Preserve Exact Public Attribution
+
+When a protected principal is themselves the public source or subject of the evidence, the application may preserve the exact public identity in the evidence layer.
+
+For example, an officially released public statement should retain:
+
+* the speaker’s public name;
+* official title at the time of the statement;
+* source;
+* publication date;
+* exact quote or faithful summary.
+
+The protected-principal rule applies to the application’s internal customer relationship, not to publicly attributable evidence.
+
+### Rule 7: Genericization Does Not Determine Releasability
+
+Role abstraction does not make information:
+
+* unclassified;
+* publicly releasable;
+* free from operational-security concerns;
+* exempt from records requirements;
+* exempt from privacy or licensing restrictions.
+
+All applicable handling, classification, privacy, records, and release rules remain in force.
+
+## 8. Decision-Case Language
+
+Decision cases should be written without identifying the exact senior customer.
+
+### Preferred structure
+
+**Decision Requirement**
+
+> A national-level decision authority has requested military options to accomplish [desired strategic condition].
+
+**Advisory Requirement**
+
+> The Senior Military Advisor must present distinguishable options and associated risk portfolios.
+
+**Staff Requirement**
+
+> The Strategic Military Staff must assess how each option could change the interconnected strategic environment.
+
+**Public Information Requirement**
+
+> The Strategic Public Information Staff must identify publicly observable effects, likely interpretations, narrative pathways, audience reactions, and strategic communication risks.
+
+### Avoid
+
+> The President asked the Chairman to provide options.
+
+### Prefer
+
+> A national-level decision authority requested military options and associated risks.
+
+The broader Strategic Risk Delta model is already structured around national-level intent, alternative options, uncertainty, and option-specific risk rather than a named individual or office. Generic functional terminology should remain consistent with that architecture. 
+
+## 9. COA and Risk Language
+
+### Preferred
+
+> COA 2 provides the strongest alignment with national-level intent but introduces greater escalation and alliance risk.
+
+### Avoid
+
+> COA 2 is the option the Chairman should recommend to the President.
+
+### Preferred
+
+> The Senior Military Advisor may determine that the option’s expected benefits warrant accepting the residual risk.
+
+### Avoid
+
+> The Chairman accepts the risk.
+
+### Preferred
+
+> Final acceptability remains a human judgment assigned to the appropriate decision authority.
+
+### Avoid
+
+> The application determined that the option was acceptable.
+
+## 10. User Interface Guidance
+
+### Page and module names
+
+Use:
+
+* **Decision Cases**
+* **Senior-Level Decision Support**
+* **Current Information Environment**
+* **National-Level Intent**
+* **Strategic Network**
+* **COA Comparison**
+* **Strategic Risk Delta**
+* **Senior Reviewer**
+* **Authorized Decision Authority**
+* **Public Information Implications**
+
+Avoid:
+
+* Chairman Dashboard;
+* CJCS Brief;
+* OCJCS Workspace;
+* Chairman’s Options;
+* Chairman’s Read Book;
+* CJCS Risk Score;
+* Chairman Alert.
+
+### Audience labels
+
+Recommended:
+
+```text
+Decision Level: National-Level Military Advisory
+Primary User: Senior Military Advisor
+Supporting Staff: Strategic Military Staff
+Functional Lens: Strategic Public Information
+Decision Authority: National-Level Decision Authority
+```
+
+### User roles
+
+Recommended application roles:
+
+* **Analyst**
+* **Senior Analyst**
+* **Senior Reviewer**
+* **Decision Support Lead**
+* **Collection Operator**
+* **Administrator**
+
+Do not name user roles after an exact office or individual.
+
+## 11. Database and Technical Implementation
+
+Protected-principal abstraction should be enforced through deterministic system logic rather than relying solely on an AI model to remember terminology.
+
+### Recommended fields
+
+```text
+entity_id
+canonical_identity
+protected_entity_class
+generic_display_label
+abstraction_level
+visibility_tier
+authorized_exact_identity
+valid_from
+valid_to
+handling_designation
+```
+
+### Recommended protected-entity classes
+
+```text
+SENIOR_MILITARY_ADVISOR
+NATIONAL_LEVEL_DECISION_AUTHORITY
+CIVILIAN_DEFENSE_LEADERSHIP
+SENIOR_NATIONAL_SECURITY_ADVISOR
+STRATEGIC_MILITARY_STAFF
+STRATEGIC_PUBLIC_INFORMATION_STAFF
+OPERATIONAL_MILITARY_COMMAND
+MILITARY_SERVICE_LEADERSHIP
+NATIONAL_INTELLIGENCE_ENTERPRISE
+INTERAGENCY_PARTNER
+ALLIED_PARTNER_LEADERSHIP
+```
+
+### Separate the canonical identity from the display identity
+
+The restricted system may maintain an exact identity when operationally necessary.
+
+The standard user-facing output should receive only:
+
+```text
+generic_display_label = "Senior Military Advisor"
+```
+
+The model should not receive the canonical identity unless the task specifically requires it.
+
+### Use an output-rendering policy
+
+Before any generated content is displayed or exported, the system should apply a deterministic entity-abstraction pass that:
+
+1. identifies protected names, offices, acronyms, and titles;
+2. replaces them with the approved generic label;
+3. checks filenames and metadata;
+4. checks headers, footers, speaker notes, and document properties;
+5. flags potentially identifying contextual combinations;
+6. records the transformation in an audit log.
+
+### Restricted mapping table
+
+Any table connecting generic roles to exact individuals or offices should:
+
+* be separately access-controlled;
+* be unavailable to ordinary users;
+* be excluded from routine model context;
+* be excluded from exports;
+* be excluded from screenshots and demonstration environments;
+* have complete access logging.
+
+## 12. Filename and Metadata Rules
+
+Do not use protected identities or office names in:
+
+* filenames;
+* folder names;
+* export titles;
+* document subjects;
+* PDF properties;
+* PowerPoint properties;
+* spreadsheet sheet names;
+* image metadata;
+* email subject lines;
+* API paths;
+* cache keys;
+* logs presented in the interface.
+
+### Avoid
+
+```text
+CJCS_Iran_Risk_Brief_20260820.pdf
+Chairman_COA_Comparison.pptx
+OCJCS_PA_Assessment.docx
+```
+
+### Prefer
+
+```text
+Senior_Military_Risk_Brief_20260820.pdf
+National_Level_COA_Comparison.pptx
+Strategic_Public_Information_Assessment.docx
+```
+
+## 13. Paste-Ready System Instruction
+
+```text
+PROTECTED-PRINCIPAL AND ROLE-NEUTRAL OUTPUT REQUIREMENT
+
+The application must use role-based, function-based, and enterprise-level terminology when referring to the internal senior leaders, offices, staffs, and decision customers for whom it produces analysis.
+
+Do not name or directly identify the protected principal, exact billet, exact office, or sponsoring organization unless exact identification is specifically authorized and necessary for the task.
+
+Default terminology:
+- Senior Military Advisor
+- National-Level Decision Authority
+- Civilian Defense Leadership
+- Senior National Security Advisor
+- Strategic Military Staff
+- Strategic Public Information Staff
+- U.S. Military Force
+- Operational Military Command
+- Military Service Leadership
+- National Intelligence Enterprise
+- Interagency Partners
+- Allied and Partner Leadership
+
+Replace position-specific expressions such as “the Chairman,” “Chairman-level,” “CJCS,” “OCJCS,” or office-specific acronyms with the appropriate generic functional term.
+
+Use “Senior Military Advisory Level” or “National-Level Military Advisory” instead of “Chairman-level.”
+
+Use “Senior Military Decision Environment” instead of “the Chairman’s information environment.”
+
+Use “National-Level Military Options” instead of “the Chairman’s options.”
+
+Use “Strategic Military Staff” instead of the exact supporting headquarters or office.
+
+Use “Strategic Public Information Staff” instead of the exact public-affairs office.
+
+Do not infer or reconstruct the protected identity from contextual clues.
+
+Do not include protected names, titles, offices, acronyms, or identifiers in filenames, headers, footers, document properties, exports, URLs, user-visible logs, demonstration data, or model-generated metadata.
+
+This requirement applies to the decision customer and internal supporting organization. It does not remove the requirement to accurately attribute public evidence. Preserve the exact public identity of leaders, officials, organizations, outlets, accounts, authors, and speakers when their identity is material to the evidence or analysis.
+
+Clearly distinguish:
+- the protected decision customer;
+- the public actor being analyzed;
+- the source providing the evidence.
+
+Role abstraction does not determine classification, releasability, privacy, records status, or operational-security handling. Apply all relevant handling controls independently.
+```
+
+## 14. Examples
+
+### Example 1: Decision requirement
+
+**Avoid**
+
+> The President directed the Chairman to develop three options.
+
+**Preferred**
+
+> A national-level decision authority requested three military options and associated risks.
+
+### Example 2: Product purpose
+
+**Avoid**
+
+> This dashboard optimizes the Chairman’s information environment.
+
+**Preferred**
+
+> This dashboard supports the senior military decision environment.
+
+### Example 3: Staff action
+
+**Avoid**
+
+> OCJCS PA will monitor public reaction.
+
+**Preferred**
+
+> The Strategic Public Information Staff will monitor publicly observable reactions.
+
+### Example 4: Force terminology
+
+**Avoid**
+
+> The Joint Force must determine whether it can meet demand.
+
+**Preferred**
+
+> The U.S. Military Force must determine whether the option can be executed and sustained within available capacity and concurrent commitments.
+
+### Example 5: Recommendation
+
+**Avoid**
+
+> The Chairman should recommend COA 2.
+
+**Preferred**
+
+> COA 2 provides the strongest alignment with national-level intent but requires acceptance or mitigation of increased escalation risk.
+
+### Example 6: Public source attribution
+
+**Incorrect over-abstraction**
+
+> A national-level leader stated that the operation would continue.
+
+**Correct**
+
+> President [Public Name] stated publicly that the operation would continue.
+
+The exact identity is preserved because the person is the source being analyzed, not the protected consumer of the analysis.
+
+## 15. Quality-Assurance Tests
+
+Before publishing or exporting a product, the system should verify that:
+
+* no protected personal name appears as the decision customer;
+* no prohibited office acronym appears;
+* no exact protected billet appears;
+* no filename or metadata field identifies the protected organization;
+* the generic term accurately reflects the person’s function;
+* public sources remain correctly attributed;
+* generic labels have not changed the substantive meaning;
+* context does not unnecessarily re-identify the protected principal;
+* the application does not infer an exact identity from the generic label;
+* the output does not imply that the AI accepted risk or made the decision;
+* role abstraction has not been presented as a substitute for handling or release controls.
+
+## 16. Governing Principle
+
+> **Be exact about the evidence, precise about the function, and intentionally generic about the protected decision customer.**
+
+The application should reveal what the decision requires and how the strategic environment may change without unnecessarily revealing exactly who requested the analysis, who receives it, or which internal office produced it.

@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import { polyfillCountryFlagEmojis } from "country-flag-emoji-polyfill";
 import App from "./App";
+import { shouldPauseProductionViews } from "./lib/operationalPause";
 import "./index.css";
 
 function PhaseOutNotice() {
@@ -30,9 +31,18 @@ function PhaseOutNotice() {
 // ("USUSUS"). No-op on Mac/iOS/Android. Self-hosted woff2 (no runtime CDN).
 polyfillCountryFlagEmojis("Twemoji Country Flags", "/TwemojiCountryFlags.woff2");
 
+const productionViewsPaused = shouldPauseProductionViews(
+  import.meta.env.PROD,
+  import.meta.env.VITE_PRODUCTION_VIEWS_PAUSED,
+);
+
 createRoot(document.getElementById("root")!).render(
-  <>
+  productionViewsPaused ? (
     <PhaseOutNotice />
-    <App />
-  </>,
+  ) : (
+    <>
+      <PhaseOutNotice />
+      <App />
+    </>
+  ),
 );

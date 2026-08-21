@@ -5,11 +5,19 @@ import { Document, Packer, Paragraph, TextRun, HeadingLevel, ExternalHyperlink, 
 import Anthropic from '@anthropic-ai/sdk';
 import { formatInTimeZone } from "date-fns-tz";
 import { stripBriefingPreamble } from './summarySanitizer';
+import { assertAIIntegrationsEnabled } from './aiClient';
 
-const anthropic = new Anthropic({
-  apiKey: process.env.AI_INTEGRATIONS_ANTHROPIC_API_KEY,
-  baseURL: process.env.AI_INTEGRATIONS_ANTHROPIC_BASE_URL,
-});
+let anthropic: Anthropic | null = null;
+function getAnthropic(): Anthropic {
+  assertAIIntegrationsEnabled();
+  if (!anthropic) {
+    anthropic = new Anthropic({
+      apiKey: process.env.AI_INTEGRATIONS_ANTHROPIC_API_KEY,
+      baseURL: process.env.AI_INTEGRATIONS_ANTHROPIC_BASE_URL,
+    });
+  }
+  return anthropic;
+}
 
 export interface SubmissionWithTopic {
   id: string;
@@ -157,7 +165,7 @@ ${allPostsContent}
 Write the "Relevant Social Media" section:`;
 
   try {
-    const response = await anthropic.messages.create({
+    const response = await getAnthropic().messages.create({
       model: 'claude-sonnet-4-5',
       max_tokens: 800,
       messages: [{ role: 'user', content: prompt }],
@@ -211,7 +219,7 @@ ${!hasDomestic ? '[DOMESTIC OPS] No stories' : ''}
 Write only the BLUF paragraph:`;
 
   try {
-    const response = await anthropic.messages.create({
+    const response = await getAnthropic().messages.create({
       model: 'claude-sonnet-4-5',
       max_tokens: 500,
       messages: [{ role: 'user', content: prompt }],
@@ -268,7 +276,7 @@ CRITICAL RULES:
 Start each bullet with a dash (-):`;
 
   try {
-    const response = await anthropic.messages.create({
+    const response = await getAnthropic().messages.create({
       model: 'claude-sonnet-4-5',
       max_tokens: 800,
       messages: [{ role: 'user', content: prompt }],
@@ -391,6 +399,7 @@ function deduplicateSources(submissions: SubmissionWithTopic[]): SubmissionWithT
 }
 
 export async function generateNewsScrub(fromDate: Date, toDate: Date, boloTopics?: string): Promise<Buffer> {
+  assertAIIntegrationsEnabled();
   const submissions = await db
     .select({
       id: teamSubmissions.id,

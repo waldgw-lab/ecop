@@ -10,6 +10,7 @@ import {
   type ArchiveItem,
 } from './mcopBotArchive';
 import { filterCuratedStories, type CuratedStoryForModel } from './mcopBotCurated';
+import { assertAIIntegrationsEnabled, isAIIntegrationsDisabled } from './aiClient';
 
 // Curated-view awareness. When (and ONLY when) the route authorizes curated mode
 // it injects a provider that returns the trust-tagged curated Top Stories
@@ -24,7 +25,7 @@ const OPENROUTER_BASE_URL = process.env.AI_INTEGRATIONS_OPENROUTER_BASE_URL;
 const OPENROUTER_API_KEY = process.env.AI_INTEGRATIONS_OPENROUTER_API_KEY;
 const OPENROUTER_MODEL = 'anthropic/claude-haiku-4.5';
 
-const openrouter = (OPENROUTER_BASE_URL && OPENROUTER_API_KEY)
+const openrouter = (!isAIIntegrationsDisabled() && OPENROUTER_BASE_URL && OPENROUTER_API_KEY)
   ? new OpenAI({ baseURL: OPENROUTER_BASE_URL, apiKey: OPENROUTER_API_KEY })
   : null;
 
@@ -34,6 +35,7 @@ const openrouter = (OPENROUTER_BASE_URL && OPENROUTER_API_KEY)
 // the gate harness. Only the legacy fallback path actually needs it.
 let _anthropic: Anthropic | null = null;
 function getAnthropic(): Anthropic {
+  assertAIIntegrationsEnabled();
   if (!_anthropic) {
     _anthropic = new Anthropic({
       apiKey: process.env.AI_INTEGRATIONS_ANTHROPIC_API_KEY,
@@ -350,6 +352,7 @@ async function answerWithOpenRouter(query: string, curatedProvider?: CuratedStor
   let curatedCache: CuratedStoryForModel[] | null = null;
 
   for (let iter = 0; iter < MAX_TOOL_ITERATIONS; iter++) {
+    assertAIIntegrationsEnabled();
     const resp = await openrouter.chat.completions.create({
       model: OPENROUTER_MODEL,
       messages,
@@ -407,6 +410,7 @@ async function answerWithOpenRouter(query: string, curatedProvider?: CuratedStor
   }
 
   // Final attempt without tools to force a textual answer
+  assertAIIntegrationsEnabled();
   const finalResp = await openrouter.chat.completions.create({
     model: OPENROUTER_MODEL,
     messages,
@@ -417,6 +421,7 @@ async function answerWithOpenRouter(query: string, curatedProvider?: CuratedStor
 
 // Legacy fallback: single-shot context blob via direct Anthropic.
 async function answerWithLegacyAnthropic(query: string): Promise<string> {
+  assertAIIntegrationsEnabled();
   const items = await searchArchive({ perTableLimit: 50, totalLimit: 250 });
   if (items.length === 0) {
     return "I don't have any news articles to search through yet. Once articles are submitted or scraped, I'll be able to answer questions about them.";
@@ -426,6 +431,7 @@ async function answerWithLegacyAnthropic(query: string): Promise<string> {
     return `[REF ${idx + 1}] [${it.sourceTable}] ${date}\nSource: ${it.source}${it.author ? ` (${it.author})` : ''}\nTitle: ${it.title}\n${it.summary ? `Summary: ${it.summary}\n` : ''}${it.fullText ? `Text: ${it.fullText.slice(0, 1500)}\n` : ''}URL: ${it.url}`;
   }).join('\n---\n');
 
+  assertAIIntegrationsEnabled();
   const response = await getAnthropic().messages.create({
     model: 'claude-sonnet-4-5',
     max_tokens: 2048,
@@ -440,6 +446,7 @@ export async function answerQuestion(
   query: string,
   opts?: { curatedProvider?: CuratedStoriesProvider },
 ): Promise<string> {
+  assertAIIntegrationsEnabled();
   // Curated awareness is opt-in and route-gated: the tool + safety prompt are
   // only active when the route injects a provider. The legacy single-shot
   // fallback stays curated-unaware (it reads only the shared archive) — a safe,

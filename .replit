@@ -30,3 +30,7 @@ defaultBucketID = "replit-objstore-b4fae1e0-7d6b-488f-bda8-bc337f16226f"
 [userenv.shared]
 EV_RELAY_DISABLED = "true"
 MELTWATER_DISABLED = "true"
+AI_INTEGRATIONS_DISABLED = "true"
+
+[userenv.production]
+VITE_PRODUCTION_VIEWS_PAUSED = "true"

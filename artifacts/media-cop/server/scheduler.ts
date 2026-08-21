@@ -34,6 +34,23 @@ import { logFdSample } from './fdMonitor';
 import { requestCuratedReshape } from './curatedAutoReshape';
 import { runScoreRetry } from './scoreRetry';
 import { checkSmsAlertHealth } from './smsAlertMonitor';
+import { isAIIntegrationsDisabled } from './aiClient';
+
+// Log each paused AI lane only once per process so the stop is visible without
+// producing a cron-frequency log storm. Returning true means the caller must
+// exit before any fetch, DB retry bookkeeping, or provider-bound work begins.
+const aiPauseLoggedJobs = new Set<string>();
+export function shouldSkipScheduledAIWork(job: string): boolean {
+  if (!isAIIntegrationsDisabled()) {
+    aiPauseLoggedJobs.delete(job);
+    return false;
+  }
+  if (!aiPauseLoggedJobs.has(job)) {
+    aiPauseLoggedJobs.add(job);
+    console.log(`[Scheduler] ${job} skipped — AI integrations are disabled`);
+  }
+  return true;
+}
 
 // Re-entrancy guard to prevent overlapping scrape cycles
 let isScrapingInProgress = false;
@@ -380,44 +397,48 @@ async function runFullScrape(source: string): Promise<boolean> {
     // decoupled from the scrape lock so a wedged scrape can no longer starve it.
 
     checkNotCancelled('team submission clustering');
-    const { isTopicClusteringEnabled } = await import('./clusterConfig');
-    if (isTopicClusteringEnabled()) {
-      console.log('Running team submission clustering...');
-      try {
-        await clusterAllActiveTopics();
-        console.log('Team submission clustering complete');
-      } catch (teamClusterError) {
-        console.error('Error during team submission clustering:', teamClusterError);
+    if (!shouldSkipScheduledAIWork('Team submission clustering')) {
+      const { isTopicClusteringEnabled } = await import('./clusterConfig');
+      if (isTopicClusteringEnabled()) {
+        console.log('Running team submission clustering...');
+        try {
+          await clusterAllActiveTopics();
+          console.log('Team submission clustering complete');
+        } catch (teamClusterError) {
+          console.error('Error during team submission clustering:', teamClusterError);
+        }
+      } else {
+        console.log('Team submission clustering skipped (disabled by user)');
       }
-    } else {
-      console.log('Team submission clustering skipped (disabled by user)');
     }
-    
+
     // Match submissions to Joe Priority / BOLO topics.
     // Enabled by default but gated to a deliberate cadence (and the matcher itself
     // early-returns instantly when no active topics exist) so it doesn't spend AI
     // calls on every scrape cycle.
-    const { isJoePriorityMatchingEnabled, shouldRunJoePriorityMatching, markJoePriorityMatchingRan } = await import('./clusterConfig');
-    if (shouldRunJoePriorityMatching()) {
-      try {
-        const { matched, ranAi } = await matchSubmissionsToJoePriorities();
-        // Only advance the cadence window when the matcher actually spent AI work.
-        // A transient failure (caught below) or an early-return with nothing to do
-        // leaves the window open so the next scrape cycle retries promptly — keeping
-        // the matcher responsive right after a new topic is added.
-        if (ranAi) {
-          markJoePriorityMatchingRan();
+    if (!shouldSkipScheduledAIWork('Joe Priority/BOLO matching')) {
+      const { isJoePriorityMatchingEnabled, shouldRunJoePriorityMatching, markJoePriorityMatchingRan } = await import('./clusterConfig');
+      if (shouldRunJoePriorityMatching()) {
+        try {
+          const { matched, ranAi } = await matchSubmissionsToJoePriorities();
+          // Only advance the cadence window when the matcher actually spent AI work.
+          // A transient failure (caught below) or an early-return with nothing to do
+          // leaves the window open so the next scrape cycle retries promptly — keeping
+          // the matcher responsive right after a new topic is added.
+          if (ranAi) {
+            markJoePriorityMatchingRan();
+          }
+          if (matched > 0) {
+            console.log(`Joe Priority/BOLO matching complete: ${matched} new matches`);
+          }
+        } catch (matchError) {
+          console.error('Error during Joe Priority/BOLO matching:', matchError);
         }
-        if (matched > 0) {
-          console.log(`Joe Priority/BOLO matching complete: ${matched} new matches`);
-        }
-      } catch (matchError) {
-        console.error('Error during Joe Priority/BOLO matching:', matchError);
+      } else if (!isJoePriorityMatchingEnabled()) {
+        console.log('Joe Priority/BOLO matching skipped (paused)');
+      } else {
+        console.log('Joe Priority/BOLO matching skipped (cadence interval not elapsed)');
       }
-    } else if (!isJoePriorityMatchingEnabled()) {
-      console.log('Joe Priority/BOLO matching skipped (paused)');
-    } else {
-      console.log('Joe Priority/BOLO matching skipped (cadence interval not elapsed)');
     }
     
     // Update scrape metadata with timestamps and counts
@@ -1040,6 +1061,7 @@ export function startScheduledScraping() {
   //
   // Run DrudgeBot every 30 minutes (at :08 and :38)
   cron.schedule('8,38 * * * *', async () => {
+    if (shouldSkipScheduledAIWork('DrudgeBot')) return;
     if (!isBotEnabled('drudgeBot')) { console.log('[Scheduler] DrudgeBot is paused, skipping'); return; }
     console.log('[Scheduler] Running DrudgeBot...');
     try {
@@ -1052,6 +1074,7 @@ export function startScheduledScraping() {
   
   // Run BBCBot every 30 minutes (at :18 and :48)
   cron.schedule('18,48 * * * *', async () => {
+    if (shouldSkipScheduledAIWork('BBCBot')) return;
     if (!isBotEnabled('bbcBot')) { console.log('[Scheduler] BBCBot is paused, skipping'); return; }
     console.log('[Scheduler] Running BBCBot...');
     try {
@@ -1076,6 +1099,7 @@ export function startScheduledScraping() {
   
   // Run FoxNewsBot every hour (at :06 — :x6 class, non-AI neighbours only)
   cron.schedule('6 * * * *', async () => {
+    if (shouldSkipScheduledAIWork('FoxNewsBot')) return;
     if (!isBotEnabled('foxNewsBot')) { console.log('[Scheduler] FoxNewsBot is paused, skipping'); return; }
     console.log('[Scheduler] Running FoxNewsBot...');
     try {
@@ -1088,6 +1112,7 @@ export function startScheduledScraping() {
   
   // Run ABCNewsBot every hour (at :16 — :x6 class, non-AI neighbours only)
   cron.schedule('16 * * * *', async () => {
+    if (shouldSkipScheduledAIWork('ABCNewsBot')) return;
     if (!isBotEnabled('abcNewsBot')) { console.log('[Scheduler] ABCNewsBot is paused, skipping'); return; }
     console.log('[Scheduler] Running ABCNewsBot...');
     try {
@@ -1100,6 +1125,7 @@ export function startScheduledScraping() {
   
   // Run CBSNewsBot every hour (at :26 — :x6 class, non-AI neighbours only)
   cron.schedule('26 * * * *', async () => {
+    if (shouldSkipScheduledAIWork('CBSNewsBot')) return;
     if (!isBotEnabled('cbsNewsBot')) { console.log('[Scheduler] CBSNewsBot is paused, skipping'); return; }
     console.log('[Scheduler] Running CBSNewsBot...');
     try {
@@ -1112,6 +1138,7 @@ export function startScheduledScraping() {
   
   // Run NBCNewsBot every hour (at :36 — :x6 class, non-AI neighbours only)
   cron.schedule('36 * * * *', async () => {
+    if (shouldSkipScheduledAIWork('NBCNewsBot')) return;
     if (!isBotEnabled('nbcNewsBot')) { console.log('[Scheduler] NBCNewsBot is paused, skipping'); return; }
     console.log('[Scheduler] Running NBCNewsBot...');
     try {
@@ -1126,6 +1153,7 @@ export function startScheduledScraping() {
   // neighbour at :x3 non-score-retry minutes, and it fires every 10 min not
   // every 5; was :47→:46, but :46 overlaps STATE_MEDIA_CRON_MINUTES[46])
   cron.schedule('33 * * * *', async () => {
+    if (shouldSkipScheduledAIWork('APNewsBot')) return;
     if (!isBotEnabled('apNewsBot')) { console.log('[Scheduler] APNewsBot is paused, skipping'); return; }
     console.log('[Scheduler] Running APNewsBot...');
     try {
@@ -1140,6 +1168,7 @@ export function startScheduledScraping() {
   // neighbour at :x3 non-score-retry minutes, and it fires every 10 min not
   // every 5; was :52→:56, but :56 overlaps STATE_MEDIA_CRON_MINUTES[56])
   cron.schedule('3 * * * *', async () => {
+    if (shouldSkipScheduledAIWork('ReutersBot')) return;
     if (!isBotEnabled('reutersBot')) { console.log('[Scheduler] ReutersBot is paused, skipping'); return; }
     console.log('[Scheduler] Running ReutersBot...');
     try {
@@ -1155,6 +1184,7 @@ export function startScheduledScraping() {
   // headlines straight into the isolated curated aperture (admitCuratedCandidates
   // gate mode) and NEVER touches any shared feed.
   cron.schedule('42 * * * *', async () => {
+    if (shouldSkipScheduledAIWork('CnnCuratedBot')) return;
     if (!isBotEnabled('cnnCuratedBot')) { console.log('[Scheduler] CnnCuratedBot is paused, skipping'); return; }
     console.log('[Scheduler] Running CnnCuratedBot...');
     try {
@@ -1186,6 +1216,7 @@ export function startScheduledScraping() {
   // headlines straight into the isolated curated aperture and NEVER touches any
   // shared feed.
   cron.schedule('44 * * * *', async () => {
+    if (shouldSkipScheduledAIWork('NprCuratedBot')) return;
     if (!isBotEnabled('nprCuratedBot')) { console.log('[Scheduler] NprCuratedBot is paused, skipping'); return; }
     console.log('[Scheduler] Running NprCuratedBot...');
     try {
@@ -1210,6 +1241,7 @@ export function startScheduledScraping() {
   STATE_MEDIA_CURATED_SOURCES.forEach((src, i) => {
     const minute = STATE_MEDIA_CRON_MINUTES[i] ?? (46 + i * 2);
     cron.schedule(`${minute} * * * *`, async () => {
+      if (shouldSkipScheduledAIWork(src.logTag)) return;
       if (!isBotEnabled(src.id)) { console.log(`[Scheduler] ${src.logTag} is paused, skipping`); return; }
       console.log(`[Scheduler] Running ${src.logTag}...`);
       try {
@@ -1286,6 +1318,7 @@ export function startScheduledScraping() {
   CURATED_OFFHOST_SOURCES.forEach((src, i) => {
     const minute = OFFHOST_CRON_MINUTES[i] ?? (8 + i * 10);
     cron.schedule(`${minute} * * * *`, async () => {
+      if (shouldSkipScheduledAIWork(src.logTag)) return;
       if (!isBotEnabled(src.id)) { console.log(`[Scheduler] ${src.logTag} is paused, skipping`); return; }
       console.log(`[Scheduler] Running ${src.logTag}...`);
       try {
@@ -1494,6 +1527,7 @@ export function startScheduledScraping() {
   // minute class (unused by other crons) to stay off the main scrape/bot ticks.
   // runScoreRetry has its own in-flight guard and is fully non-fatal.
   cron.schedule('13,43 * * * *', async () => {
+    if (shouldSkipScheduledAIWork('Score-retry sweep')) return;
     try {
       await runScoreRetry();
     } catch (error) {
@@ -1508,6 +1542,7 @@ export function startScheduledScraping() {
   // overlaps only the light curated media backfill at :06,:16,...). Same 5-min
   // cadence and coverage — minute offset only.
   cron.schedule('1,6,11,16,21,26,31,36,41,46,51,56 * * * *', async () => {
+    if (shouldSkipScheduledAIWork('RSSFeedBot')) return;
     if (!isBotEnabled('rssFeedBot')) { console.log('[Scheduler] RSSFeedBot is paused, skipping'); return; }
     console.log('[Scheduler] Running RSSFeedBot...');
     try {
@@ -1528,6 +1563,7 @@ export function startScheduledScraping() {
   // inline pre-enrichment is bounded so a pass finishes well within 5 min.
   // Writes ONLY to curated_items; never touches headlines.
   cron.schedule('2,7,12,17,22,27,32,37,42,47,52,57 * * * *', async () => {
+    if (shouldSkipScheduledAIWork('Curated ingest')) return;
     try {
       const { runCuratedIngest } = await import('./curatedIngest');
       const result = await runCuratedIngest();
@@ -1548,6 +1584,7 @@ export function startScheduledScraping() {
   // skips overlapping passes. Writes ONLY to curated_cluster_members; never
   // mutates headlines.cluster_id.
   cron.schedule('4,9,14,19,24,29,34,39,44,49,54,59 * * * *', async () => {
+    if (shouldSkipScheduledAIWork('Curated clustering')) return;
     try {
       const { clusterCuratedLane } = await import('./curatedCluster');
       // Outer hard-bound backstop (Task #741). clusterCuratedLane already self-
@@ -1603,6 +1640,7 @@ export function startScheduledScraping() {
   // (:04/:09 series). It now only brushes light single-handle bots (:15/:45),
   // never a heavy AI or image job. Same cadence/model — minute offset only.
   cron.schedule('5,15,25,35,45,55 * * * *', async () => {
+    if (shouldSkipScheduledAIWork('Curated classification')) return;
     try {
       const { backfillCuratedClassifications } = await import('./curatedClassify');
       const result = await backfillCuratedClassifications();
@@ -1708,6 +1746,7 @@ export function startScheduledScraping() {
   // Warfighter-only RSS scraper (Blaze, Epoch Times, Daily Wire) every 10 min,
   // offset to :03/:13/... so it doesn't collide with the main scrape at :00/:10.
   cron.schedule('3,13,23,33,43,53 * * * *', async () => {
+    if (shouldSkipScheduledAIWork('Warfighter RSS scoring')) return;
     try {
       const { runWarfighterRssScraper } = await import('./warfighterRssScraper');
       const result = await runWarfighterRssScraper();
@@ -1741,6 +1780,7 @@ export function startScheduledScraping() {
   // matching the prior inline behavior, which never explicitly invalidated either.
   let headlineClusteringRunning = false;
   cron.schedule('3,13,23,33,43,53 * * * *', async () => {
+    if (shouldSkipScheduledAIWork('Main-feed headline clustering')) return;
     const { isClusteringEnabled } = await import('./clusterConfig');
     if (!isClusteringEnabled()) return;
     if (headlineClusteringRunning) {
@@ -1812,6 +1852,7 @@ export function startScheduledScraping() {
   // empty grid is nearly free; aiClient still globally serializes/spaces calls.
   let customMcopScoringRunning = false;
   cron.schedule('2,32 * * * *', async () => {
+    if (shouldSkipScheduledAIWork('Custom-MCOP scoring')) return;
     if (customMcopScoringRunning) {
       console.log('[Scheduler] Custom-MCOP scoring already in progress, skipping');
       return;
@@ -1851,7 +1892,26 @@ export function startScheduledScraping() {
   // recurring crons above keep everything fresh on the normal cadence, so
   // nothing here is load-bearing for steady state.
   const bootSleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+  const aiBootStepLabels = new Set<string>([
+    'DrudgeBot',
+    'BBCBot',
+    'FoxNewsBot',
+    'ABCNewsBot',
+    'CBSNewsBot',
+    'NBCNewsBot',
+    'APNewsBot',
+    'ReutersBot',
+    'CnnCuratedBot',
+    'NprCuratedBot',
+    'RSSFeedBot',
+    'outlet enrichment',
+    ...STATE_MEDIA_CURATED_SOURCES.map(source => source.logTag),
+    ...CURATED_OFFHOST_SOURCES.map(source => source.logTag),
+  ]);
   const bootStep = async <T>(label: string, fn: () => Promise<T>): Promise<T | undefined> => {
+    if (aiBootStepLabels.has(label) && shouldSkipScheduledAIWork(`Initial ${label}`)) {
+      return undefined;
+    }
     try {
       return await fn();
     } catch (error) {
@@ -2149,6 +2209,7 @@ export function startScheduledScraping() {
 
   // Overnight refresh every day at 03:00.
   cron.schedule('0 3 * * *', async () => {
+    if (shouldSkipScheduledAIWork('Outlet enrichment')) return;
     try {
       const { runOutletEnrichment } = await import('./enrichment');
       await runOutletEnrichment('overnight-cron');

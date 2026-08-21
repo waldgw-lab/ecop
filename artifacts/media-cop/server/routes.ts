@@ -130,7 +130,7 @@ import {
 import { sampleFdUsage, getFdHistory, FD_WARN_THRESHOLD } from "./fdMonitor";
 import { fetchViaPaywallBypass } from "./paywallBypass";
 import { registerPublicApi } from "./publicApi";
-import { openai, isAIConfigured, isTransientAIError, getProviderMode, setProviderMode, createPreferOpenRouter, parseAiJson } from "./aiClient";
+import { openai, isAIConfigured, isAIIntegrationsDisabled, isTransientAIError, getProviderMode, setProviderMode, createPreferOpenRouter, parseAiJson } from "./aiClient";
 import { withAiTimeout, AI_CALL_TIMEOUT_MS, AI_CALL_BACKSTOP_MS } from "./aiTimeout";
 import { createHash } from "crypto";
 
@@ -14690,7 +14690,12 @@ Examples:
   app.get("/api/team/ai-settings", requireTeamMember, async (req, res) => {
     try {
       const settings = await storage.getAiSettings();
-      res.json({ provider: settings.provider, mode: getProviderMode(), updatedAt: settings.updatedAt });
+      res.json({
+        provider: settings.provider,
+        mode: getProviderMode(),
+        disabled: isAIIntegrationsDisabled(),
+        updatedAt: settings.updatedAt,
+      });
     } catch (error) {
       console.error('Error fetching AI settings:', error);
       res.status(500).json({ error: 'Failed to fetch AI settings' });
@@ -14699,13 +14704,20 @@ Examples:
 
   app.post("/api/team/ai-settings", requireTeamMember, async (req, res) => {
     try {
+      if (isAIIntegrationsDisabled()) {
+        return res.status(409).json({
+          error: 'AI integrations are disabled by operator configuration.',
+          code: 'AI_INTEGRATIONS_DISABLED',
+          disabled: true,
+        });
+      }
       const { provider } = req.body;
       if (provider !== 'openrouter' && provider !== 'internal' && provider !== 'auto') {
         return res.status(400).json({ error: "provider must be 'auto', 'openrouter', or 'internal'" });
       }
       const settings = await storage.updateAiSettings(provider);
       setProviderMode(provider);
-      res.json({ provider: settings.provider, mode: getProviderMode(), updatedAt: settings.updatedAt });
+      res.json({ provider: settings.provider, mode: getProviderMode(), disabled: false, updatedAt: settings.updatedAt });
     } catch (error) {
       console.error('Error updating AI settings:', error);
       res.status(500).json({ error: 'Failed to update AI settings' });

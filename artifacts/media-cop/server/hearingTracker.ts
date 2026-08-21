@@ -29,6 +29,7 @@ import * as cheerio from "cheerio";
 import { storage } from "./storage";
 import { fetchWithResilience } from "./resilientFetch";
 import { admitCuratedCandidates, type CuratedIntakeCandidate } from "./curatedIngest";
+import { isAIIntegrationsDisabled } from "./aiClient";
 import type { InsertCommitteeHearing } from "@shared/schema";
 
 const HASC_BASE = "https://armedservices.house.gov";
@@ -360,6 +361,12 @@ async function pollCommittee(committee: "HASC" | "SASC", now: number): Promise<C
  * exactly as for every other curated source. Curated lane only.
  */
 async function admitPostedTestimony(now: number): Promise<{ ingested: number; skipped: number }> {
+  // Keep the non-AI committee poll and hearing storage active, but defer the
+  // AI-gated testimony handoff without querying/building candidates or logging a
+  // false admission failure on every hourly poll.
+  if (isAIIntegrationsDisabled()) {
+    return { ingested: 0, skipped: 0 };
+  }
   const hearings = await storage.getCommitteeHearingsInWindow(
     now - TESTIMONY_LOOKBACK_MS,
     now + TESTIMONY_LOOKAHEAD_MS,

@@ -417,7 +417,7 @@ export default function Team() {
   });
 
   // AI provider mode (Auto / OpenRouter / Internal AI) — global switch for the whole MCOP
-  const { data: aiSettings } = useQuery<{ provider: 'openrouter' | 'internal' | 'auto'; mode: string; updatedAt: string | null }>({
+  const { data: aiSettings } = useQuery<{ provider: 'openrouter' | 'internal' | 'auto'; mode: string; disabled: boolean; updatedAt: string | null }>({
     queryKey: ['/api/team/ai-settings'],
     enabled: teamAccess?.hasTeamAccess === true,
   });
@@ -2126,14 +2126,19 @@ This alert was drafted from the Media Common Operating Picture (MCOP) system.`;
                 {aiSettings && (
                   <div
                     className="flex items-center gap-1 rounded-md border p-0.5"
-                    title="Choose which AI powers the whole MCOP. Auto (recommended) picks the healthy provider automatically and switches the moment one gets rate-limited. OpenRouter / Internal AI force one to run first, with the other as automatic backup."
+                    title={aiSettings.disabled
+                      ? "AI integrations are disabled by operator configuration."
+                      : "Choose which AI powers the whole MCOP. Auto (recommended) picks the healthy provider automatically and switches the moment one gets rate-limited. OpenRouter / Internal AI force one to run first, with the other as automatic backup."}
                     data-testid="control-ai-provider"
                   >
+                    {aiSettings.disabled && (
+                      <Badge variant="secondary" data-testid="badge-ai-disabled">AI off</Badge>
+                    )}
                     <Button
                       size="sm"
                       variant={aiSettings.provider === 'auto' ? 'default' : 'ghost'}
                       onClick={() => aiSettings.provider !== 'auto' && setPendingAiProvider('auto')}
-                      disabled={aiProviderMutation.isPending}
+                      disabled={aiProviderMutation.isPending || aiSettings.disabled}
                       data-testid="button-ai-auto"
                     >
                       Auto
@@ -2142,7 +2147,7 @@ This alert was drafted from the Media Common Operating Picture (MCOP) system.`;
                       size="sm"
                       variant={aiSettings.provider === 'openrouter' ? 'default' : 'ghost'}
                       onClick={() => aiSettings.provider !== 'openrouter' && setPendingAiProvider('openrouter')}
-                      disabled={aiProviderMutation.isPending}
+                      disabled={aiProviderMutation.isPending || aiSettings.disabled}
                       data-testid="button-ai-openrouter"
                     >
                       OpenRouter
@@ -2151,7 +2156,7 @@ This alert was drafted from the Media Common Operating Picture (MCOP) system.`;
                       size="sm"
                       variant={aiSettings.provider === 'internal' ? 'default' : 'ghost'}
                       onClick={() => aiSettings.provider !== 'internal' && setPendingAiProvider('internal')}
-                      disabled={aiProviderMutation.isPending}
+                      disabled={aiProviderMutation.isPending || aiSettings.disabled}
                       data-testid="button-ai-internal"
                     >
                       Internal AI
@@ -2453,6 +2458,9 @@ This alert was drafted from the Media Common Operating Picture (MCOP) system.`;
             {aiSettings && (
               <div className="space-y-1.5">
                 <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">AI Provider</p>
+                {aiSettings.disabled && (
+                  <Badge variant="secondary" data-testid="badge-ai-disabled-mobile">Disabled by operator</Badge>
+                )}
                 <div
                   className="flex items-center gap-1 rounded-md border p-0.5 w-fit"
                   title="Choose which AI powers the whole MCOP."
@@ -2462,7 +2470,7 @@ This alert was drafted from the Media Common Operating Picture (MCOP) system.`;
                     size="sm"
                     variant={aiSettings.provider === 'auto' ? 'default' : 'ghost'}
                     onClick={() => { if (aiSettings.provider !== 'auto') setPendingAiProvider('auto'); setMobileMenuOpen(false); }}
-                    disabled={aiProviderMutation.isPending}
+                    disabled={aiProviderMutation.isPending || aiSettings.disabled}
                     data-testid="button-ai-auto"
                   >
                     Auto
@@ -2471,7 +2479,7 @@ This alert was drafted from the Media Common Operating Picture (MCOP) system.`;
                     size="sm"
                     variant={aiSettings.provider === 'openrouter' ? 'default' : 'ghost'}
                     onClick={() => { if (aiSettings.provider !== 'openrouter') setPendingAiProvider('openrouter'); setMobileMenuOpen(false); }}
-                    disabled={aiProviderMutation.isPending}
+                    disabled={aiProviderMutation.isPending || aiSettings.disabled}
                     data-testid="button-ai-openrouter"
                   >
                     OpenRouter
@@ -2480,7 +2488,7 @@ This alert was drafted from the Media Common Operating Picture (MCOP) system.`;
                     size="sm"
                     variant={aiSettings.provider === 'internal' ? 'default' : 'ghost'}
                     onClick={() => { if (aiSettings.provider !== 'internal') setPendingAiProvider('internal'); setMobileMenuOpen(false); }}
-                    disabled={aiProviderMutation.isPending}
+                    disabled={aiProviderMutation.isPending || aiSettings.disabled}
                     data-testid="button-ai-internal"
                   >
                     Internal AI

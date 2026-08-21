@@ -4,7 +4,7 @@ import { db } from "./db";
 import { headlines, manualSubmissions, curatedItems, xPosts } from "@shared/schema";
 import { and, eq, gt, gte, isNull, isNotNull, or, sql, inArray, desc } from "drizzle-orm";
 import { ObjectStorageService } from "./objectStorage";
-import { openai, isAIConfigured } from "./aiClient";
+import { openai, isAIConfigured, isAIIntegrationsDisabled } from "./aiClient";
 import { withAiTimeout, AI_CALL_BACKSTOP_MS } from "./aiTimeout";
 import { buildOutletIndex, findOutlet, isSocialFlashOutlet } from "@shared/outletRegistry";
 import { isPlaceholderImageUrl, isOutletLogoByContent } from "@shared/placeholderImage";
@@ -1348,10 +1348,30 @@ export function shouldUpgradeSummaryFromText(opts: {
   return typeof opts.regeneratedSummary === 'string' && opts.regeneratedSummary.trim().length > 10;
 }
 
+export function shouldSkipMediaEnrichmentForAIPause(
+  ogImageUrl: string | null | undefined,
+  aiDisabled = isAIIntegrationsDisabled(),
+): boolean {
+  return aiDisabled && !!ogImageUrl && !isPlaceholderImageUrl(ogImageUrl);
+}
+
+export function shouldUsePauseSafeCuratedWrite(
+  bulletsFailureReason: BulletsFailureReason | null,
+  aiDisabled = isAIIntegrationsDisabled(),
+): boolean {
+  return aiDisabled && bulletsFailureReason === 'ai_not_configured';
+}
+
 async function enrichOneItem(item: EnrichableItem): Promise<'enhanced' | 'skipped' | 'failed'> {
   if (item.manuallyEdited) return 'skipped';
 
   const isFaviconOnly = isPlaceholderImageUrl(item.ogImageUrl);
+  // During an operator AI pause, a row that already has a real image has only
+  // AI-derived work remaining. Skip before any network/DB activity so the pause
+  // cannot consume enrichment retries or clear existing bullets/claims/spin.
+  if (shouldSkipMediaEnrichmentForAIPause(item.ogImageUrl)) {
+    return 'skipped';
+  }
   // Curated bullets retry (Task #14): a stamped curated row whose bullets are
   // still missing WITHOUT a terminal reason (short_text/social/carried) is NOT
   // considered fully cached — the backfill re-selects it so bullets can be
@@ -2283,7 +2303,10 @@ async function cacheHeadlineMedia(headlineId: string, ogImageUrl: string | null,
   const kindSet = contentKind ? { contentKind } : {};
   // Attributed claims (Task #256). Persisted next to summaryBullets; null when
   // none were found so the additive detail section simply hides.
-  const claimsSet = attributedClaims.length > 0 ? { attributedClaims } : { attributedClaims: null };
+  const preserveAIFields = isAIIntegrationsDisabled();
+  const claimsSet = preserveAIFields
+    ? {}
+    : (attributedClaims.length > 0 ? { attributedClaims } : { attributedClaims: null });
 
   try {
     const [existing] = await db.select({
@@ -2299,7 +2322,9 @@ async function cacheHeadlineMedia(headlineId: string, ogImageUrl: string | null,
       const existingHasManualBullets = existing.summaryBullets && existing.summaryBullets.length > 0 && existing.mediaScrapedAt;
       const isManualUpload = existing.ogImageUrl && existing.ogImageUrl.startsWith('/objects/') && !existing.ogImageUrl.includes('/auto-');
       const finalOgImage = isManualUpload ? existing.ogImageUrl : ogImageUrl;
-      const finalBullets = existingHasManualBullets ? existing.summaryBullets : (summaryBullets.length > 0 ? summaryBullets : null);
+      const finalBullets = preserveAIFields
+        ? existing.summaryBullets
+        : (existingHasManualBullets ? existing.summaryBullets : (summaryBullets.length > 0 ? summaryBullets : null));
       // Summary upgrade: if no article text was available at post time (fullText
       // null/empty), the stored summary is a title-derived fallback. Upgrade it
       // when enrichment has now recovered substantive text. Retryability: if the
@@ -2337,7 +2362,9 @@ async function cacheHeadlineMedia(headlineId: string, ogImageUrl: string | null,
       const existingHasManualBullets = existingManual.summaryBullets && existingManual.summaryBullets.length > 0 && existingManual.mediaScrapedAt;
       const isManualUpload = existingManual.ogImageUrl && existingManual.ogImageUrl.startsWith('/objects/') && !existingManual.ogImageUrl.includes('/auto-');
       const finalOgImage = isManualUpload ? existingManual.ogImageUrl : ogImageUrl;
-      const finalBullets = existingHasManualBullets ? existingManual.summaryBullets : (summaryBullets.length > 0 ? summaryBullets : null);
+      const finalBullets = preserveAIFields
+        ? existingManual.summaryBullets
+        : (existingHasManualBullets ? existingManual.summaryBullets : (summaryBullets.length > 0 ? summaryBullets : null));
       // Summary upgrade: if the row had no article text at post time (fullText
       // null) the stored summary is a title-derived AI rephrase. Now that we
       // have recovered real text, replace it with a properly sourced one-liner.
@@ -2489,6 +2516,32 @@ export async function cacheCuratedItemMedia(curatedItemId: string, ogImageUrl: s
         END`,
       }
     : {};
+  // Preserve every AI-derived field and both retry counters during an
+  // intentional operator pause. Non-AI work is still useful: a newly recovered
+  // real image, deterministic content kind, score cap, and published date may be
+  // stored. A favicon is never allowed to overwrite an existing real image.
+  if (shouldUsePauseSafeCuratedWrite(bulletsFailureReason)) {
+    try {
+      const hasRealImage = !!ogImageUrl && !isFaviconUrl(ogImageUrl);
+      const pauseSafeSet = {
+        ...(hasRealImage ? {
+          ogImageUrl,
+          ogImageSourceUrl,
+          mediaScrapedAt: new Date(),
+        } : {}),
+        ...kindSet,
+        ...analysisCapSet,
+      };
+      if (Object.keys(pauseSafeSet).length > 0) {
+        await db.update(curatedItems)
+          .set(pauseSafeSet)
+          .where(eq(curatedItems.id, curatedItemId));
+      }
+    } catch (error) {
+      console.error(`[StreamPrefetch] Curated pause-safe cache write failed for ${curatedItemId}:`, error);
+    }
+    return;
+  }
   // Summary upgrade for curated rows: curated_items.summary defaults to '' and
   // is populated at ingest from the same AI one-liner as the main lane. If a
   // regenerated summary was produced from recovered article text, write it now.

@@ -17,6 +17,7 @@
 import { storage } from './storage';
 import { scoreHeadlinePrioritiesBatch } from './aiAnalyzer';
 import { qualifiesForFlashTopStories, FLASH_TOPIC_NAME } from './subjectMatcher';
+import { isAIIntegrationsDisabled } from './aiClient';
 
 // Retry at most this many times per row before giving up (leaves score_source
 // as 'unscored_fallback' so it stays honestly distinguishable from a real 30,
@@ -30,8 +31,19 @@ const RETRY_WINDOW_HOURS = 48;
 const MAX_PER_CYCLE = 40;
 
 let isRunning = false;
+let loggedAIDisabled = false;
 
 export async function runScoreRetry(): Promise<{ retried: number; rescored: number; stillFailed: number }> {
+  // An operator pause is not a scoring failure. Exit before the DB read so no
+  // row consumes a retry attempt while providers are intentionally offline.
+  if (isAIIntegrationsDisabled()) {
+    if (!loggedAIDisabled) {
+      loggedAIDisabled = true;
+      console.log('[ScoreRetry] Skipped — AI integrations are disabled');
+    }
+    return { retried: 0, rescored: 0, stillFailed: 0 };
+  }
+  loggedAIDisabled = false;
   if (isRunning) {
     console.log('[ScoreRetry] Previous run still in progress, skipping');
     return { retried: 0, rescored: 0, stillFailed: 0 };

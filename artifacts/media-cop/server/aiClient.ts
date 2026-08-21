@@ -83,14 +83,37 @@ const OPENROUTER_API_KEY = process.env.AI_INTEGRATIONS_OPENROUTER_API_KEY;
 const ANTHROPIC_BASE_URL = process.env.AI_INTEGRATIONS_ANTHROPIC_BASE_URL;
 const ANTHROPIC_API_KEY = process.env.AI_INTEGRATIONS_ANTHROPIC_API_KEY;
 
+/**
+ * Authoritative operator kill switch. This is intentionally independent of
+ * credentials and provider preference: stored settings and fallback routing can
+ * never re-enable AI while the switch is active.
+ */
+export function isAIIntegrationsDisabled(): boolean {
+  return process.env.AI_INTEGRATIONS_DISABLED === 'true';
+}
+
+export class AIIntegrationsDisabledError extends Error {
+  readonly code = 'AI_INTEGRATIONS_DISABLED';
+  readonly status = 503;
+
+  constructor() {
+    super('AI integrations are disabled by operator configuration.');
+    this.name = 'AIIntegrationsDisabledError';
+  }
+}
+
+export function assertAIIntegrationsEnabled(): void {
+  if (isAIIntegrationsDisabled()) throw new AIIntegrationsDisabledError();
+}
+
 /** True when the primary OpenRouter AI Integration is configured. */
 export function isOpenRouterConfigured(): boolean {
-  return !!(OPENROUTER_BASE_URL && OPENROUTER_API_KEY);
+  return !isAIIntegrationsDisabled() && !!(OPENROUTER_BASE_URL && OPENROUTER_API_KEY);
 }
 
 /** True when the Anthropic AI Integration (fallback provider) is configured. */
 export function isAnthropicConfigured(): boolean {
-  return !!(ANTHROPIC_BASE_URL && ANTHROPIC_API_KEY);
+  return !isAIIntegrationsDisabled() && !!(ANTHROPIC_BASE_URL && ANTHROPIC_API_KEY);
 }
 
 /**
@@ -157,6 +180,7 @@ function resolveEffectiveMode(): 'openrouter' | 'internal' {
 let rawClient: OpenAI | null = null;
 
 function getClient(): OpenAI {
+  assertAIIntegrationsEnabled();
   if (!rawClient) {
     rawClient = new OpenAI({
       baseURL: OPENROUTER_BASE_URL,
@@ -187,6 +211,7 @@ function mapModel(model: string): string {
 let rawAnthropic: Anthropic | null = null;
 
 function getAnthropic(): Anthropic {
+  assertAIIntegrationsEnabled();
   if (!rawAnthropic) {
     rawAnthropic = new Anthropic({
       apiKey: ANTHROPIC_API_KEY,
@@ -263,6 +288,9 @@ function circuitOpenError(provider: Provider): AICircuitOpenError {
 }
 
 function isProviderFailure(err: any): boolean {
+  // The operator shutdown is an intentional, terminal state — never retry it,
+  // count it against a provider circuit, or present it as a provider outage.
+  if (err instanceof AIIntegrationsDisabledError) return false;
   const status = err?.status ?? err?.response?.status;
   if (status === 429) return true;
   if (typeof status === 'number' && status >= 500) return true;
@@ -419,8 +447,10 @@ function computeBackoffMs(attempt: number, err: any): number {
 async function spacedLimitedCall(
   fn: () => Promise<OpenAI.Chat.Completions.ChatCompletion>,
 ): Promise<OpenAI.Chat.Completions.ChatCompletion> {
+  assertAIIntegrationsEnabled();
   let lastErr: any;
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    assertAIIntegrationsEnabled();
     // Do not retry into an open breaker (it may have tripped during a backoff
     // from other concurrent calls). Stop and let the caller's fallback run.
     if (isBreakerOpen('openrouter')) throw circuitOpenError('openrouter');
@@ -434,6 +464,7 @@ async function spacedLimitedCall(
       // request into an open breaker. AICircuitOpenError is not a provider
       // failure, so the catch below re-throws it immediately (no retry).
       const result = await limit(() => {
+        assertAIIntegrationsEnabled();
         if (isBreakerOpen('openrouter')) throw circuitOpenError('openrouter');
         return fn();
       });
@@ -877,8 +908,10 @@ function mapStopReason(
 // bounded transient retry. Crucially, Anthropic failures are NOT recorded
 // against the OpenRouter circuit breaker.
 async function anthropicCall<T>(fn: () => Promise<T>): Promise<T> {
+  assertAIIntegrationsEnabled();
   let lastErr: any;
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
+    assertAIIntegrationsEnabled();
     // Do not retry into an open Anthropic breaker (it may have tripped during a
     // backoff from other concurrent calls). Stop and let the orchestrator route
     // to OpenRouter instead of hammering a provider we know is rate-limited.
@@ -886,6 +919,7 @@ async function anthropicCall<T>(fn: () => Promise<T>): Promise<T> {
     await waitForSpacing();
     try {
       const result = await limit(() => {
+        assertAIIntegrationsEnabled();
         if (isBreakerOpen('anthropic')) throw circuitOpenError('anthropic');
         return fn();
       });
@@ -990,6 +1024,7 @@ async function create(
   options?: OpenAI.RequestOptions,
   routing?: { preferOpenRouter?: boolean },
 ): Promise<OpenAI.Chat.Completions.ChatCompletion> {
+  assertAIIntegrationsEnabled();
   const orConfigured = isOpenRouterConfigured();
   const anthropicConfigured = isAnthropicConfigured();
 

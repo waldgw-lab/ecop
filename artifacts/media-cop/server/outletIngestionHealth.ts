@@ -23,7 +23,7 @@ import type { OutletRegistry, MeltwaterTelemetry, ScrapeMetadata } from "@shared
 import { normalizeOutletName, extractOutletDomain } from "@shared/outletRegistry";
 import { findApprovedSocialAccountsForRegistryIdentity } from "@shared/socialAccountCatalog";
 import { getFeedHealthReport, type FeedHealthRow } from "./feedHealthTracker";
-import { getXRelayHeartbeat } from "./xRelayService";
+import { getXRelayHeartbeat, isXRelayDisabled } from "./xRelayService";
 import { getRelayHeartbeat } from "./truthSocialService";
 import { RSS_FEEDS } from "./rssFeeds";
 import { WARFIGHTER_ONLY_RSS_FEEDS } from "./warfighterRssScraper";
@@ -34,7 +34,7 @@ import type { IStorage } from "./storage";
 // run/freshness telemetry to attest health — we must never invent 'healthy'.
 // 'unused' is reserved for genuinely-not-wired (no pipeline) OR a live fallback
 // that is idle because the primary is confirmed healthy.
-export type IngestionHealth = "healthy" | "degraded" | "broken" | "unknown" | "unused";
+export type IngestionHealth = "healthy" | "degraded" | "broken" | "unknown" | "unused" | "disabled";
 
 export interface IngestionSource {
   // What kind of pipeline this is (rss/scraper/relay/api/none).
@@ -96,7 +96,7 @@ function feedHealthFor(
 // unused), used when an outlet is fed by several feed URLs (e.g. Washington
 // Post has 3). 'unknown' ranks above 'healthy' so a mixed set never rounds up.
 function worstHealth(healths: IngestionHealth[]): IngestionHealth {
-  const order: IngestionHealth[] = ["broken", "degraded", "unknown", "healthy", "unused"];
+  const order: IngestionHealth[] = ["broken", "degraded", "unknown", "healthy", "disabled", "unused"];
   for (const h of order) if (healths.includes(h)) return h;
   return "unused";
 }
@@ -191,7 +191,15 @@ const MELTWATER_BROKEN_MS = 24 * 60 * 60 * 1000;
 function meltwaterHealthFrom(
   hasKey: boolean,
   telemetry: MeltwaterTelemetry | null,
+  disabled: boolean,
 ): { health: IngestionHealth; lastCheckedAt: string | null; note: string } {
+  if (disabled) {
+    return {
+      health: "disabled",
+      lastCheckedAt: telemetry?.lastRunAt ? new Date(telemetry.lastRunAt).toISOString() : null,
+      note: "Disabled by operator configuration",
+    };
+  }
   if (!hasKey) {
     return { health: "broken", lastCheckedAt: null, note: "Meltwater not connected (no credentials configured)" };
   }
@@ -241,6 +249,8 @@ export async function buildOutletIngestionHealth(
   const byUrl = indexFeedHealth(feedHealth.feeds);
   const configured = allConfiguredFeeds();
   const hasMeltwaterKey = !!process.env.MELTWATER_API_KEY;
+  const meltwaterDisabled = process.env.MELTWATER_DISABLED === 'true';
+  const xRelayDisabled = isXRelayDisabled();
   const xRelay = getXRelayHeartbeat();
   const truthRelay = getRelayHeartbeat();
 
@@ -278,11 +288,11 @@ export async function buildOutletIngestionHealth(
     const isSocial = socialAccounts.length > 0;
 
     if (isSocial) {
-      out.push(buildSocialIngestion(row, xRelay, truthRelay, xScraperRun, truthScraperRun));
+      out.push(buildSocialIngestion(row, xRelay, truthRelay, xScraperRun, truthScraperRun, xRelayDisabled));
       continue;
     }
 
-    out.push(buildNewsIngestion(row, configured, byUrl, hasMeltwaterKey, meltwaterTelemetry));
+    out.push(buildNewsIngestion(row, configured, byUrl, hasMeltwaterKey, meltwaterTelemetry, meltwaterDisabled));
   }
 
   return out;
@@ -297,6 +307,7 @@ function buildNewsIngestion(
   byUrl: Map<string, FeedHealthRow>,
   hasMeltwaterKey: boolean,
   meltwaterTelemetry: MeltwaterTelemetry | null,
+  meltwaterDisabled: boolean,
 ): OutletIngestion {
   const nameKeys = new Set<string>();
   const nk = normalizeOutletName(row.canonicalName);
@@ -345,8 +356,8 @@ function buildNewsIngestion(
   // healthy; key present but no run telemetry → unknown; errored/stale → broken/
   // degraded; key absent → broken/not-connected. When the primary RSS feed is
   // confirmed healthy, the fallback is genuinely idle → 'unused' (greyed).
-  const mw = meltwaterHealthFrom(hasMeltwaterKey, meltwaterTelemetry);
-  const meltwaterIdle = primary.health === "healthy";
+  const mw = meltwaterHealthFrom(hasMeltwaterKey, meltwaterTelemetry, meltwaterDisabled);
+  const meltwaterIdle = !meltwaterDisabled && primary.health === "healthy";
   const meltwaterHealth: IngestionHealth = meltwaterIdle ? "unused" : mw.health;
   const secondary: IngestionSource = {
     kind: "api",
@@ -364,7 +375,7 @@ function buildNewsIngestion(
   let overall: IngestionHealth;
   if (primary.kind === "none") {
     // No RSS feed at all — the outlet rests entirely on Meltwater's real verdict.
-    overall = hasMeltwaterKey ? mw.health : "unused";
+    overall = meltwaterDisabled ? "unused" : hasMeltwaterKey ? mw.health : "unused";
   } else if (primary.health === "healthy") {
     overall = "healthy";
   } else if (mw.health === "healthy") {
@@ -394,17 +405,23 @@ function buildSocialIngestion(
   truthRelayMs: number,
   xScraperRun: Date | null,
   truthScraperRun: Date | null,
+  xRelayDisabled: boolean,
 ): OutletIngestion {
   const truth = isTruthSocialOutlet(row);
   const relayMs = truth ? truthRelayMs : xRelayMs;
   const relayVerdict = relayHealth(relayMs);
+  const relayDisabled = !truth && xRelayDisabled;
 
   const primary: IngestionSource = {
     kind: "relay",
     label: truth ? "Truth Social relay (EV)" : "EV relay API (X)",
-    health: relayVerdict.health,
+    health: relayDisabled ? "disabled" : relayVerdict.health,
     lastCheckedAt: relayVerdict.lastCheckedAt,
-    note: relayVerdict.health === "broken" ? "Relay heartbeat stale/absent" : undefined,
+    note: relayDisabled
+      ? "Disconnected by operator configuration"
+      : relayVerdict.health === "broken"
+        ? "Relay heartbeat stale/absent"
+        : undefined,
   };
 
   // Secondary Playwright/fallback scraper. When the relay is healthy the scraper
@@ -413,7 +430,7 @@ function buildSocialIngestion(
   // invented 'healthy'. No timestamp → 'unknown' with a note.
   const scraperRun = truth ? truthScraperRun : xScraperRun;
   const scraperVerdict = scraperHealthFromRun(scraperRun);
-  const relayHealthy = relayVerdict.health === "healthy";
+  const relayHealthy = !relayDisabled && relayVerdict.health === "healthy";
   const secondary: IngestionSource = {
     kind: "scraper",
     label: truth ? "Truth Social fallback scraper" : "Playwright scraper (X)",
@@ -421,7 +438,9 @@ function buildSocialIngestion(
     lastCheckedAt: scraperVerdict.lastCheckedAt,
     note: relayHealthy
       ? "Fallback — idle while relay is healthy"
-      : scraperVerdict.health === "unknown"
+      : relayDisabled && scraperVerdict.health === "healthy"
+        ? "Primary X collection path while EV relay is disconnected"
+        : scraperVerdict.health === "unknown"
         ? "Fallback scraper — no recent run telemetry"
         : scraperVerdict.health === "healthy"
           ? "Fallback scraper active (recent run) while relay is down"
@@ -434,7 +453,9 @@ function buildSocialIngestion(
   //   - relay down + scraper stale/broken     → broken
   //   - relay down + no scraper telemetry     → unknown
   let overall: IngestionHealth;
-  if (relayHealthy) {
+  if (relayDisabled) {
+    overall = scraperVerdict.health;
+  } else if (relayHealthy) {
     overall = "healthy";
   } else if (scraperVerdict.health === "healthy") {
     overall = "degraded";

@@ -24,3 +24,9 @@ channel = "stable-25_05"
 
 [objectStorage]
 defaultBucketID = "replit-objstore-b4fae1e0-7d6b-488f-bda8-bc337f16226f"
+
+[userenv]
+
+[userenv.shared]
+EV_RELAY_DISABLED = "true"
+MELTWATER_DISABLED = "true"

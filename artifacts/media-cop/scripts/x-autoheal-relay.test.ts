@@ -36,7 +36,7 @@
 
 import { storage } from '../server/storage';
 import { __schedulerWatchdogTestHooks } from '../server/scheduler';
-import { isXRelayHealthy, updateXRelayHeartbeat } from '../server/xRelayService';
+import { getXRelayMode, isXRelayDisabled, isXRelayHealthy, updateXRelayHeartbeat } from '../server/xRelayService';
 import { EXIT_PASS, EXIT_FAIL } from './harness-reliability';
 
 const { setGuardState, runSelfHealingCheck } = __schedulerWatchdogTestHooks;
@@ -114,7 +114,13 @@ const logged = (needle: string) => captured.some((l) => l.includes(needle));
 async function main() {
   installStubs();
   try {
-    const initiallyHealthy = isXRelayHealthy();
+    if (isXRelayDisabled()) {
+      check('disabled relay: reports intentionally disconnected', !isXRelayHealthy());
+      updateXRelayHeartbeat();
+      check('disabled relay: a heartbeat cannot silently reconnect EV', !isXRelayHealthy());
+      check('disabled relay: Playwright fallback remains PRIMARY', getXRelayMode() === 'PRIMARY');
+    } else {
+      const initiallyHealthy = isXRelayHealthy();
 
     // ---- Case STALE-RELAY: fallback protection must be unchanged --------------
     if (!initiallyHealthy) {
@@ -167,11 +173,12 @@ async function main() {
       logged('blocking counters') && !logged('Detected X blocking'),
       `captured: ${JSON.stringify(captured)}`,
     );
-    check(
-      'healthy relay: no recovery sequence of any kind initiated',
-      !logged('Initiating recovery sequence') && !logged('Starting fresh scrape cycle'),
-      `captured: ${JSON.stringify(captured)}`,
-    );
+      check(
+        'healthy relay: no recovery sequence of any kind initiated',
+        !logged('Initiating recovery sequence') && !logged('Starting fresh scrape cycle'),
+        `captured: ${JSON.stringify(captured)}`,
+      );
+    }
   } finally {
     stopCapture();
     restoreStubs();
@@ -179,7 +186,7 @@ async function main() {
   }
 
   if (failures.length === 0) {
-    console.log('\n[x-autoheal-relay] PASS — AUTO-HEAL respects X relay health (healthy = no browser recovery; stale = fallback unchanged)');
+    console.log('\n[x-autoheal-relay] PASS — EV disconnect/health mode preserves the Playwright fallback');
     process.exit(EXIT_PASS);
   } else {
     console.error(`\n[x-autoheal-relay] FAIL — ${failures.length} assertion(s) failed`);

@@ -75,6 +75,28 @@ function telemetry(
 }
 
 // ---------------------------------------------------------------------------
+// 1b. operator-disabled — historical telemetry remains visible but never
+// presents as stale/broken and the aggregate is not degraded.
+// ---------------------------------------------------------------------------
+{
+  const old = telemetry(12 * HOUR, {
+    outcome: 'success',
+    ingested: 4,
+    dayRemaining: 21,
+  });
+  const disabled = computeMeltwaterHealth(old, true, STALE_THRESHOLD_MS, true);
+  check('disabled: status', disabled.status === 'disabled');
+  check('disabled: not degraded', disabled.isDegraded === false);
+  check('disabled: preserves last-run telemetry', disabled.lastRunAt !== null && disabled.ingested === 4);
+  check('disabled: explains operator configuration', /disabled by operator/i.test(disabled.summary));
+
+  const multiDisabled = computeMeltwaterHealthMulti([old], true, true);
+  check('multi disabled: every search disabled', multiDisabled.searches.every((s) => s.health.status === 'disabled'));
+  check('multi disabled: no degraded searches', multiDisabled.aggregate.degradedCount === 0 && !multiDisabled.aggregate.isDegraded);
+  check('multi disabled: aggregate status', multiDisabled.aggregate.worstStatus === 'disabled');
+}
+
+// ---------------------------------------------------------------------------
 // 2. healthy — recent success.
 // ---------------------------------------------------------------------------
 {

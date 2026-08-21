@@ -42,6 +42,7 @@
 import type { CuratedIntakeCandidate } from './curatedIngest';
 import { storage } from './storage';
 import { buildOutletIndex, findOutlet, normalizeOutletName, type OutletIndex } from '@shared/outletRegistry';
+import { isBotEnabled } from './scraperConfig';
 
 const MELTWATER_BASE = 'https://api.meltwater.com';
 
@@ -369,6 +370,13 @@ async function runMeltwaterSearchBot(config: MeltwaterSearchConfig): Promise<{
 }> {
   const { searchId, label, maxPages, windowMinutes, mode } = config;
   const LOG = `[MeltwaterCuratedBot:${label}]`;
+
+  // Defense in depth: scheduled and manual callers both stop here before the
+  // credential is read or any request is made to Meltwater.
+  if (!isBotEnabled('meltwaterCuratedBot')) {
+    console.log(`${LOG} Disabled — skipping without contacting Meltwater`);
+    return { ingested: 0, skipped: 0, errors: 0, rateLimited: false };
+  }
 
   if (inFlightSearches.has(label)) {
     console.log(`${LOG} Previous run still in flight, skipping this cycle`);

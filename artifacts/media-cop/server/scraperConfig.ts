@@ -67,20 +67,34 @@ export const BOT_DEFINITIONS: BotDefinition[] = [
 
 const BOTS_DISABLED_BY_DEFAULT = new Set<string>(['drudgeBot']);
 
+function isBotDisabledByEnvironment(botId: string): boolean {
+  return botId === 'meltwaterCuratedBot' && process.env.MELTWATER_DISABLED === 'true';
+}
+
 const botStates: Record<string, boolean> = {};
 for (const bot of BOT_DEFINITIONS) {
   botStates[bot.id] = !BOTS_DISABLED_BY_DEFAULT.has(bot.id);
 }
 
 export function getBotStates(): Record<string, boolean> {
-  return { ...botStates };
+  const states = { ...botStates };
+  for (const botId of Object.keys(states)) {
+    if (isBotDisabledByEnvironment(botId)) states[botId] = false;
+  }
+  return states;
 }
 
 export function isBotEnabled(botId: string): boolean {
+  if (isBotDisabledByEnvironment(botId)) return false;
   return botStates[botId] ?? true;
 }
 
 export function setBotEnabled(botId: string, enabled: boolean): void {
+  if (enabled && isBotDisabledByEnvironment(botId)) {
+    botStates[botId] = false;
+    console.log(`[ScraperConfig] ${botId} remains disabled by environment configuration`);
+    return;
+  }
   botStates[botId] = enabled;
   const def = BOT_DEFINITIONS.find(b => b.id === botId);
   console.log(`[ScraperConfig] ${def?.name || botId} ${enabled ? 'enabled' : 'disabled'}`);

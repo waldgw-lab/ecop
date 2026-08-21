@@ -418,7 +418,7 @@ interface PipelineVerdict {
   };
   lastSuccessAt: string | null;
 }
-type MeltwaterStatus = "healthy" | "throttled" | "stale" | "error" | "not-run";
+type MeltwaterStatus = "healthy" | "throttled" | "stale" | "error" | "not-run" | "disabled";
 interface MeltwaterHealth {
   status: MeltwaterStatus;
   summary: string;
@@ -535,7 +535,7 @@ interface CoverageReport {
 // Per-outlet ingestion-health shape (Registry tab) returned by
 // GET /api/team/outlet-registry/ingestion. Read-only: describes HOW each outlet
 // is ingested (primary + fallback source) and the live health of each pipeline.
-type IngestionHealth = "healthy" | "degraded" | "broken" | "unknown" | "unused";
+type IngestionHealth = "healthy" | "degraded" | "broken" | "unknown" | "unused" | "disabled";
 interface IngestionSource {
   kind: "rss" | "scraper" | "relay" | "api" | "none";
   label: string;
@@ -570,6 +570,7 @@ const INGESTION_DOT_CLASSES: Record<IngestionHealth, string> = {
   // "unused" dot without adding a new color.
   unknown: "bg-transparent border border-gray-400",
   unused: "bg-gray-400",
+  disabled: "bg-slate-500 ring-2 ring-slate-300 dark:ring-slate-700",
 };
 const INGESTION_DOT_TITLES: Record<IngestionHealth, string> = {
   healthy: "Ingestion healthy — the outlet's feed/relay is delivering.",
@@ -577,6 +578,7 @@ const INGESTION_DOT_TITLES: Record<IngestionHealth, string> = {
   broken: "Ingestion broken — no source is currently delivering for this outlet.",
   unknown: "Status unknown — the pipeline is wired but there is no recent run/freshness telemetry to confirm it is delivering.",
   unused: "Not in use — no automated ingestion is wired to this outlet (or the fallback is idle because the primary is healthy).",
+  disabled: "Disconnected by operator configuration.",
 };
 // Text-color classes for the primary/secondary source lines in the expanded
 // detail, keyed by that source's own health. `unknown` and `unused` both read
@@ -587,6 +589,7 @@ const INGESTION_TEXT_CLASSES: Record<IngestionHealth, string> = {
   broken: "text-red-600 dark:text-red-400",
   unknown: "text-muted-foreground italic",
   unused: "text-muted-foreground/60",
+  disabled: "text-muted-foreground",
 };
 
 // Display-only roster name (registry display names task). Handle-keyed rows
@@ -2310,6 +2313,10 @@ export function OutletOversightDialog({
                       return status === "healthy" ? (
                         <Badge variant="secondary" className="gap-1 text-green-700 dark:text-green-400" data-testid={testId}>
                           <CheckCircle2 className="w-3 h-3" /> Healthy
+                        </Badge>
+                      ) : status === "disabled" ? (
+                        <Badge variant="outline" className="gap-1 text-muted-foreground" data-testid={testId}>
+                          <XCircle className="w-3 h-3" /> Disabled
                         </Badge>
                       ) : status === "throttled" ? (
                         <Badge variant="outline" className="gap-1 border-amber-500/50 text-amber-600 dark:text-amber-400" data-testid={testId}>

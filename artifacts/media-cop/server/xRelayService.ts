@@ -31,6 +31,13 @@ import { suppressAttachmentOnlySocialImage } from './socialPostText';
 let lastXRelayReceivedAt = 0;
 const X_RELAY_STALE_THRESHOLD = 15 * 60 * 1000; // 15 minutes — same as Truth Social relay
 
+// Explicit operator disconnect. Unlike a stale relay, this is intentional:
+// inbound EV payloads are ignored while the existing Playwright X scrapers
+// remain available as the primary collection path.
+export function isXRelayDisabled(): boolean {
+  return process.env.EV_RELAY_DISABLED === 'true';
+}
+
 // --- Durable heartbeat persistence (Task #340) -----------------------------
 // The in-memory value above stays the fast read path. We additionally persist
 // the timestamp so it survives a redeploy/restart — otherwise MCOP boots into
@@ -86,6 +93,7 @@ export function getXRelayStaleThresholdMs(): number {
 }
 
 export function isXRelayHealthy(): boolean {
+  if (isXRelayDisabled()) return false;
   if (lastXRelayReceivedAt === 0) return false;
   return (Date.now() - lastXRelayReceivedAt) < X_RELAY_STALE_THRESHOLD;
 }

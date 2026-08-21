@@ -7,7 +7,7 @@ import { FLASH_PRIORITY_THRESHOLD } from "./subjectMatcher";
 import { CURATED_SOFT_CAP, CURATED_ANALYSIS_OPINION_CAP } from "./scoreAdjustments";
 import { scrapeDrudgeReport, generateSummary, extractArchiveData } from "./scraper";
 import { scrapeAllTruthSocial, updateRelayHeartbeat, isRelayHealthy, getRelayHeartbeat, filterTruthSocialPostImage } from "./truthSocialService";
-import { updateXRelayHeartbeat, getXRelayHeartbeat, isXRelayHealthy, normalizeXRelayPost, routeXRelayPost, extractXRelayPosts } from "./xRelayService";
+import { updateXRelayHeartbeat, getXRelayHeartbeat, isXRelayHealthy, isXRelayDisabled, normalizeXRelayPost, routeXRelayPost, extractXRelayPosts } from "./xRelayService";
 import { processPostImages } from './imageTextExtractor';
 import { sendPOTUSAlert } from './twilioService';
 import { isGenericCategory } from './curatedClassify';
@@ -8427,7 +8427,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       {
-        const { setBotEnabled, persistBotStates, BOT_DEFINITIONS } = await import('./scraperConfig');
+        const { setBotEnabled, persistBotStates, isBotEnabled, BOT_DEFINITIONS } = await import('./scraperConfig');
         const validBot = BOT_DEFINITIONS.find(b => b.id === botId);
         if (!validBot) {
           return res.status(400).json({ error: `Unknown bot: ${botId}` });
@@ -8435,9 +8435,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         setBotEnabled(botId, enabled);
         // Persist alongside the in-memory update so the toggle survives restarts.
         await persistBotStates();
+        return res.json({ success: true, botId, enabled: isBotEnabled(botId) });
       }
-
-      res.json({ success: true, botId, enabled });
     } catch (error) {
       console.error('Error toggling bot:', error);
       res.status(500).json({ error: 'Failed to toggle bot' });
@@ -13628,6 +13627,15 @@ Examples:
   // ==========================================================================
   app.post("/api/webhooks/x-relay", async (req, res) => {
     try {
+      if (isXRelayDisabled()) {
+        return res.status(200).json({
+          status: 'disabled',
+          heartbeat: false,
+          received: 0,
+          new: 0,
+          message: 'EV relay ingestion is disconnected',
+        });
+      }
       const apiKey = req.headers['x-api-key'] as string;
       const configuredKey = process.env.EV_RELAY_API_KEY;
       if (!configuredKey || !apiKey || apiKey !== configuredKey) {
@@ -13681,24 +13689,30 @@ Examples:
   app.get("/api/admin/x-relay-status", requireAdmin, async (req, res) => {
     const heartbeat = getXRelayHeartbeat();
     const healthy = isXRelayHealthy();
+    const disabled = isXRelayDisabled();
     const ageSec = heartbeat > 0 ? Math.round((Date.now() - heartbeat) / 1000) : null;
     res.json({
       relayHealthy: healthy,
+      disabled,
       lastHeartbeat: heartbeat > 0 ? new Date(heartbeat).toISOString() : null,
       lastHeartbeatAgeSeconds: ageSec,
       scraperMode: healthy ? 'WATCHDOG' : 'PRIMARY',
+      relayStatus: disabled ? 'DISCONNECTED' : healthy ? 'CONNECTED' : 'STALE',
     });
   });
 
   app.get("/api/team/x-relay-status", requireTeamMember, async (req: any, res) => {
     const heartbeat = getXRelayHeartbeat();
     const healthy = isXRelayHealthy();
+    const disabled = isXRelayDisabled();
     const ageSec = heartbeat > 0 ? Math.round((Date.now() - heartbeat) / 1000) : null;
     res.json({
       relayHealthy: healthy,
+      disabled,
       lastHeartbeat: heartbeat > 0 ? new Date(heartbeat).toISOString() : null,
       lastHeartbeatAgeSeconds: ageSec,
       scraperMode: healthy ? 'WATCHDOG' : 'PRIMARY',
+      relayStatus: disabled ? 'DISCONNECTED' : healthy ? 'CONNECTED' : 'STALE',
     });
   });
 
@@ -14177,7 +14191,11 @@ Examples:
       // as degraded (stale/error) in the summary flagged count, not merely throttled.
       const meltwaterTelemetryRows = await storage.getMeltwaterTelemetries();
       const hasApiKey = !!process.env.MELTWATER_API_KEY;
-      const meltwater = computeMeltwaterHealthMulti(meltwaterTelemetryRows, hasApiKey);
+      const meltwater = computeMeltwaterHealthMulti(
+        meltwaterTelemetryRows,
+        hasApiKey,
+        process.env.MELTWATER_DISABLED === 'true',
+      );
 
       // RSS FEED HEALTH — per-feed-URL outcome tracking for the main RSS Monitor
       // (server/rssFeeds.ts) and the Warfighter RSS list (Task #542). Surfaces

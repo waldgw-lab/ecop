@@ -13,7 +13,7 @@
 import type { MeltwaterTelemetry } from "@shared/schema";
 import { MELTWATER_SEARCHES } from "./meltwaterBot";
 
-export type MeltwaterStatus = "healthy" | "throttled" | "stale" | "error" | "not-run";
+export type MeltwaterStatus = "healthy" | "throttled" | "stale" | "error" | "not-run" | "disabled";
 
 export interface MeltwaterHealth {
   status: MeltwaterStatus;
@@ -127,10 +127,11 @@ function fmtAge(ms: number | null): string {
 // Status priority for worst-of aggregation (higher index = worse).
 const STATUS_RANK: Record<MeltwaterStatus, number> = {
   "healthy": 0,
-  "not-run": 1,
-  "throttled": 2,
-  "stale": 3,
-  "error": 4,
+  "disabled": 1,
+  "not-run": 2,
+  "throttled": 3,
+  "stale": 4,
+  "error": 5,
 };
 
 // ---------------------------------------------------------------------------
@@ -141,7 +142,26 @@ export function computeMeltwaterHealth(
   telemetry: MeltwaterTelemetry | null,
   hasApiKey: boolean,
   staleThresholdMs: number = DEFAULT_STALE_THRESHOLD_MS,
+  disabled: boolean = false,
 ): MeltwaterHealth {
+  if (disabled) {
+    return {
+      status: "disabled",
+      summary: "Meltwater pulling is disabled by operator configuration.",
+      lastRunAt: telemetry?.lastRunAt?.toISOString() ?? null,
+      lastRunAgeMs: ageMs(telemetry?.lastRunAt),
+      outcome: telemetry?.outcome ?? null,
+      ingested: telemetry?.ingested ?? 0,
+      skipped: telemetry?.skipped ?? 0,
+      dayRemaining: telemetry?.dayRemaining ?? null,
+      dayLimit: telemetry?.dayLimit ?? null,
+      dayResetAt: telemetry?.dayResetAt?.toISOString() ?? null,
+      minuteRemaining: telemetry?.minuteRemaining ?? null,
+      isDegraded: false,
+      quotaWarning: false,
+      overflow: telemetry?.overflow ?? false,
+    };
+  }
   if (!telemetry) {
     if (!hasApiKey) {
       return {
@@ -269,6 +289,7 @@ const SEARCH_META: Record<string, { displayName: string; cadenceLabel: string }>
 export function computeMeltwaterHealthMulti(
   telemetryRows: MeltwaterTelemetry[],
   hasApiKey: boolean,
+  disabled: boolean = false,
 ): MeltwaterMultiHealth {
   // Build a lookup from search label → row.
   const byLabel = new Map<string, MeltwaterTelemetry>();
@@ -286,7 +307,7 @@ export function computeMeltwaterHealthMulti(
       displayName: meta.displayName,
       cadenceLabel: meta.cadenceLabel,
       staleThresholdMs,
-      health: computeMeltwaterHealth(telemetry, hasApiKey, staleThresholdMs),
+      health: computeMeltwaterHealth(telemetry, hasApiKey, staleThresholdMs, disabled),
     };
   });
 

@@ -15,18 +15,13 @@ localPort = 20561
 run = "pnpm --filter @workspace/media-cop run dev"
 
 [services.production]
+serve = "static"
+publicDir = "dist/public"
 
 [services.production.build]
 args = [ "pnpm", "--filter", "@workspace/media-cop", "run", "build" ]
 
 [services.production.build.env]
-NODE_ENV = "production"
-
-[services.production.run]
-args = [ "pnpm", "--filter", "@workspace/media-cop", "run", "start" ]
-
-[services.production.run.env]
-PORT = "20561"
 NODE_ENV = "production"
 
 [services.env]

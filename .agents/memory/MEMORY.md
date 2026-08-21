@@ -9,4 +9,4 @@
 - [Curated cluster fragmentation](curated-cluster-fragmentation.md) — missed merges = over-applied prompt rules or token morphology; fix prompts/recall, never precision bars.
 - [Curated fill vs custom size](curated-fill-vs-custom-size.md) — user-set pane heights must exit the social bloc's abspos fill layout; inner max-height alone can't grow the section.
 - [Media COP deployment target](media-cop-deployment.md) — prod must be single-instance Reserved VM; autoscale suspends crons → "stale after first hour" feeds; X relay never heartbeats in prod.
-- [Operational AI pause](operational-ai-pause.md) — a provider kill switch must also freeze AI retry/bookkeeping state; mixed media jobs may continue image-only with pause-safe writes.
+- [Operational AI pause](operational-ai-pause.md) — freeze AI retry state during provider pauses; a banner-only, zero-backend shutdown must use static production hosting.

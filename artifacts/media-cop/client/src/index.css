@@ -215,6 +215,63 @@
   }
 }
 
+/* Non-dismissible routing notice rendered above the entire application shell.
+   It deliberately uses fixed colors rather than theme variables, so it remains
+   high-contrast for Classic, dark, and Curated views alike. Sticky positioning
+   keeps the legacy destination available while a signed-in view is scrolled,
+   while its normal-flow space leaves page controls unobscured. */
+.phase-out-notice {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  margin: 0;
+  padding: 0.6875rem 1rem;
+  background: #7c2d12;
+  border-bottom: 2px solid #fdba74;
+  color: #fff7ed;
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.45;
+  text-align: center;
+  box-shadow: 0 2px 8px rgb(67 20 7 / 0.32);
+}
+
+.phase-out-notice p {
+  max-width: 80rem;
+  margin: 0 auto;
+}
+
+.phase-out-notice-link {
+  color: #ffffff;
+  font-weight: 800;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 0.15em;
+}
+
+.phase-out-notice-link:hover {
+  color: #ffedd5;
+}
+
+.phase-out-notice-link:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 3px;
+  border-radius: 0.125rem;
+}
+
+@media (max-width: 40rem) {
+  .phase-out-notice {
+    padding: 0.625rem 0.875rem;
+    font-size: 0.875rem;
+  }
+
+  .phase-out-notice-link {
+    overflow-wrap: anywhere;
+  }
+}
+
 /* ── Curated View theme tokens ─────────────────────────────────────────────
    The Curated View was originally dark-only (its root forced `.dark`). These
    tokens let every curated surface follow the app light/dark theme instead.

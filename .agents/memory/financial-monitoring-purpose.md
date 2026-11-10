@@ -26,3 +26,9 @@ The dashboard should explain important world economic conditions as a PhD econom
 **Why:** The user explicitly clarified the intended dashboard experience after reviewing the news-first version.
 
 **How to apply:** Prioritize economic context and understandable explanations when deciding which information deserves prominence. Do not treat a longer story list as a substitute for the requested economic dashboard.
+
+The user wants a large-monitor dashboard with "Today's BLUF" at the top, top financial news on the left, and key graphs reflecting the BLUF on the right, plus clickable additional screens and a chatbot.
+
+**Why:** The user explicitly specified this briefing layout and navigation after reviewing the economic overview.
+
+**How to apply:** Keep the first screen a briefing rather than stacking every detailed panel on it. Supporting screens should provide deeper market, economic, news and source information.

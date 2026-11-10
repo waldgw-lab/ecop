@@ -8,6 +8,7 @@ This mirror is now a restricted internal financial-stability monitor for militar
 - Dedicated financial ingestion, ranking and persistence are separate from the original military tables. Financial startup refuses a database matching the separately configured original production database.
 - Legacy military schedulers, old API/relay endpoints, outbound notifications and startup data repairs do not run in financial mode.
 - Preserve the existing AI shutdown setting. Financial scores are transparent rule-based screening with independent confidence labels, not AI-generated assessments or predictions.
+- The briefing assistant is deliberately a source-grounded rule-based data guide while external AI is paused; adding chat must not silently re-enable provider calls or legacy AI jobs. It reads current finance snapshots, cites observation dates, keeps conversations only in tab memory, and declines unsupported topics.
 - Internal access uses the app's existing team password/session mechanism, including in development; there is no development data-access bypass. No new authentication provider was introduced.
 - Social account listings are a reference roster, not direct live X collection. Social links received through Dataminr remain attributed, unconfirmed signals.
 - Public CSV downloads back the historical indicators; no values are invented for missing observations. CNN Fear & Greed is explicitly unavailable until permitted data access is established.

@@ -13,6 +13,7 @@ export async function getEconomyOverview(days: number): Promise<EconomyOverview>
   );
   const brent = markets.quotes.find(q => q.id === "brent");
   if (brent?.value != null) briefing.push(`Energy: Brent near-contract oil is $${brent.value.toFixed(2)}/barrel${brent.changePercent !== null ? `, ${brent.changePercent >= 0 ? "+" : ""}${brent.changePercent.toFixed(2)}% versus the previous completed daily bar (${brent.previousCloseDate})` : ""}, observed ${brent.asOf}.${brent.status === "stale" ? " Retained or stale quote." : ""} Oil shocks can affect fuel budgets, import bills and inflation.`);
+  else briefing.push("Energy: no usable Brent near-contract price is available. No current oil-price direction is inferred. The oil panel explains any source gaps.");
   return {
     ...all, days, indicators: all.indicators.map(ind => ({ ...ind, points: ind.points.filter(p => p.date >= cutoff) })),
     generatedAt: new Date().toISOString(), markets, conditions, briefing,

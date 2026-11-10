@@ -23,7 +23,7 @@ const ser = (i: FinanceIndicator | undefined, name: string, color: string, step 
 export function Briefing({ e }: { e: EconomyOverview }) {
   return (
     <section className="fsw-panel min-w-0 p-4 border-l-2 border-l-[hsl(var(--fsw-brass))]" data-testid="section-briefing">
-      <p className="fsw-label text-[hsl(var(--fsw-brass))]">The picture in plain terms</p>
+      <p className="fsw-label text-[hsl(var(--fsw-brass))]">Today&apos;s BLUF</p>
       {e.briefing.length === 0 ? <p className="mt-2 text-sm text-[hsl(var(--fsw-dim))]">No briefing lines could be drawn from available data.</p> : (
         <ol className="mt-2 grid grid-cols-1 gap-x-8 gap-y-2 lg:grid-cols-2">
           {e.briefing.map((b, i) => <li key={i} className="grid grid-cols-[1.5rem_1fr] text-[14px] leading-snug" data-testid={`text-briefing-${i}`}><span className="fsw-mono text-xs text-[hsl(var(--fsw-brass))] pt-0.5">{String(i + 1).padStart(2, "0")}</span><span>{b}</span></li>)}

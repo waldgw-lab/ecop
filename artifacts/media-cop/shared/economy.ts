@@ -70,6 +70,7 @@ export interface EconomyOverview extends FinanceIndicators {
   };
   conditions: EconomicCondition[];
   briefing: string[];
+  briefingIds?: string[];
   rateExpectations: RateExpectation[];
   oilCurve: OilCurve;
   notes: string[];

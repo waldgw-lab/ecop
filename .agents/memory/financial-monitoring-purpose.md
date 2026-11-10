@@ -32,3 +32,9 @@ The user wants a large-monitor dashboard with "Today's BLUF" at the top, top fin
 **Why:** The user explicitly specified this briefing layout and navigation after reviewing the economic overview.
 
 **How to apply:** Keep the first screen a briefing rather than stacking every detailed panel on it. Supporting screens should provide deeper market, economic, news and source information.
+
+The BLUF should contain facts and explain why they matter to someone who is not well versed in finance or economics, without sounding patronizing. Do not mention missing information in the BLUF.
+
+**Why:** The user explicitly corrected technical data-gap language appearing in the executive briefing.
+
+**How to apply:** Keep dated observations and concise economic/security significance in the narrative. Put missing-data and source-quality notices in the supporting charts and details instead.

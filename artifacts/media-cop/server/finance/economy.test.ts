@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import type { FinanceIndicator } from "../../shared/finance";
 import { annualChanges, compareIndicator, economicConditions, oilCurve, rateExpectations } from "./economyAnalysis";
 import { parseMarketChart, unavailableQuote, type QuoteDefinition } from "./marketParsing";
+import { buildBriefing } from "./briefing";
 
 const now = Date.parse("2026-11-10T18:00:00Z");
 const seconds = (date: string) => Date.parse(date) / 1000;
@@ -80,4 +81,40 @@ test("missing economic data and unavailable quotes never become reassuring zeroe
   assert.ok(conditions.every(c => c.status === "unavailable" && c.observedAt === null));
   assert.equal(unavailableQuote(definition, "Failed").value, null);
   assert.equal(rateExpectations([])[0].impliedRate, null);
+});
+test("BLUF pairs dated facts with significance, without leaking technical data-quality notices", () => {
+  const inflation: FinanceIndicator = {
+    ...indicator([{ date: "2026-06-01", value: 3.47 }, { date: "2026-09-01", value: 3.72 }]),
+    id: "CPI_YOY", status: "stale", message: "Annual comparison is unavailable because a source observation is missing.",
+  };
+  const jobs = indicator([{ date: "2026-07-01", value: 4.1 }, { date: "2026-10-01", value: 4.1 }]);
+  const conditions = economicConditions([inflation, jobs]);
+  const oil = { ...parseMarketChart(payload(), definition, now), id: "brent" };
+  const items = buildBriefing([inflation, jobs], conditions, [oil]);
+  assert.deepEqual(items.map(i => i.id), ["02", "03", "04"]);
+  const text = items.map(i => i.text).join("\n");
+  assert.match(text, /3.72% higher.*September 2026/);
+  assert.match(text, /rose 0.25 percentage points/);
+  assert.match(text, /household budgets and operating costs/);
+  assert.match(text, /little changed over three months/);
+  assert.match(text, /tax revenue/);
+  assert.match(text, /oil-exporting governments/);
+  assert.doesNotMatch(text, /missing|unavailable|stale|source observation|No usable|current-day assessment/i);
+});
+test("BLUF omits unsupported facts and comparisons rather than reporting data gaps", () => {
+  assert.deepEqual(buildBriefing([], economicConditions([]), []), []);
+  const jobs = indicator([{ date: "2026-10-01", value: 4.1 }]);
+  const [item] = buildBriefing([jobs], economicConditions([jobs]), []);
+  assert.equal(item.id, "03");
+  assert.match(item.text, /4.10% in October 2026/);
+  assert.doesNotMatch(item.text, /three months|baseline|unavailable|missing/i);
+});
+test("BLUF distinguishes above-average stress and falling consumer prices", () => {
+  const stress = { ...indicator([{ date: "2026-11-06", value: 1.2 }], "Daily"), id: "OFR_FSI" };
+  const prices = { ...indicator([{ date: "2026-09-01", value: -1 }]), id: "CPI_YOY" };
+  const items = buildBriefing([stress, prices], economicConditions([stress, prices]), []);
+  assert.match(items[0].text, /above its historical average/);
+  assert.match(items[0].text, /credit harder to obtain/);
+  assert.match(items[1].text, /1.00% lower/);
+  assert.match(items[1].text, /weak demand/);
 });

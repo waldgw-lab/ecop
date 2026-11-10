@@ -2,21 +2,18 @@ import type { EconomyOverview } from "../../shared/economy";
 import { economicConditions, oilCurve, rateExpectations } from "./economyAnalysis";
 import { getIndicators } from "./indicators";
 import { getMarketSnapshot } from "./markets";
+import { buildBriefing } from "./briefing";
 
 export async function getEconomyOverview(days: number): Promise<EconomyOverview> {
   const [all, markets] = await Promise.all([getIndicators(365), getMarketSnapshot(days)]);
   const cutoff = new Date(Date.now() - days * 86_400_000).toISOString().slice(0, 10);
   const conditions = economicConditions(all.indicators);
   const curve = oilCurve(markets.quotes);
-  const briefing = conditions.filter(c => ["stress", "inflation", "jobs"].includes(c.id)).map(c =>
-    `${c.title}: ${c.assessment}. ${c.detail}`
-  );
-  const brent = markets.quotes.find(q => q.id === "brent");
-  if (brent?.value != null) briefing.push(`Energy: Brent near-contract oil is $${brent.value.toFixed(2)}/barrel${brent.changePercent !== null ? `, ${brent.changePercent >= 0 ? "+" : ""}${brent.changePercent.toFixed(2)}% versus the previous completed daily bar (${brent.previousCloseDate})` : ""}, observed ${brent.asOf}.${brent.status === "stale" ? " Retained or stale quote." : ""} Oil shocks can affect fuel budgets, import bills and inflation.`);
-  else briefing.push("Energy: no usable Brent near-contract price is available. No current oil-price direction is inferred. The oil panel explains any source gaps.");
+  const briefing = buildBriefing(all.indicators, conditions, markets.quotes);
   return {
     ...all, days, indicators: all.indicators.map(ind => ({ ...ind, points: ind.points.filter(p => p.date >= cutoff) })),
-    generatedAt: new Date().toISOString(), markets, conditions, briefing,
+    generatedAt: new Date().toISOString(), markets, conditions,
+    briefing: briefing.map(b => b.text), briefingIds: briefing.map(b => b.id),
     rateExpectations: rateExpectations(markets.quotes), oilCurve: curve,
     notes: [
       "This is an economic briefing, not an investment recommendation or a single objective stability score. Financial conditions, household resilience and market prices can send different signals.",

@@ -2,11 +2,7 @@ import type { FinancialSocialPost } from "../../shared/financeSocial";
 import type { FinanceStory } from "../../shared/finance";
 import { classifyFinance } from "./scoring";
 
-export const PUBLIC_SOCIAL_ACCOUNTS = [
-  { handle: "financialtimes.com", name: "Financial Times" },
-  { handle: "bloomberg.com", name: "Bloomberg" },
-  { handle: "economist.com", name: "The Economist" },
-] as const;
+export { PUBLIC_SOCIAL_ACCOUNTS } from "../../shared/financeSocial";
 type Account = { handle: string; name: string };
 
 export function parseBlueskyPosts(payload: unknown, account: Account, now = Date.now()): FinancialSocialPost[] {

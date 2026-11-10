@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import { dataminrSocialPosts, parseBlueskyPosts } from "./socialParsing";
 import type { FinanceStory } from "../../shared/finance";
+import { PUBLIC_SOCIAL_ACCOUNTS, socialAccountOptions, socialAccountId, filterSocialPosts, parseSocialSelection, toggleSocialAccount } from "../../shared/financeSocial";
 
 const now = Date.parse("2026-11-10T22:00:00Z");
 const account = { name: "Financial Times", handle: "financialtimes.com" };
@@ -48,4 +49,36 @@ test("only actual social permalinks become Dataminr social cards, and claims rem
   assert.equal(post.author, "Dataminr report");
   assert.equal(dataminrSocialPosts([{ ...base, url: "https://app.dataminr.com/alert/123" }]).length, 0);
   assert.equal(dataminrSocialPosts([{ ...base, url: "https://x.com.attacker.invalid/example/status/1234" }]).length, 0);
+});
+
+test("account menu includes every monitored publisher even without current financial posts", () => {
+  const options = socialAccountOptions([]);
+  assert.equal(options.length, PUBLIC_SOCIAL_ACCOUNTS.length);
+  assert.ok(options.some(o => o.name === "The Economist" && o.id === "Bluesky:economist.com" && o.count === 0));
+});
+
+test("account filters support multiple accounts, none, all and platform-specific identities", () => {
+  const [ft] = parseBlueskyPosts({ feed: [record()] }, account, now);
+  const economist = { ...ft, id: "econ", author: "The Economist", handle: "economist.com" };
+  const x = { ...ft, id: "x", platform: "X" as const, via: "Dataminr" as const };
+  const posts = [ft, economist, x];
+  assert.equal(filterSocialPosts(posts, null).length, 3);
+  assert.equal(filterSocialPosts(posts, []).length, 0);
+  assert.deepEqual(filterSocialPosts(posts, [socialAccountId(economist)]), [economist]);
+  assert.deepEqual(filterSocialPosts(posts, [socialAccountId(ft), socialAccountId(economist)]), [ft, economist]);
+  assert.equal(socialAccountOptions(posts).find(o => o.id === "Bluesky:financialtimes.com")?.count, 1);
+  assert.ok(socialAccountOptions(posts).some(o => o.id === "X:financialtimes.com"));
+  const ids = socialAccountOptions(posts).map(o => o.id);
+  const deselected = toggleSocialAccount(null, ids, socialAccountId(ft), false);
+  assert.ok(!deselected.includes(socialAccountId(ft)));
+  assert.ok(deselected.includes(socialAccountId(x)));
+  assert.ok(toggleSocialAccount([], ids, socialAccountId(economist), true).includes(socialAccountId(economist)));
+});
+
+test("saved social choices restore exactly, including none; malformed preferences fall back to all", () => {
+  assert.deepEqual(parseSocialSelection(JSON.stringify(["Bluesky:economist.com"])), ["Bluesky:economist.com"]);
+  assert.deepEqual(parseSocialSelection("[]"), []);
+  assert.equal(parseSocialSelection(null), null);
+  assert.equal(parseSocialSelection("{bad"), null);
+  assert.equal(parseSocialSelection('[42]'), null);
 });

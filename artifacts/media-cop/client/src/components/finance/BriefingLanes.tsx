@@ -7,13 +7,15 @@ import { AlertTriangle, ExternalLink } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { KIND_LABEL, errorText, fmtDate, fmtDateTime, fmtNum, impactTone, relTime } from "./utils";
 import { PAL, TimeChart, moveColor, signed, statusColor } from "./economy/charts";
+import { SocialAccountSelector, useSocialAccountSelection } from "./SocialAccountSelector";
 
-export function Lane({ title, sub, right, footer, children, testId }: { title: string; sub?: string; right?: ReactNode; footer?: ReactNode; children: ReactNode; testId: string }) {
+export function Lane({ title, sub, right, controls, footer, children, testId }: { title: string; sub?: string; right?: ReactNode; controls?: ReactNode; footer?: ReactNode; children: ReactNode; testId: string }) {
   return (
     <section className="fsw-panel fsw-lane flex flex-col min-w-0 overflow-hidden" data-testid={testId}>
       <header className="shrink-0 px-3 py-2 border-b border-[hsl(var(--fsw-line))] bg-[hsl(var(--fsw-panel-2)/0.6)]">
         <div className="flex items-center justify-between gap-2"><h2 className="fsw-label text-[hsl(var(--fsw-brass))]">{title}</h2>{right}</div>
         {sub && <p className="text-[11px] text-[hsl(var(--fsw-dim))] mt-0.5 leading-snug">{sub}</p>}
+        {controls}
       </header>
       <div className="fsw-lane-body flex-1 min-h-0 overflow-y-auto fsw-scroll">{children}</div>
       {footer && <footer className="shrink-0 px-3 py-2 border-t border-[hsl(var(--fsw-line))] text-[10.5px] leading-snug text-[hsl(var(--fsw-dim))]">{footer}</footer>}
@@ -155,8 +157,10 @@ const safeUrl = (u: string) => { try { const x = new URL(u); return x.protocol =
 
 export function SocialLane({ feed, loading, error, isError, retry }: { feed: FinancialSocialFeed | undefined; loading: boolean; error: unknown; isError: boolean; retry: () => void }) {
   const down = feed?.sources.filter((s) => s.status !== "healthy") ?? [];
+  const accounts = useSocialAccountSelection(feed?.posts);
   return (
     <Lane title="Financial social media" sub="Publisher posts screened for financial and security relevance." testId="lane-social"
+      controls={<SocialAccountSelector {...accounts} />}
       right={feed?.refreshing ? <span className="fsw-label fsw-pulse text-[hsl(var(--fsw-brass))]">refreshing</span> : feed?.updatedAt ? <span className="fsw-mono text-[10px] text-[hsl(var(--fsw-dim))]">{relTime(feed.updatedAt)}</span> : null}
       footer={<details data-testid="details-social-status"><summary className="cursor-pointer hover:text-[hsl(var(--fsw-brass))]">Sources: {feed ? `${feed.sources.length - down.length}/${feed.sources.length} healthy` : "unknown"} · Meltwater {feed?.meltwater.status ?? "unknown"}</summary>
         <ul className="mt-1 space-y-0.5">{feed?.sources.map((s) => <li key={s.name}><span style={{ color: s.status === "healthy" ? "hsl(var(--fsw-ok))" : "hsl(var(--fsw-bad))" }}>{s.status}</span> · {s.name}{s.message ? ` — ${s.message}` : ""}</li>)}</ul>
@@ -164,8 +168,8 @@ export function SocialLane({ feed, loading, error, isError, retry }: { feed: Fin
       </details>}>
       {isError && !feed ? <ErrBox id="social" text={`Social feed unavailable (${errorText(error)}).`} onRetry={retry} /> : loading || !feed ? <LaneSkel /> : <>
         {isError && <p className="px-3 pt-2 text-[10.5px] text-[hsl(var(--fsw-bad))]">Update failed; showing last loaded posts.</p>}
-        {feed.posts.length === 0 ? <Note>No qualifying posts from monitored publisher accounts in this cycle.{down.length ? ` ${down.length} source${down.length > 1 ? "s" : ""} not responding.` : ""}</Note> :
-          <ol>{feed.posts.map((p) => {
+        {accounts.visiblePosts.length === 0 ? <Note>{accounts.selection?.length === 0 ? "No accounts selected. Choose accounts from the dropdown above." : feed.posts.length > 0 ? "No qualifying posts from the selected accounts in this cycle. Choose other accounts or show all." : `No qualifying posts from monitored publisher accounts in this cycle.${down.length ? ` ${down.length} source${down.length > 1 ? "s" : ""} not responding.` : ""}`}</Note> :
+          <ol>{accounts.visiblePosts.map((p) => {
             const url = safeUrl(p.url);
             return (
               <li key={p.id} className="fsw-row px-3 py-2.5 border-b border-[hsl(var(--fsw-line))]" data-testid={`card-social-${p.id}`}>

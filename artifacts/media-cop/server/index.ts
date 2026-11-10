@@ -1,7 +1,12 @@
-import express, { type Request, Response, NextFunction } from "express";
+import express, { type Request, Response, NextFunction, type RequestHandler } from "express";
 import path from "path";
 import compression from "compression";
-import { registerRoutes } from "./routes";
+import { createServer } from "node:http";
+import { FINANCIAL_MODE } from "./finance/config";
+import { assertMirrorDatabase, initializeFinanceStore } from "./finance/store";
+import { startFinanceCollection } from "./finance/collector";
+import { registerFinanceRoutes } from "./finance/routes";
+import { registerAppPasswordRoutes } from "./appPasswordRoutes";
 import { setupVite, serveStatic, log } from "./vite";
 import { startScheduledScraping } from "./scheduler";
 import { startTickerCache } from "./tickerCache";
@@ -16,6 +21,7 @@ import { restoreWatchTopicSteering } from "./watchTopicMatcher";
 import { restoreClusteringFlags } from "./clusterConfig";
 import { restoreScraperFlags } from "./scraperConfig";
 import { setupAuth, registerAuthRoutes } from "./replit_integrations/auth";
+import { getSession } from "./replit_integrations/auth/replitAuth";
 import { seedPredefinedTopics } from "./subjectMatcher";
 import { seedOutletRegistry } from "./outletRegistrySeed";
 import { normalizeCuratedSourceNames } from "./curatedIngest";
@@ -107,10 +113,20 @@ app.use((req, res, next) => {
   // Setup Replit Auth (for Team page access). The PG session store is
   // configured lazily (createTableIfMissing:false), so this does not query
   // the database at startup and is safe to run before schema init.
-  await setupAuth(app);
-  registerAuthRoutes(app);
-
-  const server = await registerRoutes(app);
+  let server;
+  if (FINANCIAL_MODE) {
+    assertMirrorDatabase();
+    app.set("trust proxy", 1);
+    app.use(getSession() as unknown as RequestHandler);
+    registerAppPasswordRoutes(app);
+    registerFinanceRoutes(app);
+    server = createServer(app);
+  } else {
+    await setupAuth(app);
+    registerAuthRoutes(app);
+    const { registerRoutes } = await import("./routes");
+    server = await registerRoutes(app);
+  }
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
@@ -158,6 +174,18 @@ app.use((req, res, next) => {
     reusePort: true,
   }, async () => {
     log(`serving on port ${port}`);
+
+    if (FINANCIAL_MODE) {
+      try {
+        await initializeFinanceStore();
+        markSchemaReady();
+        startFinanceCollection();
+      } catch (error) {
+        markSchemaFailed(error);
+        console.error("[Finance] Initialization failed; original military jobs remain disabled:", error);
+      }
+      return;
+    }
 
     // Ensure database schema is initialized (creates tables / adds columns if
     // missing). Runs AFTER the port is open; any failure is logged but never

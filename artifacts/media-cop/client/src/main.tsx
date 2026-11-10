@@ -4,7 +4,9 @@ import { polyfillCountryFlagEmojis } from "country-flag-emoji-polyfill";
 import { shouldPauseProductionViews } from "./lib/operationalPause";
 import "./index.css";
 
-const App = lazy(() => import("./App"));
+// The mirror uses the existing framework with a dedicated financial product entry.
+// Keep the legacy App intact; it is not the active dashboard in this copy.
+const App = lazy(() => import("./FinancialApp"));
 
 function PhaseOutNotice() {
   return (
@@ -61,7 +63,6 @@ createRoot(document.getElementById("root")!).render(
     <PhaseOutNotice />
   ) : (
     <>
-      <PhaseOutNotice />
       <Suspense fallback={null}>
         <App />
       </Suspense>

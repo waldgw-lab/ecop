@@ -88,11 +88,11 @@ async function authenticate(): Promise<string> {
       'Accept': 'application/json',
     },
     body,
+    signal: AbortSignal.timeout(20_000),
   });
 
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Authentication failed: ${response.status} - ${errorText}`);
+    throw new Error(`Dataminr authentication returned HTTP ${response.status}`);
   }
 
   const data: AuthResponse = await response.json();
@@ -115,14 +115,19 @@ async function getAuthToken(): Promise<string> {
   return await authenticate();
 }
 
-export async function scrapeFirstAlerts(retryOnAuthFailure = true): Promise<InsertFirstAlert[]> {
+export async function scrapeFirstAlerts(retryOnAuthFailure = true, options: {
+  financial?: boolean;
+  cursor?: string | null;
+  onParsed?: (alerts: InsertFirstAlert[], nextCursor: string | null) => Promise<void>;
+} = {}): Promise<InsertFirstAlert[]> {
   const token = await getAuthToken();
   
   const url = new URL(ALERTS_URL);
   url.searchParams.set('alertversion', ALERT_VERSION.toString());
   
-  if (lastCursor) {
-    url.searchParams.set('from', lastCursor);
+  const cursor = options.financial ? options.cursor : lastCursor;
+  if (cursor) {
+    url.searchParams.set('from', cursor);
   }
 
   console.log('Fetching First Alert notifications from DataMinr API...');
@@ -133,6 +138,7 @@ export async function scrapeFirstAlerts(retryOnAuthFailure = true): Promise<Inse
       'Authorization': `DmAuth ${token}`,
       'Accept': 'application/json',
     },
+    signal: AbortSignal.timeout(20_000),
   });
 
   if (!response.ok) {
@@ -144,26 +150,17 @@ export async function scrapeFirstAlerts(retryOnAuthFailure = true): Promise<Inse
       // Retry once with fresh authentication
       if (retryOnAuthFailure) {
         console.log('Retrying with fresh authentication token...');
-        return await scrapeFirstAlerts(false);
+        return await scrapeFirstAlerts(false, options);
       }
       
       throw new Error('DataMinr authentication failed after retry');
     }
-    const errorText = await response.text();
-    throw new Error(`Failed to fetch DataMinr alerts: ${response.status} - ${errorText}`);
+    throw new Error(`Dataminr alerts returned HTTP ${response.status}`);
   }
 
   const data: AlertsResponse = await response.json();
   
-  if (data.to) {
-    lastCursor = data.to;
-  }
-
-  // Log first alert for inspection
-  if (data.alerts.length > 0) {
-    console.log('Sample DataMinr Alert (first one):');
-    console.log(JSON.stringify(data.alerts[0], null, 2));
-  }
+  // Do not log licensed alert payloads or account-specific contents.
 
   const alerts: InsertFirstAlert[] = [];
   
@@ -191,7 +188,7 @@ export async function scrapeFirstAlerts(retryOnAuthFailure = true): Promise<Inse
     // Deterministic intake downsampling (no AI): drop oversized low-criticality
     // watchlist noise (e.g. routine Russia/Ukraine ground-war ticker) before it is
     // ever stored. Cross-listed and Urgent/Flash items are always kept.
-    if (shouldDownsampleAlert(alertLists, alertType)) {
+    if (!options.financial && shouldDownsampleAlert(alertLists, alertType)) {
       droppedCount++;
       continue;
     }
@@ -242,6 +239,10 @@ export async function scrapeFirstAlerts(retryOnAuthFailure = true): Promise<Inse
     console.log(`Downsampled (dropped) ${droppedCount} low-criticality First Alert notifications before storage`);
   }
   console.log(`Scraped ${alerts.length} First Alert notifications`);
+  // The financial collector commits its batch and cursor together before advancing.
+  // If persistence fails, the same batch is requested again and upserts are safe.
+  if (options.onParsed) await options.onParsed(alerts, data.to ?? null);
+  if (data.to) lastCursor = data.to;
   return alerts;
 }
 

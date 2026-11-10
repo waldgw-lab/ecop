@@ -1,4 +1,19 @@
-# Media Common Operating Picture (MCOP / Pilot Bravo)
+# Financial Stability Watch — Media COP mirror
+
+## Active product in this copy
+
+This mirror is now a restricted internal financial-stability monitor for military/national-security users. It uses public news feeds, public historical observations and the existing Dataminr First Alert connection. No new paid subscriptions have been activated.
+
+- The financial entry replaces the old dashboard at `/` and `/curated`; the original military implementation remains in the repository, not in the active runtime.
+- Dedicated financial ingestion, ranking and persistence are separate from the original military tables. Financial startup refuses a database matching the separately configured original production database.
+- Legacy military schedulers, old API/relay endpoints, outbound notifications and startup data repairs do not run in financial mode.
+- Preserve the existing AI shutdown setting. Financial scores are transparent rule-based screening with independent confidence labels, not AI-generated assessments or predictions.
+- Internal access uses the app's existing team password/session mechanism, including in development; there is no development data-access bypass. No new authentication provider was introduced.
+- Social account listings are a reference roster, not direct live X collection. Social links received through Dataminr remain attributed, unconfirmed signals.
+- Public CSV downloads back the historical indicators; no values are invented for missing observations. CNN Fear & Greed is explicitly unavailable until permitted data access is established.
+- Production hosting remains in its prior static configuration; do not publish the interactive financial service without a deliberate authenticated-server deployment review.
+
+The following sections describe the retained legacy framework and migration context.
 
 Defense-news aggregation app for military leadership: a Bloomberg-Terminal-style feed with scrapers, AI prioritization, a war dashboard, curated lanes, Truth Social/X feeds, and team views.
 

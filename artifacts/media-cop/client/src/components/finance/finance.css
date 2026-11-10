@@ -1,0 +1,60 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+
+/* Financial Stability Watch — "plotting room" palette: deep chart-table teal-ink,
+   brass/amber for attention, signal coral for early-warning, cool cyan for reporting. */
+.fsw {
+  --fsw-bg: 198 30% 7%;
+  --fsw-panel: 198 26% 10%;
+  --fsw-panel-2: 198 22% 13%;
+  --fsw-line: 196 18% 20%;
+  --fsw-ink: 42 22% 90%;
+  --fsw-dim: 195 10% 62%;
+  --fsw-brass: 40 78% 58%;
+  --fsw-coral: 9 78% 64%;
+  --fsw-cyan: 189 52% 60%;
+  --fsw-sand: 34 38% 70%;
+  --fsw-lilac: 262 30% 74%;
+  --fsw-ok: 150 38% 52%;
+  --fsw-bad: 4 70% 60%;
+  --background: var(--fsw-bg);
+  --foreground: var(--fsw-ink);
+  --border: var(--fsw-line);
+  --muted-foreground: var(--fsw-dim);
+  --popover: var(--fsw-panel-2);
+  --popover-foreground: var(--fsw-ink);
+  --input: var(--fsw-line);
+  --ring: var(--fsw-brass);
+  min-height: 100dvh;
+  background:
+    radial-gradient(1200px 500px at 85% -10%, hsl(40 70% 50% / 0.06), transparent 60%),
+    linear-gradient(hsl(var(--fsw-bg)), hsl(var(--fsw-bg)));
+  color: hsl(var(--fsw-ink));
+  font-family: "IBM Plex Sans Condensed", system-ui, sans-serif;
+}
+.fsw::before {
+  content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image: linear-gradient(hsl(196 30% 60% / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, hsl(196 30% 60% / 0.035) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+.fsw > * { position: relative; z-index: 1; }
+.fsw-mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-feature-settings: "tnum"; }
+.fsw-panel { min-width: 0; background: hsl(var(--fsw-panel)); border: 1px solid hsl(var(--fsw-line)); border-radius: 4px; }
+.fsw-label { font-family: "IBM Plex Mono", monospace; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: hsl(var(--fsw-dim)); }
+.fsw-chip { border: 1px solid hsl(var(--fsw-line)); color: hsl(var(--fsw-dim)); padding: 2px 8px; border-radius: 2px; font-size: 12px; transition: background .15s, color .15s, border-color .15s; white-space: nowrap; }
+.fsw-chip:hover { color: hsl(var(--fsw-ink)); border-color: hsl(var(--fsw-dim) / .6); }
+.fsw-chip[data-on="true"] { background: hsl(var(--fsw-brass) / .14); color: hsl(var(--fsw-brass)); border-color: hsl(var(--fsw-brass) / .6); }
+.fsw-row { transition: background .15s; }
+.fsw-row:hover { background: hsl(var(--fsw-panel-2)); }
+.fsw-row[data-active="true"] { background: hsl(var(--fsw-brass) / .08); box-shadow: inset 2px 0 0 hsl(var(--fsw-brass)); }
+.fsw-k-reporting { color: hsl(var(--fsw-cyan)); }
+.fsw-k-official { color: hsl(var(--fsw-sand)); }
+.fsw-k-dataminr { color: hsl(var(--fsw-coral)); }
+.fsw-k-social { color: hsl(var(--fsw-lilac)); }
+.fsw a:focus-visible, .fsw button:focus-visible, .fsw input:focus-visible { outline: 2px solid hsl(var(--fsw-brass)); outline-offset: 2px; }
+.fsw-scroll { scrollbar-width: thin; scrollbar-color: hsl(var(--fsw-line)) transparent; }
+@keyframes fsw-pulse { 0%,100% { opacity: 1 } 50% { opacity: .35 } }
+.fsw-pulse { animation: fsw-pulse 1.4s ease-in-out infinite; }
+@keyframes fsw-in { from { opacity: 0; transform: translateY(4px) } to { opacity: 1; transform: none } }
+.fsw-in { animation: fsw-in .35s ease-out both; }
+@media (prefers-reduced-motion: reduce) { .fsw-pulse, .fsw-in { animation: none; } }

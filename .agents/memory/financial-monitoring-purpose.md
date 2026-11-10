@@ -13,4 +13,10 @@ The financial dashboard is for a restricted internal team.
 
 **Why:** The user explicitly selected this audience.
 
-**How to apply:** Plan private access and evaluate licenses for internal multi-user display, retained history, and derived summaries; do not assume either public redistribution or personal-use licensing.
+**How to apply:** Plan private access (including development data endpoints) and evaluate licenses for internal multi-user display, retained history, and derived summaries; do not assume either public redistribution or personal-use licensing.
+
+For the initial version, use public sources and services already connected to this app, specifically the existing Dataminr connection, before considering new subscriptions.
+
+**Why:** After evaluating paid-feed options, the user asked to see how far public sources and existing connections can get.
+
+**How to apply:** Do not treat the earlier paid-feed evaluation as approval to purchase a service or alter shared Dataminr watchlists. Distinguish direct social collection from social reports arriving through existing alerts.

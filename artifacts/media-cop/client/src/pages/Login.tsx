@@ -19,9 +19,10 @@ import { Textarea } from "@/components/ui/textarea";
 
 interface LoginProps {
   onLoginSuccess: () => void;
+  productName?: string;
 }
 
-export default function Login({ onLoginSuccess }: LoginProps) {
+export default function Login({ onLoginSuccess, productName }: LoginProps) {
   const { theme } = useTheme();
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -44,7 +45,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
       if (response.ok) {
         toast({
           title: "Access Granted",
-          description: "Welcome to Media Common Operating Picture v3.0",
+          description: productName ? `Welcome to ${productName}` : "Welcome to Media Common Operating Picture v3.0",
         });
         onLoginSuccess();
       } else {
@@ -109,18 +110,20 @@ export default function Login({ onLoginSuccess }: LoginProps) {
       <div className="w-full max-w-md flex flex-col gap-4">
         <Card className="p-8">
           <div className="flex flex-col items-center mb-6">
-            <img
+            {productName ? <div className="text-center"><p className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Restricted internal monitoring</p><h1 className="text-2xl font-semibold">{productName}</h1><p className="text-sm text-muted-foreground mt-3">Financial developments with domestic and global stability implications.</p></div> : <img
               src={theme === "dark" ? mcopLogoWhite : mcopLogoBlack}
               alt="MOOP"
               className="h-24 w-auto"
               data-testid="img-login-logo"
-            />
+            />}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Input
                 type="password"
+                aria-label="Team access code"
+                autoComplete="current-password"
                 placeholder="Enter access code"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
@@ -142,7 +145,7 @@ export default function Login({ onLoginSuccess }: LoginProps) {
           </form>
 
           <div className="mt-6 text-xs text-center text-muted-foreground space-y-2">
-            <p>M.C.O.P. v3.0</p>
+            <p>{productName ? "Authorized team members only · Existing team access code" : "M.C.O.P. v3.0"}</p>
           </div>
         </Card>
       </div>

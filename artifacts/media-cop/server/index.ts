@@ -171,7 +171,9 @@ app.use((req, res, next) => {
   server.listen({
     port,
     host: "0.0.0.0",
-    reusePort: true,
+    // A financial mirror has one collector/cache owner. Shared listeners let
+    // orphaned old versions serve random requests and race the Dataminr cursor.
+    reusePort: !FINANCIAL_MODE,
   }, async () => {
     log(`serving on port ${port}`);
 

@@ -20,3 +20,9 @@ For the initial version, use public sources and services already connected to th
 **Why:** After evaluating paid-feed options, the user asked to see how far public sources and existing connections can get.
 
 **How to apply:** Do not treat the earlier paid-feed evaluation as approval to purchase a service or alter shared Dataminr watchlists. Distinguish direct social collection from social reports arriving through existing alerts.
+
+The dashboard should explain important world economic conditions as a PhD economist would explain them to a layperson or military official, rather than primarily displaying a ranked news list. Include current market rates, oil prices and price changes, stability comparisons over previous months, and signals from futures markets; news is a supporting section.
+
+**Why:** The user explicitly clarified the intended dashboard experience after reviewing the news-first version.
+
+**How to apply:** Prioritize economic context and understandable explanations when deciding which information deserves prominence. Do not treat a longer story list as a substitute for the requested economic dashboard.

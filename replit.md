@@ -11,6 +11,9 @@ This mirror is now a restricted internal financial-stability monitor for militar
 - Internal access uses the app's existing team password/session mechanism, including in development; there is no development data-access bypass. No new authentication provider was introduced.
 - Social account listings are a reference roster, not direct live X collection. Social links received through Dataminr remain attributed, unconfirmed signals.
 - Public CSV downloads back the historical indicators; no values are invented for missing observations. CNN Fear & Greed is explicitly unavailable until permitted data access is established.
+- The economic overview joins official released observations with indicative Yahoo Finance quotes. Market downloads are bounded/cached for 15 minutes; daily/monthly public indicators refresh on an hourly budget. A manual refresh does not bypass those budgets.
+- Oil spot observations, rolling near-contract futures and named forward contracts are distinct instruments. Quote changes use the previous completed daily bar, never a year-range `chartPreviousClose`; these are not certified settlements or executable live prices.
+- Macro comparisons use each series' latest observation and explicit historical baseline dates. CPI/output growth use matching prior-year months; missing monthly baselines are not filled. Fed funds futures imply contract-month average effective rates, not meeting probabilities.
 - Production hosting remains in its prior static configuration; do not publish the interactive financial service without a deliberate authenticated-server deployment review.
 
 The following sections describe the retained legacy framework and migration context.

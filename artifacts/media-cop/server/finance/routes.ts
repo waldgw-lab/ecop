@@ -3,6 +3,8 @@ import { requireAppSession } from "../appPasswordRoutes";
 import { financeStoreReady } from "./store";
 import { getFinanceDashboard, refreshFinance } from "./collector";
 import { getIndicators, refreshIndicators } from "./indicators";
+import { getEconomyOverview } from "./economy";
+import { refreshMarkets } from "./markets";
 
 let lastManualRefresh = 0;
 const sameOrigin: RequestHandler = (req, res, next) => {
@@ -25,9 +27,15 @@ export function registerFinanceRoutes(app: Express) {
   });
   app.get("/api/finance/indicators", async (req, res) => {
     const days = Number(req.query.days ?? 30);
-    if (![7, 30, 90, 365].includes(days)) return void res.status(400).json({ error: "days must be 7, 30, 90 or 365" });
+    if (![7, 30, 90, 180, 365].includes(days)) return void res.status(400).json({ error: "days must be 7, 30, 90, 180 or 365" });
     try { res.json(await getIndicators(days)); }
     catch { res.status(503).json({ error: "Historical indicator storage is unavailable" }); }
+  });
+  app.get("/api/finance/economy", async (req, res) => {
+    const days = Number(req.query.days ?? 180);
+    if (![7, 30, 90, 180, 365].includes(days)) return void res.status(400).json({ error: "days must be 7, 30, 90, 180 or 365" });
+    try { res.json(await getEconomyOverview(days)); }
+    catch { res.status(503).json({ error: "Economic observations are temporarily unavailable. No substitute data is shown." }); }
   });
   app.post("/api/finance/refresh", sameOrigin, (_req, res) => {
     if (Date.now() - lastManualRefresh < 60_000) {
@@ -38,6 +46,7 @@ export function registerFinanceRoutes(app: Express) {
     void refreshFinance().catch(error => console.error("[Finance] Manual collection failed:", error.message));
     // Historical data only updates hourly; a button must not bypass publisher request budgets.
     void refreshIndicators().catch(error => console.error("[Finance] Indicators failed:", error.message));
+    void refreshMarkets().catch(error => console.error("[Finance] Market collection failed:", error.message));
     res.status(202).json({ refreshing: true });
   });
   // Legacy public feeds, exports, relay mutations and outbound-notification endpoints are not active in this mirror.

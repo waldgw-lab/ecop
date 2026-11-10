@@ -11,3 +11,4 @@
 - [Media COP deployment target](media-cop-deployment.md) — prod must be single-instance Reserved VM; autoscale suspends crons → "stale after first hour" feeds; X relay never heartbeats in prod.
 - [Operational AI pause](operational-ai-pause.md) — freeze AI retry state during provider pauses; a banner-only, zero-backend shutdown must use static production hosting.
 - [Financial monitoring purpose](financial-monitoring-purpose.md) — repurpose this mirror for military-relevant financial instability, prioritized news/social sources, and comparative indicator graphs.
+- [Mirror listener isolation](mirror-listener-isolation.md) — intermittent old-route 404s can mean orphaned servers share a port; verify listener ownership before changing routes.

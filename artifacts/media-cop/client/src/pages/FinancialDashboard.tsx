@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import type { FinanceDashboard, FinanceIndicators, FinanceStory } from "@shared/finance";
+import type { FinanceDashboard, FinanceStory } from "@shared/finance";
+import type { EconomyOverview } from "@shared/economy";
+import { Briefing, Conditions, Markets, Oil, Rates } from "@/components/finance/economy/Panels";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,7 +14,9 @@ import { KIND_LABEL, errorText, fmtDateTime, impactTone, isAuthError, relTime } 
 import "@/components/finance/finance.css";
 
 const DASH_KEY = ["/api/finance/dashboard"];
-const RANGES = [7, 30, 90, 365] as const;
+const RANGES = [7, 30, 90, 180, 365] as const;
+const ECON = "/api/finance/economy";
+const STRESS = ["OFR_FSI", "VIXCLS", "NFCI", "STLFSI4", "T10Y2Y", "T10YIE", "CPI_YOY", "UNRATE", "INDPRO_YOY", "DTWEXBGS"];
 const LINE_COLORS = ["#61A9BD", "#E98E2E", "#CED14E", "#DD83C9", "#44986D", "#9267C6", "#D8524F", "#8CCEDE"];
 
 function useNow(ms = 30000) {
@@ -72,7 +76,7 @@ function Pane({ title, right, children, className = "" }: { title: string; right
 
 export default function FinancialDashboard() {
   const now = useNow();
-  const [days, setDays] = useState<number>(30);
+  const [days, setDays] = useState<number>(180);
   const [q, setQ] = useState("");
   const [topic, setTopic] = useState<string | null>(null);
   const [region, setRegion] = useState<string | null>(null);
@@ -85,15 +89,15 @@ export default function FinancialDashboard() {
     refetchInterval: (query) => (query.state.data?.refreshing ? 4000 : 5 * 60_000),
   });
   const refreshing = !!dash.data?.refreshing;
-  const ind = useQuery<FinanceIndicators>({
-    queryKey: ["/api/finance/indicators", { days }],
-    refetchInterval: refreshing ? 6000 : 15 * 60_000,
+  const ind = useQuery<EconomyOverview>({
+    queryKey: [ECON, { days }],
+    refetchInterval: (query) => (refreshing || query.state.data?.markets.refreshing ? 5000 : 10 * 60_000),
     placeholderData: (prev) => prev,
   });
 
   const wasRefreshing = useState({ v: false })[0];
   useEffect(() => {
-    if (wasRefreshing.v && !refreshing) queryClient.invalidateQueries({ queryKey: ["/api/finance/indicators"] });
+    if (wasRefreshing.v && !refreshing) queryClient.invalidateQueries({ queryKey: [ECON] });
     wasRefreshing.v = refreshing;
   }, [refreshing, wasRefreshing]);
 
@@ -102,7 +106,7 @@ export default function FinancialDashboard() {
     onSuccess: (r) => {
       queryClient.setQueryData<FinanceDashboard>(DASH_KEY, (old) => (old ? { ...old, refreshing: r.refreshing } : old));
       queryClient.invalidateQueries({ queryKey: DASH_KEY });
-      queryClient.invalidateQueries({ queryKey: ["/api/finance/indicators"] });
+      queryClient.invalidateQueries({ queryKey: [ECON] });
     },
   });
 
@@ -134,6 +138,7 @@ export default function FinancialDashboard() {
           <div>
             <p className="fsw-label text-[hsl(var(--fsw-brass))]">Restricted · Internal</p>
             <h1 className="text-xl font-semibold tracking-tight leading-none mt-0.5">Financial Stability Watch</h1>
+            <p className="text-[11px] text-[hsl(var(--fsw-dim))] mt-1">Economic conditions briefing · source-dated, descriptive only</p>
           </div>
           <div className="fsw-mono text-[11px] text-[hsl(var(--fsw-dim))] leading-relaxed" data-testid="status-refresh">
             <div>Fetched {d?.updatedAt ? `${fmtDateTime(d.updatedAt)} (${relTime(d.updatedAt, now)})` : "—"}</div>
@@ -143,7 +148,7 @@ export default function FinancialDashboard() {
               {unhealthy > 0 && <span className="text-[hsl(var(--fsw-bad))]">· {unhealthy} source{unhealthy > 1 ? "s" : ""} down</span>}
             </div>
           </div>
-          <div className="ml-auto flex items-center gap-2">
+          <div className="ml-auto flex flex-wrap items-center gap-2"><div className="flex gap-1" role="group" aria-label="History window" data-testid="group-range"><span className="fsw-label self-center mr-1 hidden md:inline">History</span>{RANGES.map((r) => <button key={r} data-on={days === r} onClick={() => setDays(r)} className="fsw-chip fsw-mono" data-testid={`button-range-${r}`}>{r}d</button>)}</div>
             <button onClick={() => refresh.mutate()} disabled={refresh.isPending || refreshing} className="inline-flex items-center gap-1.5 px-3 py-1.5 text-sm border border-[hsl(var(--fsw-brass)/0.6)] text-[hsl(var(--fsw-brass))] rounded-sm hover:bg-[hsl(var(--fsw-brass)/0.1)] disabled:opacity-50" data-testid="button-refresh">
               <RefreshCw className={`h-3.5 w-3.5 ${refreshing || refresh.isPending ? "animate-spin" : ""}`} /> Refresh now
             </button>
@@ -153,7 +158,7 @@ export default function FinancialDashboard() {
         {refresh.isError && <p className="px-4 pb-2 text-xs text-[hsl(var(--fsw-bad))] max-w-[1680px] mx-auto">Refresh request failed ({errorText(refresh.error)}).</p>}
       </header>
 
-      <main className="max-w-[1680px] mx-auto px-4 py-4 space-y-4">
+      <main className="max-w-[1680px] mx-auto px-3 sm:px-4 py-4 space-y-4 min-w-0">
         {dash.isError && (
           <div className="fsw-panel p-4 flex items-center gap-3 border-[hsl(var(--fsw-bad)/0.6)]" data-testid="error-dashboard">
             <AlertTriangle className="h-5 w-5 text-[hsl(var(--fsw-bad))]" />
@@ -162,8 +167,54 @@ export default function FinancialDashboard() {
           </div>
         )}
 
+        {ind.isError && !ind.data ? (
+          <div className="fsw-panel p-4 flex flex-wrap items-center gap-3" data-testid="error-economy"><AlertTriangle className="h-5 w-5 text-[hsl(var(--fsw-bad))]" /><span className="text-sm flex-1">Economic data service unavailable ({errorText(ind.error)}).</span><button onClick={() => ind.refetch()} className="fsw-chip" data-testid="button-retry-economy">Retry</button></div>
+        ) : ind.isLoading || !ind.data ? (
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_420px]" data-testid="loading-economy"><Skeleton className="h-72 bg-[hsl(var(--fsw-panel-2))]" /><Skeleton className="h-72 bg-[hsl(var(--fsw-panel-2))]" /></div>
+        ) : (
+          <>
+            {ind.isError && <p className="text-xs text-[hsl(var(--fsw-bad))]" data-testid="error-economy-stale">Latest economic update failed ({errorText(ind.error)}); showing last loaded data.</p>}
+            <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_420px]">
+              <div className="min-w-0 space-y-4"><Briefing e={ind.data} /><Conditions e={ind.data} /></div>
+              <Markets e={ind.data} />
+            </div>
+            <Oil e={ind.data} />
+            <Rates e={ind.data} />
+          </>
+        )}
+
+        {/* Indicators */}
+        <Pane title="Indicator history · stress, inflation, jobs, output" right={
+          <span className="fsw-label">window {days}d</span>
+        }>
+          <div className="p-3">
+            <p className="text-[11px] text-[hsl(var(--fsw-dim))] mb-3">{ind.data?.notes.join(" ")} Daily and weekly series from official publishers; not live market data. Gaps are left as gaps. "Obs." is the observation date; "fetched" is when this system retrieved it.{ind.isFetching && !ind.isLoading ? " Updating…" : ""}</p>
+            {ind.isError && !ind.data ? (
+              <div className="flex items-center gap-3 text-sm"><AlertTriangle className="h-4 w-4 text-[hsl(var(--fsw-bad))]" />Indicator service unavailable ({errorText(ind.error)}).<button onClick={() => ind.refetch()} className="fsw-chip" data-testid="button-retry-indicators">Retry</button></div>
+            ) : ind.isLoading ? (
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-60 bg-[hsl(var(--fsw-panel-2))]" />)}</div>
+            ) : (
+              <>
+                {ind.data && ind.data.indicators.length === 0 && <Empty text="No indicators configured." />}
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
+                  {ind.data?.indicators.filter((x) => STRESS.includes(x.id)).map((x, i) => <IndicatorChart key={x.id} ind={x} color={LINE_COLORS[i % LINE_COLORS.length]} />)}
+                  {ind.data && (
+                    <div className="fsw-panel p-3 border-dashed" data-testid="card-fear-greed">
+                      <h3 className="text-sm font-semibold">CNN Fear &amp; Greed Index</h3>
+                      <p className="fsw-label mt-1 text-[hsl(var(--fsw-dim))]">Not supported</p>
+                      <p className="mt-2 text-xs leading-relaxed">{ind.data.fearAndGreed.message}</p>
+                      <p className="mt-2 text-[11px] text-[hsl(var(--fsw-dim))]">VIX and OFR stress measures above are separate indicators and are not substitutes for this index.</p>
+                      <a href={ind.data.fearAndGreed.sourceUrl} target="_blank" rel="noreferrer noopener" className="mt-3 inline-flex items-center gap-1 text-xs text-[hsl(var(--fsw-brass))] hover:underline" data-testid="link-fear-greed">View at CNN <ExternalLink className="h-3 w-3" /></a>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        </Pane>
+
         {/* Filters */}
-        <div className="fsw-panel p-3 space-y-2.5">
+        <div className="fsw-panel p-3 space-y-2.5" data-testid="section-news-filters">
           <div className="flex flex-wrap items-center gap-3">
             <label className="relative flex-1 min-w-[220px] max-w-md">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[hsl(var(--fsw-dim))]" />
@@ -184,7 +235,7 @@ export default function FinancialDashboard() {
 
         {/* Main picture */}
         <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(0,1fr)_380px]">
-          <Pane title="Top stories · reporting & official" right={<span className="fsw-label">score / 100</span>}>
+          <Pane title="News · reporting & official" right={<span className="fsw-label">score / 100</span>}>
             {dash.isLoading ? <ListSkeleton /> : stories.length === 0 ? (
               <Empty text={filtersOn ? "No stories match the current filters." : "No qualifying stories in the current cycle."} />
             ) : (
@@ -205,38 +256,6 @@ export default function FinancialDashboard() {
             <StoryDetail story={selected} />
           </aside>
         </div>
-
-        {/* Indicators */}
-        <Pane title="Stress indicators · history" right={
-          <div className="flex gap-1" role="group" aria-label="History window">
-            {RANGES.map((r) => <button key={r} data-on={days === r} onClick={() => setDays(r)} className="fsw-chip fsw-mono" data-testid={`button-range-${r}`}>{r}d</button>)}
-          </div>
-        }>
-          <div className="p-3">
-            <p className="text-[11px] text-[hsl(var(--fsw-dim))] mb-3">Daily and weekly series from official publishers; not live market data. Gaps are left as gaps. "Obs." is the observation date; "fetched" is when this system retrieved it.{ind.isFetching && !ind.isLoading ? " Updating…" : ""}</p>
-            {ind.isError && !ind.data ? (
-              <div className="flex items-center gap-3 text-sm"><AlertTriangle className="h-4 w-4 text-[hsl(var(--fsw-bad))]" />Indicator service unavailable ({errorText(ind.error)}).<button onClick={() => ind.refetch()} className="fsw-chip" data-testid="button-retry-indicators">Retry</button></div>
-            ) : ind.isLoading ? (
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">{Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-60 bg-[hsl(var(--fsw-panel-2))]" />)}</div>
-            ) : (
-              <>
-                {ind.data && ind.data.indicators.length === 0 && <Empty text="No indicators configured." />}
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4">
-                  {ind.data?.indicators.map((x, i) => <IndicatorChart key={x.id} ind={x} color={LINE_COLORS[i % LINE_COLORS.length]} />)}
-                  {ind.data && (
-                    <div className="fsw-panel p-3 border-dashed" data-testid="card-fear-greed">
-                      <h3 className="text-sm font-semibold">CNN Fear &amp; Greed Index</h3>
-                      <p className="fsw-label mt-1 text-[hsl(var(--fsw-dim))]">Not supported</p>
-                      <p className="mt-2 text-xs leading-relaxed">{ind.data.fearAndGreed.message}</p>
-                      <p className="mt-2 text-[11px] text-[hsl(var(--fsw-dim))]">VIX and OFR stress measures above are separate indicators and are not substitutes for this index.</p>
-                      <a href={ind.data.fearAndGreed.sourceUrl} target="_blank" rel="noreferrer noopener" className="mt-3 inline-flex items-center gap-1 text-xs text-[hsl(var(--fsw-brass))] hover:underline" data-testid="link-fear-greed">View at CNN <ExternalLink className="h-3 w-3" /></a>
-                    </div>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-        </Pane>
 
         {/* Reference */}
         <Pane title="Reference" right={

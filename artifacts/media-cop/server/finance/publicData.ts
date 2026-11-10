@@ -22,10 +22,10 @@ export async function downloadPublicText(url: string): Promise<string> {
   } finally { await reader.cancel().catch(() => {}); }
   return Buffer.concat(parts).toString("utf8");
 }
-export function csvPoints(text: string, dateKey: string, valueKey: string) {
+export function csvPoints(text: string, dateKey: string, valueKey: string, lookbackDays = 370) {
   const records = parse(text, { columns: true, skip_empty_lines: true, bom: true }) as Record<string, string>[];
   if (!records.length || !(dateKey in records[0]) || !(valueKey in records[0])) throw new Error("Source CSV columns did not match the documented series");
-  const cutoff = new Date(Date.now() - 370 * 86_400_000).toISOString().slice(0, 10);
+  const cutoff = new Date(Date.now() - lookbackDays * 86_400_000).toISOString().slice(0, 10);
   const today = new Date().toISOString().slice(0, 10);
   const byDate = new Map<string, number | null>();
   for (const record of records) {

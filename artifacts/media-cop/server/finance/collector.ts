@@ -5,6 +5,7 @@ import { classifyFinance, financeId, rankFinanceStories } from "./scoring";
 import { downloadPublicText } from "./publicData";
 import { financeStoreReady, readState, readStories, saveState, saveStories, type FinanceHealthStore } from "./store";
 import { indicatorsRefreshing, refreshIndicators } from "./indicators";
+import { marketsRefreshing, refreshMarkets } from "./markets";
 import { scrapeFirstAlerts } from "../firstAlertScraper";
 import type { FinanceDashboard, FinanceSourceHealth, FinanceStory } from "../../shared/finance";
 import { FINANCE_REGIONS, FINANCE_TOPICS } from "../../shared/finance";
@@ -99,6 +100,7 @@ export function startFinanceCollection() {
   const collect = () => {
     void refreshFinance().catch(error => console.error("[Finance] Collection failed:", error.message));
     void refreshIndicators().catch(error => console.error("[Finance] Indicator refresh failed:", error.message));
+    void refreshMarkets().catch(error => console.error("[Finance] Market refresh failed:", error.message));
   };
   collect();
   setInterval(collect, REFRESH_MS).unref();
@@ -110,7 +112,7 @@ export async function getFinanceDashboard(): Promise<FinanceDashboard> {
     stories: rankFinanceStories(items.filter(s => s.kind === "reporting" || s.kind === "official")).slice(0, 150),
     signals: rankFinanceStories(items.filter(s => s.kind === "dataminr" || s.kind === "social")).slice(0, 100),
     sources: Object.values(health), topics: FINANCE_TOPICS, regions: FINANCE_REGIONS,
-    updatedAt: await readState<string>("lastRefresh"), refreshing: !!refreshing || indicatorsRefreshing(), nextRefreshAt,
+    updatedAt: await readState<string>("lastRefresh"), refreshing: !!refreshing || indicatorsRefreshing() || marketsRefreshing(), nextRefreshAt,
     dataminr: { configured: dataminrConfigured(), status: health.dataminr.status, message: health.dataminr.message },
     socialAccounts: [
       { name: "Federal Reserve", handle: "federalreserve", focus: "U.S. monetary policy and banking", role: "Institution", status: "Via public releases" },

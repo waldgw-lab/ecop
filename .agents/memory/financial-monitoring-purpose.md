@@ -8,3 +8,9 @@ Use the framework of this mirrored military-news and social-media monitoring app
 **Why:** The user stated this product direction; relevance is financial instability and its security implications, not general investing.
 
 **How to apply:** Evaluate proposed sources, ranking criteria, social rosters, and indicators against that audience and purpose. This is the intended direction for this mirror, not permission to modify a separate original app.
+
+The financial dashboard is for a restricted internal team.
+
+**Why:** The user explicitly selected this audience.
+
+**How to apply:** Plan private access and evaluate licenses for internal multi-user display, retained history, and derived summaries; do not assume either public redistribution or personal-use licensing.

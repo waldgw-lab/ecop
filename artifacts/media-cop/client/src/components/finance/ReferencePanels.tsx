@@ -69,14 +69,14 @@ export function SocialRoster({ accounts }: { accounts: FinanceDashboard["socialA
   if (accounts.length === 0) return <p className="p-4 text-sm text-[hsl(var(--fsw-dim))]">No accounts on the roster.</p>;
   return (
     <div className="p-4">
-      <p className="text-xs text-[hsl(var(--fsw-dim))] mb-3">Reference list of accounts relevant to financial stability. These accounts are not scraped live; status shows how each is actually covered.</p>
+      <p className="text-xs text-[hsl(var(--fsw-dim))] mb-3">Accounts relevant to financial stability. Entries marked "Via public Bluesky" are collected live from public verified-domain publisher feeds and appear in the Briefing social lane. X accounts are reference only and are not collected; others are covered through their public releases.</p>
       <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
         {accounts.map((a) => (
           <a key={a.handle} href={a.url} target="_blank" rel="noreferrer noopener" className="fsw-panel p-3 block hover:border-[hsl(var(--fsw-brass)/0.5)] transition-colors" data-testid={`link-social-${a.handle}`}>
             <div className="flex justify-between gap-2"><span className="font-medium text-sm">{a.name}</span><ExternalLink className="h-3 w-3 opacity-50 shrink-0" /></div>
             <p className="fsw-mono text-[11px] text-[hsl(var(--fsw-dim))]">{a.handle} · {a.role}</p>
             <p className="text-xs mt-1">{a.focus}</p>
-            <p className="fsw-label mt-2" style={{ color: a.status === "Via public releases" ? "hsl(var(--fsw-sand))" : "hsl(var(--fsw-dim))" }}>{a.status}</p>
+            <p className="fsw-label mt-2" style={{ color: a.status === "Via public Bluesky" ? "hsl(var(--fsw-lilac))" : a.status === "Via public releases" ? "hsl(var(--fsw-sand))" : "hsl(var(--fsw-dim))" }}>{a.status}</p>
           </a>
         ))}
       </div>

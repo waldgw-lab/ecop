@@ -6,6 +6,8 @@ import { downloadPublicText } from "./publicData";
 import { financeStoreReady, readState, readStories, saveState, saveStories, type FinanceHealthStore } from "./store";
 import { indicatorsRefreshing, refreshIndicators } from "./indicators";
 import { marketsRefreshing, refreshMarkets } from "./markets";
+import { refreshSocial } from "./social";
+import { PUBLIC_SOCIAL_ACCOUNTS } from "./socialParsing";
 import { scrapeFirstAlerts } from "../firstAlertScraper";
 import type { FinanceDashboard, FinanceSourceHealth, FinanceStory } from "../../shared/finance";
 import { FINANCE_REGIONS, FINANCE_TOPICS } from "../../shared/finance";
@@ -101,6 +103,7 @@ export function startFinanceCollection() {
     void refreshFinance().catch(error => console.error("[Finance] Collection failed:", error.message));
     void refreshIndicators().catch(error => console.error("[Finance] Indicator refresh failed:", error.message));
     void refreshMarkets().catch(error => console.error("[Finance] Market refresh failed:", error.message));
+    void refreshSocial().catch(error => console.error("[Finance] Social refresh failed:", error.message));
   };
   collect();
   setInterval(collect, REFRESH_MS).unref();
@@ -114,7 +117,7 @@ export async function getFinanceDashboard(): Promise<FinanceDashboard> {
     sources: Object.values(health), topics: FINANCE_TOPICS, regions: FINANCE_REGIONS,
     updatedAt: await readState<string>("lastRefresh"), refreshing: !!refreshing || indicatorsRefreshing() || marketsRefreshing(), nextRefreshAt,
     dataminr: { configured: dataminrConfigured(), status: health.dataminr.status, message: health.dataminr.message },
-    socialAccounts: [
+    socialAccounts: [...[
       { name: "Federal Reserve", handle: "federalreserve", focus: "U.S. monetary policy and banking", role: "Institution", status: "Via public releases" },
       { name: "European Central Bank", handle: "ecb", focus: "Euro-area monetary and banking conditions", role: "Institution", status: "Via public releases" },
       { name: "U.S. EIA", handle: "EIAgov", focus: "Energy supply, inventories and prices", role: "Institution", status: "Via public releases" },
@@ -123,7 +126,12 @@ export async function getFinanceDashboard(): Promise<FinanceDashboard> {
       { name: "Nick Timiraos", handle: "NickTimiraos", focus: "Federal Reserve reporting", role: "Journalist", status: "Not directly collected" },
       { name: "Javier Blas", handle: "JavierBlas", focus: "Energy and commodities reporting", role: "Journalist", status: "Not directly collected" },
       { name: "Brad Setser", handle: "Brad_Setser", focus: "Sovereign debt and capital flows analysis", role: "Analyst", status: "Not directly collected" },
-    ].map(a => ({ ...a, url: `https://x.com/${a.handle}` })) as FinanceDashboard["socialAccounts"],
+    ].map(a => ({ ...a, url: `https://x.com/${a.handle}` })),
+      ...PUBLIC_SOCIAL_ACCOUNTS.map(a => ({
+        name: a.name, handle: a.handle, focus: "Public financial reporting and economic-security commentary",
+        role: "Journalist", status: "Via public Bluesky", url: `https://bsky.app/profile/${a.handle}`,
+      })),
+    ] as FinanceDashboard["socialAccounts"],
     methodology: {
       title: "Stability-impact screening · rules, not predictions",
       description: "Transparent keyword screening ranks potential financial/security consequences, not investment opportunity. High impact means importance, not necessarily worsening conditions: relief or de-escalation can also be consequential. Impact decays with a 72-hour half-life; the evidence breakdown shows the original score. Confidence is kept separate. Similar headlines are conservatively grouped, not treated as independent confirmation.",
@@ -131,7 +139,7 @@ export async function getFinanceDashboard(): Promise<FinanceDashboard> {
       limitations: [
         "AI processing remains disabled by the existing operator setting. Scores and geographic/topic labels are deterministic screening, not analyst-verified forecasts.",
         "Dataminr uses existing account watchlists. No new financial watchlists, subscriptions or account changes were made; coverage may remain military-heavy.",
-        "The social roster is a watchlist, not a claim of direct X collection. Institutional coverage uses public releases; social links appearing in Dataminr remain attributed early-warning signals.",
+        "Public Bluesky publisher feeds are collected every 15 minutes and screened for financial relevance. The separate X roster is a watchlist, not direct X collection; social links appearing in Dataminr remain attributed early-warning signals.",
         "Different publication owners or near-identical headlines do not prove independent corroboration. Critical signals require human verification.",
         "Only public feed excerpts are stored, not paywalled full articles. Some feeds/series may be delayed, stale or unavailable. This mirror does not run the original military scrapers or notifications.",
       ],

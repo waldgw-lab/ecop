@@ -68,7 +68,7 @@ export function Conditions({ e }: { e: EconomyOverview }) {
 }
 
 function QuoteRow({ x }: { x: MarketQuote }) {
-  const col = x.category === "Energy" ? PAL.orange : x.category === "Forward contracts" ? PAL.yellow : x.category === "Currencies" ? PAL.cyan : x.category === "Safe assets" ? PAL.pink : PAL.green;
+  const col = x.category === "Energy" ? PAL.orange : (x.category as string) === "Commodities" ? PAL.yellow : x.category === "Forward contracts" ? PAL.yellow : x.category === "Currencies" ? PAL.cyan : x.category === "Safe assets" ? PAL.pink : PAL.green;
   const d = x.value != null && Math.abs(x.value) < 10 ? 4 : 2;
   return (
     <li className="fsw-row px-3 py-2 border-t border-[hsl(var(--fsw-line))]" data-testid={`row-quote-${x.id}`}>
@@ -94,7 +94,7 @@ function QuoteRow({ x }: { x: MarketQuote }) {
 }
 
 export function Markets({ e }: { e: EconomyOverview }) {
-  const cats = ["Energy", "Equities", "Currencies", "Safe assets", "Forward contracts"] as const;
+  const cats = ["Energy", "Commodities", "Equities", "Currencies", "Safe assets", "Forward contracts"] as const;
   return (
     <Pane title="Market prices & exchange rates" sub="Indicative, delayed Yahoo Finance observations; collected every 15 minutes. Change is vs the previous completed daily bar. Not executable prices." testId="section-markets">
       {e.markets.quotes.length === 0 ? <p className="p-6 text-sm text-center text-[hsl(var(--fsw-dim))]">No market quotes available.</p> :

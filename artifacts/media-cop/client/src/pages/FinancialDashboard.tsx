@@ -6,8 +6,9 @@ import { Briefing, Conditions, Markets, Oil, Rates } from "@/components/finance/
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertTriangle, BarChart3, ChevronRight, Database, ExternalLink, Gauge, LayoutGrid, LogOut, MessageSquare, Newspaper, RefreshCw, Search, ShieldAlert } from "lucide-react";
-import { BlufCharts } from "@/components/finance/BlufCharts";
+import { AlertTriangle, BarChart3, Database, ExternalLink, Gauge, LayoutGrid, LogOut, MessageSquare, Newspaper, RefreshCw, Search, ShieldAlert } from "lucide-react";
+import { CommoditiesLane, MetricsLane, NewsLane, SocialLane } from "@/components/finance/BriefingLanes";
+import type { FinancialSocialFeed } from "@shared/financeSocial";
 import { ChatAssistant, type ChatState } from "@/components/finance/ChatAssistant";
 import { StoryDetail } from "@/components/finance/StoryDetail";
 import { IndicatorChart } from "@/components/finance/IndicatorChart";
@@ -125,6 +126,12 @@ export default function FinancialDashboard() {
     placeholderData: (prev) => prev,
   });
 
+  const social = useQuery<FinancialSocialFeed>({
+    queryKey: ["/api/finance/social"],
+    refetchInterval: (query) => (query.state.data?.refreshing ? 10_000 : 5 * 60_000),
+    placeholderData: (prev) => prev,
+  });
+
   const wasRefreshing = useState({ v: false })[0];
   useEffect(() => {
     if (wasRefreshing.v && !refreshing) queryClient.invalidateQueries({ queryKey: [ECON] });
@@ -153,7 +160,7 @@ export default function FinancialDashboard() {
     return all.find((s) => s.id === selectedId) ?? stories[0] ?? null;
   }, [dash.data, selectedId, stories]);
 
-  if (isAuthError(dash.error) || isAuthError(ind.error) || isAuthError(refresh.error)) return <AccessExpired />;
+  if (isAuthError(dash.error) || isAuthError(ind.error) || isAuthError(refresh.error) || isAuthError(social.error)) return <AccessExpired />;
 
   const d = dash.data;
   const e = ind.data;
@@ -161,8 +168,8 @@ export default function FinancialDashboard() {
   const selectBriefing = (id: string) => { setSelectedId(id); setSheetOpen(true); };
   const filtersOn = !!(q || topic || region);
   const unhealthy = d?.sources.filter((s) => s.status === "error" || s.status === "unavailable").length ?? 0;
-  const topStories = (d?.stories ?? []).slice(0, 12);
-  const topSignals = (d?.signals ?? []).slice(0, 4);
+  const usStories = (d?.stories ?? []).filter((x) => x.region === "United States");
+  const worldStories = (d?.stories ?? []).filter((x) => x.region !== "United States");
 
   const econGate = (render: (e: EconomyOverview) => ReactNode) =>
     ind.isError && !e ? (
@@ -228,29 +235,14 @@ export default function FinancialDashboard() {
         )}
 
         {view === "briefing" && (
-          <div className="fsw-in space-y-4">
+          <div className="fsw-in fsw-briefing space-y-4">
             {econGate((e) => <Briefing e={e} />)}
-            <div className="grid grid-cols-1 gap-4 xl:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)] 2xl:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]">
-              <Pane title="Top financial news · ranked" right={<button onClick={() => go("news")} className="inline-flex items-center gap-0.5 text-[11px] text-[hsl(var(--fsw-brass))] hover:underline" data-testid="link-all-news">All news and filters<ChevronRight className="h-3 w-3" /></button>}>
-                <div className="xl:max-h-[clamp(360px,calc(100dvh-360px),900px)] xl:overflow-y-auto fsw-scroll">
-                {dash.isLoading ? <ListSkeleton /> : topStories.length === 0 ? <Empty text="No qualifying stories in the current cycle." /> : (
-                  <ol className="-mt-px">{topStories.map((s, i) => <StoryRow key={s.id} s={s} rank={i + 1} active={sheetOpen && selected?.id === s.id} onSelect={() => selectBriefing(s.id)} />)}</ol>
-                )}
-                {topSignals.length > 0 && (
-                  <div className="border-t border-[hsl(var(--fsw-line))]">
-                    <p className="fsw-label px-3 pt-2.5 text-[hsl(var(--fsw-coral))]">Early warning · unconfirmed</p>
-                    <ol>{topSignals.map((s, i) => <StoryRow key={s.id} s={s} rank={i + 1} active={sheetOpen && selected?.id === s.id} onSelect={() => selectBriefing(s.id)} />)}</ol>
-                  </div>
-                )}
-                </div>
-                <p className="px-3 py-2 text-[10.5px] text-[hsl(var(--fsw-dim))] border-t border-[hsl(var(--fsw-line))]">Score is a rule-based evidence rating out of 100, not a judgement of importance. Select a story for detail.</p>
-              </Pane>
-              <Pane title="Graphs behind the BLUF" right={<span className="fsw-label">window {days}d</span>}>
-                <div className="p-3">
-                  {econGate((e) => <BlufCharts e={e} />)}
-                  <p className="mt-3 text-[11px] text-[hsl(var(--fsw-dim))]">Official series show observation dates and publish with a lag; Brent is a delayed front-month futures quote. Gaps are left as gaps. Full history on <button onClick={() => go("economy")} className="text-[hsl(var(--fsw-brass))] hover:underline" data-testid="link-economy">Economy</button>, oil curve and rates on <button onClick={() => go("markets")} className="text-[hsl(var(--fsw-brass))] hover:underline" data-testid="link-markets">Markets</button>.</p>
-                </div>
-              </Pane>
+            <div className="fsw-lanes" data-testid="section-briefing-lanes">
+              <NewsLane title="Top US financial news" sub="United States region, ranked by evidence score." stories={usStories} loading={dash.isLoading} activeId={sheetOpen ? selected?.id ?? null : null} onSelect={selectBriefing} testId="lane-us-news" onAll={() => go("news")} />
+              <NewsLane title="World financial news" sub="International and global stories, ranked by evidence score." stories={worldStories} loading={dash.isLoading} activeId={sheetOpen ? selected?.id ?? null : null} onSelect={selectBriefing} testId="lane-world-news" onAll={() => go("news")} />
+              <MetricsLane e={e} error={ind.error} isError={ind.isError} retry={() => ind.refetch()} days={days} />
+              <CommoditiesLane e={e} error={ind.error} isError={ind.isError} retry={() => ind.refetch()} />
+              <SocialLane feed={social.data} loading={social.isLoading} error={social.error} isError={social.isError} retry={() => social.refetch()} />
             </div>
           </div>
         )}

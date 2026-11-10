@@ -43,7 +43,7 @@ export interface FinanceSourceHealth {
 }
 export interface FinanceSocialAccount {
   name: string; handle: string; url: string; role: "Institution" | "Journalist" | "Analyst";
-  focus: string; status: "Via public releases" | "Not directly collected";
+  focus: string; status: "Via public releases" | "Via public Bluesky" | "Not directly collected";
 }
 export interface FinanceDashboard {
   stories: FinanceStory[];

@@ -27,11 +27,11 @@ The dashboard should explain important world economic conditions as a PhD econom
 
 **How to apply:** Prioritize economic context and understandable explanations when deciding which information deserves prominence. Do not treat a longer story list as a substitute for the requested economic dashboard.
 
-The user wants a large-monitor dashboard with "Today's BLUF" at the top, top financial news on the left, and key graphs reflecting the BLUF on the right, plus clickable additional screens and a chatbot.
+The user wants a large-monitor dashboard with "Today's BLUF" across the top and five columns beneath it: U.S. financial news, world financial news, graphed key financial metrics, commodity changes, and key financial social posts. Keep clickable additional screens and the chatbot.
 
-**Why:** The user explicitly specified this briefing layout and navigation after reviewing the economic overview.
+**Why:** The user refined the briefing into separate columns, using the original military dashboard as the layout reference.
 
-**How to apply:** Keep the first screen a briefing rather than stacking every detailed panel on it. Supporting screens should provide deeper market, economic, news and source information.
+**How to apply:** Keep independent scrolling columns on wide monitors rather than stacking every detailed panel. Supporting screens provide deeper market, economic, news and source information.
 
 The BLUF should contain facts and explain why they matter to someone who is not well versed in finance or economics, without sounding patronizing. Do not mention missing information in the BLUF.
 

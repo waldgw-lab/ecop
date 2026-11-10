@@ -23,7 +23,7 @@ export interface MarketQuote {
   id: string;
   symbol: string;
   name: string;
-  category: "Energy" | "Equities" | "Currencies" | "Safe assets" | "Forward contracts";
+  category: "Energy" | "Commodities" | "Equities" | "Currencies" | "Safe assets" | "Forward contracts";
   unit: string;
   explanation: string;
   contractLabel: string;

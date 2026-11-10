@@ -6,6 +6,7 @@ import { getIndicators, refreshIndicators } from "./indicators";
 import { getEconomyOverview } from "./economy";
 import { refreshMarkets } from "./markets";
 import { answerFinanceQuestion, financeChatInput } from "./chat";
+import { getSocialFeed, refreshSocial } from "./social";
 
 let lastManualRefresh = 0;
 const chatRequests = new Map<string, { count: number; until: number }>();
@@ -26,6 +27,10 @@ export function registerFinanceRoutes(app: Express) {
   app.get("/api/finance/dashboard", async (_req, res) => {
     try { res.json(await getFinanceDashboard()); }
     catch { res.status(503).json({ error: "Financial dashboard storage is unavailable" }); }
+  });
+  app.get("/api/finance/social", async (_req, res) => {
+    try { res.json(await getSocialFeed()); }
+    catch { res.status(503).json({ error: "Financial social posts are temporarily unavailable." }); }
   });
   app.get("/api/finance/indicators", async (req, res) => {
     const days = Number(req.query.days ?? 30);
@@ -69,6 +74,7 @@ export function registerFinanceRoutes(app: Express) {
     // Historical data only updates hourly; a button must not bypass publisher request budgets.
     void refreshIndicators().catch(error => console.error("[Finance] Indicators failed:", error.message));
     void refreshMarkets().catch(error => console.error("[Finance] Market collection failed:", error.message));
+    void refreshSocial().catch(error => console.error("[Finance] Social collection failed:", error.message));
     res.status(202).json({ refreshing: true });
   });
   // Legacy public feeds, exports, relay mutations and outbound-notification endpoints are not active in this mirror.

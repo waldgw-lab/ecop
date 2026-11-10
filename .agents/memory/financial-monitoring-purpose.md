@@ -31,7 +31,7 @@ The user wants a large-monitor dashboard with "Today's BLUF" across the top and 
 
 **Why:** The user refined the briefing into separate columns, using the original military dashboard as the layout reference.
 
-**How to apply:** Keep independent scrolling columns on wide monitors rather than stacking every detailed panel. Supporting screens provide deeper market, economic, news and source information.
+**How to apply:** Keep all five independent scrolling columns visible side by side at ordinary desktop preview widths, not only ultra-wide displays. A previous responsive layout pushed social media below the visible area. Supporting screens provide deeper market, economic, news and source information.
 
 The BLUF should contain facts and explain why they matter to someone who is not well versed in finance or economics, without sounding patronizing. Do not mention missing information in the BLUF.
 

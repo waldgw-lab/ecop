@@ -156,7 +156,7 @@ const safeUrl = (u: string) => { try { const x = new URL(u); return x.protocol =
 export function SocialLane({ feed, loading, error, isError, retry }: { feed: FinancialSocialFeed | undefined; loading: boolean; error: unknown; isError: boolean; retry: () => void }) {
   const down = feed?.sources.filter((s) => s.status !== "healthy") ?? [];
   return (
-    <Lane title="Key financial social posts" sub="Verified publisher accounts, screened for financial and security relevance." testId="lane-social"
+    <Lane title="Financial social media" sub="Publisher posts screened for financial and security relevance." testId="lane-social"
       right={feed?.refreshing ? <span className="fsw-label fsw-pulse text-[hsl(var(--fsw-brass))]">refreshing</span> : feed?.updatedAt ? <span className="fsw-mono text-[10px] text-[hsl(var(--fsw-dim))]">{relTime(feed.updatedAt)}</span> : null}
       footer={<details data-testid="details-social-status"><summary className="cursor-pointer hover:text-[hsl(var(--fsw-brass))]">Sources: {feed ? `${feed.sources.length - down.length}/${feed.sources.length} healthy` : "unknown"} · Meltwater {feed?.meltwater.status ?? "unknown"}</summary>
         <ul className="mt-1 space-y-0.5">{feed?.sources.map((s) => <li key={s.name}><span style={{ color: s.status === "healthy" ? "hsl(var(--fsw-ok))" : "hsl(var(--fsw-bad))" }}>{s.status}</span> · {s.name}{s.message ? ` — ${s.message}` : ""}</li>)}</ul>

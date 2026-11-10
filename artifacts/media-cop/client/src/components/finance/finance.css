@@ -77,12 +77,12 @@
 .fsw-lanes { display: grid; gap: 12px; grid-template-columns: minmax(0,1fr); }
 .fsw-lane-body { max-height: 640px; }
 @media (min-width: 768px) { .fsw-lanes { grid-template-columns: repeat(2, minmax(0,1fr)); } }
-@media (min-width: 1280px) { .fsw-lanes { grid-template-columns: repeat(3, minmax(0,1fr)); } .fsw-lane { height: 760px; } .fsw-lane-body { max-height: none; } }
-@media (min-width: 1700px) {
+@media (min-width: 960px) {
   .fsw-briefing { display: flex; flex-direction: column; gap: 16px; height: calc(100dvh - 146px); min-height: 560px; }
   .fsw-briefing > * { flex-shrink: 0; }
   .fsw-briefing > * + * { margin-top: 0 !important; }
   .fsw-briefing > .fsw-lanes { grid-template-columns: repeat(5, minmax(0,1fr)); flex: 1; min-height: 360px; }
   .fsw-lane { height: 100%; min-height: 0; }
+  .fsw-lane-body { max-height: none; }
 }
 .fsw-lane:focus-within { border-color: hsl(var(--fsw-brass) / .35); }
